@@ -1,4 +1,6 @@
-import './globals.css'
+import '../../globals.css'
+import Navbar from '../../components/navbar'
+import Sidebar from '../../components/sidebar'
 import type { Metadata } from 'next'
 import { Inter, Montserrat, Lato } from 'next/font/google'
 
@@ -12,7 +14,7 @@ const lato = Lato(
   )
 
 export const metadata: Metadata = {
-  title: 'PES | Sign In',
+  title: 'PES',
   description: 'Performance Appraisal Software',
 }
 
@@ -23,8 +25,13 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en">
-      <body className={ lato.className + ' bg-gray-10 flex flex-row relative justify-center max-w-screen h-screen' }>
-        {children}          
+      <body className={ lato.className + ' bg-gray-10 flex flex-row relative justify-center w-screen' }>
+        <Sidebar />
+        <div className="flex flex-col w-4/5 relative">
+          <Navbar />
+          {children}          
+        </div>
+
       </body>
     </html>
   )

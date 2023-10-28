@@ -18,20 +18,12 @@ async function getUser(url: string) {
 }
 
 export default async function Home() {
-  let data = getUser('localhost:3000/api/login')
 
   return(
     <main className="w-full flex overflow-hidden">
-      <div className="illustration bg-pes-gradient w-1/2 h-screen relative flex">
+      <div className="illustration w-1/2 h-screen relative flex">
+         <div className="carousel bg-pes w-full h-full"></div>
         <Image src={ '/pes.svg' } alt='pes hero image' width={ 130 } height={ 130 } className='z-10 mx-auto my-auto'/>
-
-        <div className="pattern flex flex-col justify-between absolute -rotate-65 h-full -bottom-64 right-12">
-          <div className='bg-white opacity-5 rounded-full h-96 w-192 m-8'></div>
-          <div className='bg-white opacity-5 rounded-full h-96 w-192 m-8'></div>
-          <div className='bg-white opacity-5 rounded-full h-96 w-144 m-8'></div>
-        </div>
-
-        <Image src={ '/pes-alt.svg' } alt='pes hero image' width={ 350 } height={ 350 } className='mx-auto my-auto absolute top-0 right-0'/>
       </div>
 
       <div className="form w-1/2 h-screen flex flex-col p-28 justify-center">

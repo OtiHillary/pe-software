@@ -1,4 +1,4 @@
-import './globals.css'
+import '../globals.css'
 import type { Metadata } from 'next'
 import { Inter, Montserrat, Lato } from 'next/font/google'
 
@@ -12,8 +12,8 @@ const lato = Lato(
   )
 
 export const metadata: Metadata = {
-  title: 'PES | Sign In',
-  description: 'Performance Appraisal Software',
+  title: 'PES | Sign Up',
+  description: 'Sign up for this programme',
 }
 
 export default function RootLayout({
