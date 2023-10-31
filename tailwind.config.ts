@@ -22,6 +22,12 @@ const config: Config = {
       boxShadow:{
         'custom': '0px 0px 20px 5px',
       },
+      inset: {
+        '3/12': '25%'
+      },
+      margin:{
+        '1_2': '2px'
+      },
       width:{
         '4_5': '47%',
         '192': '48rem',

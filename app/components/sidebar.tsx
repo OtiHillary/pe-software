@@ -7,12 +7,12 @@ export default function Sidebar(): JSX.Element{
    const pathname = usePathname()
 
    const tabs = [
-      { name: 'Dashboard', icon: <Home3 />, href: '/' }, 
-      { name: 'Employee Database', icon: <People />, href: '/database' }, 
-      { name: 'Goals', icon: <Setting4 />, href: '/goals' }, 
-      { name: 'Assessment', icon: <Award />, href: '/assessment' }, 
-      { name: 'Performance Review', icon: <Teacher />, href: '/performance'}, 
-      { name: 'Pricing', icon: <DollarCircle />, href: '/pricing' }
+      { key: 1, name: 'Dashboard', icon: <Home3 />, href: '/' }, 
+      { key: 2, name: 'Employee Database', icon: <People />, href: '/database' }, 
+      { key: 3, name: 'Goals', icon: <Setting4 />, href: '/goals' }, 
+      { key: 4, name: 'Assessment', icon: <Award />, href: '/assessment' }, 
+      { key: 5, name: 'Performance Review', icon: <Teacher />, href: '/performance'}, 
+      { key: 6, name: 'Pricing', icon: <DollarCircle />, href: '/pricing' }
    ]
    
    return(
@@ -25,10 +25,10 @@ export default function Sidebar(): JSX.Element{
 
             <div className='tabs my-16 flex flex-col justify-between'>
             {
-               tabs.map((i, key) => {
+               tabs.map((i) => {
                   const is_active = i.href == pathname
                   return(
-                  <div key={ key } className={`${ is_active? 'bg-gray-200 text-pes' : 'bg-transparent text-gray-400'} hover:bg-gray-200 hover:text-pes p-3 ps-8 my-1 text-md flex`}>
+                  <div key={ i.key } className={`${ is_active? 'bg-gray-200 text-pes' : 'bg-transparent text-gray-400'} hover:bg-gray-200 hover:text-pes p-3 ps-8 my-1 text-md flex`}>
                      { i.icon }
                      <p className='mx-3'> { i.name }</p>
                   </div>
