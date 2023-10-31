@@ -49,24 +49,6 @@ export default function Home() {
         </div>
       </div>
 
-      {/* <div className="illustration1 invisible flex flex-col justify-center w-1/2 py-6 px-28 h-screen relative ">
-        <div className = 'my-2 text-pes text-3xl font-extrabold flex'>
-          <Image src={'/Vector.svg'} alt='PES' width={55} height={55} />
-          <p className = 'ms-2 my-auto'>PES</p>
-        </div>
-      
-        <div className="carousel w-full text-left">
-        <h1 className='text-3xl text-semibold my-2 w-10/12'>
-          {`Your Company’s journey`} <br/> {`towards`} <span className='text-yellow-400'>Enhanced <br/> Performance</span> {`starts today`}
-        </h1>
-        <p className='text-sm'>
-          {`PES is your company's tool for optimizing team performance. Discover a suite of tools tailored to enhance collaboration and achieve organizational goals`}
-        </p>
-        </div>
-
-        <Image src={ '/team checklist-rafiki 2.png' } alt='pes hero image' width={ 400 } height={ 400 } className='z-10 mx-auto my-auto'/>
-      </div> */}
-
       <div className="illustration2 bg-white flex flex-col justify-center w-1/2 py-6 px-28 h-screen relative ">
         <div className = 'my-2 text-pes text-3xl font-extrabold flex'>
           <Image src={'/Vector.svg'} alt='PES' width={55} height={55} />
@@ -74,34 +56,28 @@ export default function Home() {
         </div>
       
         <div className="carousel w-full text-left">
-        <h1 className='text-3xl text-semibold my-2 w-10/12'>
-          Customize You Metrics
-        </h1>
-        <p className='text-sm'>
-          {`Craft performance metrics that align with your company's objectives. Our intuitive interface allows you to define goals that resonate with your team's roles and aspirations.`}
-        </p>
+          <h1 className='text-3xl text-semibold my-2 w-10/12'>
+            Customize You Metrics
+          </h1>
+          <p className='text-sm'>
+            {`Craft performance metrics that align with your company's objectives. Our intuitive interface allows you to define goals that resonate with your team's roles and aspirations.`}
+          </p>
         </div>
-
-        <Image src={ '/image 11.png' } alt='pes hero image' width={ 300 } height={ 300 } className='z-10 mx-auto my-auto'/>
+        
+        <div className='relative h-80 w-80 flex overflow-hidden mx-auto'>
+          {
+            slide.map((i, key) => (
+              <Image
+                key={key}
+                src={`/image${key + 1}.png`}
+                width={ 320 } height={ 320 }
+                alt={`slide${key + 1}`}
+                className={`carousel-image absolute top-0 left-0 object-cover ${ i ? "opacity-100" : "opacity-0" } transition-opacity duration-500`}
+              />
+            ))
+          }
+        </div>
       </div>
-
-      {/* <div className="illustration3 flex flex-col justify-center w-1/2 py-6 px-28 h-screen relative ">
-        <div className = 'my-2 text-pes text-3xl font-extrabold flex'>
-          <Image src={'/Vector.svg'} alt='PES' width={55} height={55} />
-          <p className = 'ms-2 my-auto'>PES</p>
-        </div>
-      
-        <div className="carousel w-full text-left">
-        <h1 className='text-3xl text-semibold my-2 w-10/12'>
-          {`Your Company’s journey`} <br/> {`towards`} <span className='text-yellow-400'>Enhanced <br/> Performance</span> {`starts today`}
-        </h1>
-        <p className='text-sm'>
-          {`PES is your company's tool for optimizing team performance. Discover a suite of tools tailored to enhance collaboration and achieve organizational goals`}
-        </p>
-        </div>
-
-        <Image src={ '/team checklist-rafiki 2.png' } alt='pes hero image' width={ 400 } height={ 400 } className='z-10 mx-auto my-auto'/>
-      </div> */}
 
       <div className="form w-1/2 h-screen flex flex-col p-28 justify-center">
         <p className='text-3xl text-extrabold'>Create your Account</p>
