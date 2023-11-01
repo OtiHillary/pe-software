@@ -21,8 +21,33 @@ async function getUser(url: string) {
 }
 let slider_index = 0
 
+const first = <>
+  <h1 className='text-3xl text-semibold my-2 w-10/12'>
+    {`Your Company’s journey`} <br/> {`towards`} <span className='text-yellow-400'>Enhanced <br/> Performance</span> {`starts today`}
+  </h1>
+  <p className='text-sm'>
+    {`PES is your company's tool for optimizing team performance. Discover a suite of tools tailored to enhance collaboration and achieve organizational goals`}
+  </p>
+</>
+
+const second = <>
+  <h1 className='text-3xl text-semibold my-2 w-10/12'>
+    Customize You Metrics
+  </h1>
+  <p className='text-sm'>
+    {`Craft performance metrics that align with your company's objectives. Our intuitive interface allows you to define goals that resonate with your team's roles and aspirations.`}
+  </p>
+</>
+
+const third = <>
+
+</>
+
+
 export default function Home() {
   const slider_arr = [ true, false, false ]
+  const content_arr = [ first, second, third ]
+  // const content_arr = [ 'first', 'second', 'third' ]
   const [ slide, setSlide ] = useState(slider_arr)
 
   const switchSlide = () => {
@@ -37,7 +62,7 @@ export default function Home() {
   return(
     <main className="w-full flex overflow-hidden relative">
 
-      <div className="scroller w-3/12 absolute bottom-8 left-3/12 z-10 flex justify-between">
+      <div className="scroller w-3/12 absolute bottom-4 left-3/12 z-10 flex justify-between">
         <div className="page my-auto flex">
           {          
             slide.map( (i, key) => <div key={ key } className= {`ircle h-2 ${ i ? 'w-6 bg-pes' : 'w-2 bg-gray-200'} rounded-full mx-1_2 transition-all`}></div> )
@@ -55,15 +80,16 @@ export default function Home() {
           <p className = 'ms-2 my-auto'>PES</p>
         </div>
       
-        <div className="carousel w-full text-left">
-          <h1 className='text-3xl text-semibold my-2 w-10/12'>
-            Customize You Metrics
-          </h1>
-          <p className='text-sm'>
-            {`Craft performance metrics that align with your company's objectives. Our intuitive interface allows you to define goals that resonate with your team's roles and aspirations.`}
-          </p>
+        <div className="carousel w-full h-48 text-left relative">
+          {
+            slide.map((i, key) => (
+              <div key={key} className={`${ i ? "opacity-100" : "opacity-0" } transition-opacity duration-500 absolute top-0 left-0`}>
+                { content_arr[key] }
+              </div>
+            ))
+          }
         </div>
-        
+
         <div className='relative h-80 w-80 flex overflow-hidden mx-auto'>
           {
             slide.map((i, key) => (
@@ -78,6 +104,7 @@ export default function Home() {
           }
         </div>
       </div>
+
 
       <div className="form w-1/2 h-screen flex flex-col p-28 justify-center">
         <p className='text-3xl text-extrabold'>Create your Account</p>
