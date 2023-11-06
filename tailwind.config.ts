@@ -36,7 +36,9 @@ const config: Config = {
       },
       height:{
         '22': '5.5rem',
-        '192': '192px'
+        '108': '30rem',
+        '144': '42rem',
+        '192': '48rem'
       },
       colors:{
         'pes' : '#322b80',

@@ -20,6 +20,7 @@ async function getUser(url: string) {
 export default async function Home() {
   let data = getUser('localhost:3000/api/login')
 
+  
   return(
     <main className="w-full flex overflow-hidden">
       <div className="illustration bg-pes-gradient w-1/2 h-screen relative flex">

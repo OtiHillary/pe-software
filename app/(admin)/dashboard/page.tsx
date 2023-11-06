@@ -1,6 +1,7 @@
 'use client'
 import React, { useState } from 'react'
-import { People, Award, Timer, ArrowUp, ArrowDown, CloudPlus  } from 'iconsax-react';
+import { People, Award, Timer, ArrowUp, ArrowDown, CloudPlus, Logout, InfoCircle, ArrowRight, Add  } from 'iconsax-react';
+import Link from 'next/link';
 
 export default function Home() {
   const is_logged_in = !false;
@@ -64,107 +65,131 @@ export default function Home() {
             <Timer size={ 64 } className='text-gray-100 font-bold mb-auto' />
           </div>
         </div>
+{/* 
+        <div className = "logout rounded-sm shadow-lg bg-white px-6 py-8 z-20 flex flex-col absolute top-24 right-8">
+          <Link href={`/`} className='flex py-2 px-2 justify-start w-52'>
+            <InfoCircle className='me-2'/>
+            Get help
+          </Link>
+
+          <Link href={`/`} className='text-red-500 flex py-2 px-2 justify-start w-52'>
+            <Logout className='me-2'/>
+            logout
+          </Link>
+        </div> */}
 
         <div className="(Goals and Insights)-- flex justify-between mx-6 mb-6">
-          <div className="w-4_5 shadow-md shadow-gray-100 p-4 bg-white">
-            <div className='flex justify-between w-full p-4'>
-              <p className='text-3xl text-black my-auto'>Goals</p>
-              <p className='text-md font-light my-auto text-pes'>
-                Set new Goal
-                <CloudPlus className='mx-2 font-thin' />
-              </p>                
-            </div>
-
-            <div className= 'text-white flex justify-between w-full py-4'>
-              <div className = 'bg-orng flex flex-col justify-between p-4 rounded-md text-center w-4_5'>
-                <p className='font-light'>Active Goals Set</p>
-                <p className='text-4xl font-semibold'>00</p>
+          <div className="(left_panel)-- w-4_5 flex flex-col">
+            <div className="w-full shadow-md shadow-gray-100 p-4 bg-white">
+              <div className='flex justify-between w-full p-4'>
+                <p className='text-3xl text-black my-auto'>Goals</p>
+                <p className='text-md font-light my-auto text-pes flex'>
+                  Set new Goal
+                  <Add className='mx-2 font-thin' />
+                </p>                
               </div>
 
-                <div className='bg-grn flex flex-col justify-between p-4 rounded-md text-center w-4_5'>
-                  <p className='font-light'>Goals Completed</p>
+              <div className= 'text-white flex justify-between w-full py-4'>
+                <div className = 'bg-orng flex flex-col justify-between p-4 rounded-md text-center w-4_5'>
+                  <p className='font-light'>Active Goals Set</p>
                   <p className='text-4xl font-semibold'>00</p>
                 </div>
-            </div>
 
-            <p className='text-xl text-black my-auto p-4'>Active Goal Metrics</p>
-
-            <div className='metrics flex flex-col justify-normal p-4 py-1'>
-                {
-                  goals.map((i, key) => {
-                    return(
-                      <>
-                        <div key={ key } className='goal-metrics w-full flex justify-between my-4 text-sm'>
-                          <p>{ i.name }</p>
-                          <p className={ ` text-${ colorGrade(i.status) }-500 ` }> { typeof( i.status ) == 'string'? `${ i.status }` : `${ i.status }% Completed` } </p>
-                          <p className={ ` text-${ colorGrade(i.daysLeft) }-500 ` }>{ `${ i.daysLeft } days left` }</p>        
-                        </div>
-                        <hr />                          
-                      </>
-                    )
-                  })                    
-                }
-            </div>
-
-          </div>
-
-          <div className="w-1/2 shadow-md shadow-gray-100 p-4 bg-white">
-            <div className='flex justify-start w-full'>
-              <p className='text-3xl text-black my-auto p-4'>Performance Insights</p>
-            </div>
-
-            <div className='flex flex-col justify-center relative mx-4 my-2'>
-              <div className="flex justify-start w-3/12">
-                <p className={`me-4  py-4 ${ (performanceView == 'employee') ? 'text-pes' : '' }`} onClick={ () => { setPerformanceView('employee') } }>Employees</p>
-                <p className={`me-4  py-4 ${ (performanceView == 'team') ? 'text-pes' : '' }`} onClick={ () => { setPerformanceView('team') } }>Teams</p>
+                  <div className='bg-grn flex flex-col justify-between p-4 rounded-md text-center w-4_5'>
+                    <p className='font-light'>Goals Completed</p>
+                    <p className='text-4xl font-semibold'>00</p>
+                  </div>
               </div>
 
-              <div className={`line w-20 bg-pes h-1 absolute bottom-0 ${ (performanceView == 'employee') ? 'left-0' : 'left-20' } transition-all rounded-full`}></div>
-              <div className="line w-full bg-slate-100 h-1"></div>
+              <p className='text-xl text-black my-auto p-4'>Active Goal Metrics</p>
+
+              <div className='metrics flex flex-col justify-normal p-4 py-1'>
+                  {
+                    goals.map((i, key) => {
+                      return(
+                        <>
+                          <div key={ key } className='goal-metrics w-full flex justify-between my-4 text-sm'>
+                            <p>{ i.name }</p>
+                            <p className={ ` text-${ colorGrade(i.status) }-500 ` }> { typeof( i.status ) == 'string'? `${ i.status }` : `${ i.status }% Completed` } </p>
+                            <p className={ ` text-${ colorGrade(i.daysLeft) }-500 ` }>{ `${ i.daysLeft } days left` }</p>        
+                          </div>
+                          <hr />                          
+                        </>
+                      )
+                    })                    
+                  }
+              </div>
+
+              <div className="viewgoals flex justify-end my-4">
+                  <Link href={`/`} className='bg-pes rounded-md py-2 px-4 text-white flex'>View Goals <ArrowRight className='ms-2 text-sm'/> </Link>
+              </div>
+
             </div>
 
-            <p className='text-xl text-black  my-auto px-4 py-1'>Overperforming Employees</p>
+            <div className='w-full shadow-md shadow-gray-100 p-4 bg-white mt-6'>
 
-            <div className='flex flex-col p-4'>
-                {
-                  performance.good.map((i, key) => {
-                    return(
-                      <>
-                        <div key={ key } className='  goal-metrics w-full flex justify-between my-4 text-sm'>
-                          <p>{ i.name }</p>
-                          <p> { i.dept } </p>
-                          <p className={ ` text-green-500` }>
-                            <ArrowUp className='mb-auto mx-1 font-thin' />
-                            { `${ i.yield }%` }
-                          </p>        
-                        </div>
-                        <hr />                          
-                      </>
-                    )
-                  })                    
-                }  
             </div>
+          </div>
 
-            <p className='text-xl text-black  my-auto px-4 py-1'>Underperforming Employees</p>
-            
-            <div className="flex flex-col p-4">
-                {
-                  performance.bad.map((i, key) => {
-                    return(
-                      <>
-                        <div key={ key } className='goal-metrics w-full flex justify-between my-4 text-sm'>
-                          <p>{ i.name }</p>
-                          <p> { i.dept } </p>
-                          <p className={ ` text-red-500` }>
-                            <ArrowDown className='mt-auto mx-1 font-thin' />
-                            { `${ i.yield }%` }
-                          </p>        
-                        </div>
-                        <hr />                          
-                      </>
-                    )
-                  })                    
-                }
+          <div className="(right_panel)-- w-1/2">
+            <div className="w-full shadow-md shadow-gray-100 p-4 bg-white">
+              <div className='flex justify-start w-full'>
+                <p className='text-3xl text-black my-auto p-4'>Performance Insights</p>
+              </div>
+
+              <div className='flex flex-col justify-center relative mx-4 my-2'>
+                <div className="flex justify-start w-3/12">
+                  <p className={`me-4  py-4 ${ (performanceView == 'employee') ? 'text-pes' : '' }`} onClick={ () => { setPerformanceView('employee') } }>Employees</p>
+                  <p className={`me-4  py-4 ${ (performanceView == 'team') ? 'text-pes' : '' }`} onClick={ () => { setPerformanceView('team') } }>Teams</p>
+                </div>
+
+                <div className={`line w-20 bg-pes h-1 absolute bottom-0 ${ (performanceView == 'employee') ? 'left-0' : 'left-20' } transition-all rounded-full`}></div>
+                <div className="line w-full bg-slate-100 h-1"></div>
+              </div>
+
+              <p className='text-xl text-black  my-auto px-4 py-1'>Overperforming Employees</p>
+
+              <div className='flex flex-col p-4'>
+                  {
+                    performance.good.map((i, key) => {
+                      return(
+                        <>
+                          <div key={ key } className='  goal-metrics w-full flex justify-between my-4 text-sm'>
+                            <p>{ i.name }</p>
+                            <p> { i.dept } </p>
+                            <p className={ ` text-green-500 flex` }>
+                              <ArrowUp className='mt-auto font-thin'/>
+                              { `${ i.yield }%` }
+                            </p>        
+                          </div>
+                          <hr />                          
+                        </>
+                      )
+                    })                    
+                  }  
+              </div>
+
+              <p className='text-xl text-black  my-auto px-4 py-1'>Underperforming Employees</p>
+              
+              <div className="flex flex-col p-4">
+                  {
+                    performance.bad.map((i, key) => {
+                      return(
+                        <>
+                          <div key={ key } className='goal-metrics w-full flex justify-between my-4 text-sm'>
+                            <p>{ i.name }</p>
+                            <p> { i.dept } </p>
+                            <p className={ ` text-red-500 flex` }>
+                              <ArrowDown className='mt-auto mx-1 font-thin' />
+                              { `${ i.yield }%` }
+                            </p>        
+                          </div>
+                          <hr />                          
+                        </>
+                      )
+                    })                    
+                  }
+              </div>
             </div>
           </div>
         </div>
