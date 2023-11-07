@@ -1,3 +1,4 @@
+import { TickCircle, UserTick } from "iconsax-react"
 import Link from "next/link"
 
 export default function Home() {
@@ -9,51 +10,97 @@ export default function Home() {
          </div>
 
          <div className="px-12 py-6 mx-6 bg-white flex justify-between">
-            <div className="price-card bg-white h-100 w-72 border rounded-3xl flex flex-col justify-between p-4">
+            <div className="price-card bg-white h-112 w-72 border rounded-3xl flex flex-col justify-between p-4">
                <div className="flex flex-col">
                   <div className="bg-blue-100 text-pes rounded-full py-1 px-2 text-center mb-2 font-light text-sm">Current plan</div>
 
                   <div className="des my-2 pb-4 border-b border-gray-50">
-                     <h1 className="text-lg">Basic</h1>
+                     <h1 className="text-lg font-bold">Basic</h1>
                      <h1 className="text-5xl text-black">
                         $150
                         <span className="text-gray-300 text-xs font-bold">/year</span>
                      </h1>
                   </div>
 
-                  <div className="feature pb-4 border-b border-gray-50">
-                     <li>feature goes here</li>
-                     <li>feature goes here</li>
-                     <li>feature goes here</li>
-                  </div>                  
+                  <ul className="feature pb-4 border-b border-gray-50 font-light text-sm">
+                     <li className="flex">
+                        <p className="me-4">
+                           {String.fromCharCode(10004)} 
+                        </p>
+                        feature goes here
+                     </li>
+                     <li className="flex">
+                        <p className="me-4">
+                           {String.fromCharCode(10004)} 
+                        </p> 
+                        feature goes here
+                     </li>
+                     <li className="flex">
+                        <p className="me-4">
+                           {String.fromCharCode(10004)} 
+                        </p> 
+                        feature goes here
+                     </li>
+                  </ul>                       
                </div>
 
                <div className="button border border-pes rounded-md m-2 p-2 text-pes text-center">Renew plan</div>
             </div>
 
-            <div className="price-card bg-white h-100 w-72 border rounded-3xl flex flex-col justify-between p-4">
+            <div className="price-card bg-white h-112 w-72 border rounded-3xl flex flex-col justify-between p-4">
                <div className="flex flex-col">
-                  <div className="opacity-0 bg-blue-100 text-pes rounded-xl py-1 px-2 text-center mb-2">Current plan</div>
+                  <div className="flex flex-col">
+                     <div className="opacity-0 bg-blue-100 text-pes rounded-xl py-1 px-2 text-center mb-2">Current plan</div>
 
-                  <div className="des my-2 pb-4 border-b border-gray-50">
-                     <h1 className="text-lg">Basic</h1>
-                     <h1 className="text-5xl text-black">
-                        $150
-                        <span className="text-gray-300 text-xs font-bold">/year</span>
-                     </h1>
+                     <div className="des my-2 pb-4 border-b border-gray-50">
+                        <h1 className="text-lg font-bold">Standard</h1>
+                        <h1 className="text-5xl text-black">
+                           $150
+                           <span className="text-gray-300 text-xs font-bold">/year</span>
+                        </h1>
+                     </div>
+
+                     <ul className="feature pb-4 border-b border-gray-50 font-light text-sm">
+                        <li className="flex">
+                           <p className="me-4">
+                              {String.fromCharCode(10004)} 
+                           </p>
+                           All features in Basic
+                        </li>
+                        <li className="flex">
+                           <p className="me-4">
+                              {String.fromCharCode(10004)} 
+                           </p> 
+                           feature goes here
+                        </li>
+                        <li className="flex">
+                           <p className="me-4">
+                              {String.fromCharCode(10004)} 
+                           </p> 
+                           feature goes here
+                        </li>
+                        <li className="flex">
+                           <p className="me-4">
+                              {String.fromCharCode(10004)} 
+                           </p> 
+                           feature goes here
+                        </li>
+                     </ul>                  
                   </div>
 
-                  <ul className="feature pb-4 border-b border-gray-50">
-                     <li>feature goes here</li>
-                     <li>feature goes here</li>
-                     <li>feature goes here</li>
-                  </ul>                  
+                  <p className="mt-4">
+                     Upgrade to the plan to with a one time payment of
+                     <span className="text-black font-bold text-lg mx-1">
+                        $300
+                     </span>
+                  </p>
                </div>
 
-               <div className="button border border-pes rounded-md m-2 p-2 text-pes text-center">Renew plan</div>
+
+               <div className="button border border-pes bg-pes rounded-md m-2 p-2 text-white text-center">Upgrade</div>
             </div>
 
-            <div className="price-card bg-pes h-100 w-72 border rounded-3xl flex flex-col justify-between p-4 text-white">
+            <div className="price-card bg-pes h-112 w-72 border rounded-3xl flex flex-col justify-between p-4 text-white">
                <div className="flex flex-col">
                   <div className="py-1 px-2 mb-2 flex relative h-8">
                      <div className="bg-white opacity-20 rounded-xl w-full h-full"></div>
@@ -61,21 +108,59 @@ export default function Home() {
                   </div>
 
                   <div className="des my-2 pb-4 border-b border-blue-400">
-                     <h1 className="text-lg">Basic</h1>
+                     <h1 className="text-lg font-bold">Premium</h1>
                      <h1 className="text-5xl ">
                         $150
                         <span className="text-xs">/year</span>
                      </h1>
                   </div>
 
-                  <div className="feature pb-4 border-b border-gray-50">
-                     <li>feature goes here</li>
-                     <li>feature goes here</li>
-                     <li>feature goes here</li>
-                  </div>                  
+                  <ul className="feature pb-4 border-b border-gray-50 font-light text-sm">
+                     <li className="flex">
+                        <p className="me-4">
+                           {String.fromCharCode(10004)} 
+                        </p>
+                        All features in Standard
+                     </li>
+
+                     <li className="flex">
+                        <p className="me-4">
+                           {String.fromCharCode(10004)} 
+                        </p> 
+                        feature goes here
+                     </li>
+
+                     <li className="flex">
+                        <p className="me-4">
+                           {String.fromCharCode(10004)} 
+                        </p> 
+                        feature goes here
+                     </li>
+
+                     <li className="flex">
+                        <p className="me-4">
+                           {String.fromCharCode(10004)} 
+                        </p>
+                        feature goes here
+                     </li>
+
+                     <li className="flex">
+                        <p className="me-4">
+                           {String.fromCharCode(10004)} 
+                        </p> 
+                        feature goes here
+                     </li>
+
+                     <li className="flex">
+                        <p className="me-4">
+                           {String.fromCharCode(10004)} 
+                        </p> 
+                        feature goes here
+                     </li>
+                  </ul>                      
                </div>
 
-               <div className="button bg-white border border-white text-pes rounded-md m-2 p-2 text-center">Upgrade plan</div>
+               <div className="button bg-white border border-white text-pes rounded-md m-2 p-2 text-center">Upgrade</div>
             </div>
          </div>
 
