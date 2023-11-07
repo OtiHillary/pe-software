@@ -9,7 +9,7 @@ export default function Sidebar(): JSX.Element{
 
    const tabs = [
       { key: 1, name: 'Dashboard', icon: <Home3 />, href: '/dashboard' }, 
-      { key: 2, name: 'Employee Database', icon: <People />, href: '/database' }, 
+      { key: 2, name: 'Employee Database', icon: <People />, href: '/em-database' }, 
       { key: 3, name: 'Goals', icon: <Setting4 />, href: '/goals' }, 
       { key: 4, name: 'Assessment', icon: <Award />, href: '/assessment' }, 
       { key: 5, name: 'Performance Review', icon: <Teacher />, href: '/performance'}, 

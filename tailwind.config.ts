@@ -9,6 +9,8 @@ const config: Config = {
   theme: {
     extend: {
       backgroundImage: {
+        // (177deg, #090066 2.18%, #060046 112.35%)
+        'my': " linear-gradient( #322b80ee, #322b80ee ), url('/bg-forpes.png') ",
         'gradient-radial': 'radial-gradient(var(--tw-gradient-stops))',
         'gradient-conic':  'conic-gradient(from 180deg at 50% 50%, var(--tw-gradient-stops))',
         'pes-gradient': 'linear-gradient(173deg, #3125AE 3.71%, rgba(255, 199, 42, 0.85) 257.51%);',

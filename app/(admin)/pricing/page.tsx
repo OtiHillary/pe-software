@@ -1,4 +1,3 @@
-import { TickCircle, UserTick } from "iconsax-react"
 import Link from "next/link"
 
 export default function Home() {
@@ -100,7 +99,7 @@ export default function Home() {
                <div className="button border border-pes bg-pes rounded-md m-2 p-2 text-white text-center">Upgrade</div>
             </div>
 
-            <div className="price-card bg-pes h-112 w-72 border rounded-3xl flex flex-col justify-between p-4 text-white">
+            <div className="price-card bg-my bg-center h-112 w-72 border rounded-3xl flex flex-col justify-between p-4 text-white">
                <div className="flex flex-col">
                   <div className="flex flex-col">
                      <div className="py-1 px-2 mb-2 flex relative h-8">
