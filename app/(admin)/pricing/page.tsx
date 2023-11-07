@@ -13,7 +13,7 @@ export default function Home() {
                <div className="flex flex-col">
                   <div className="bg-blue-100 text-pes rounded-full py-1 px-2 text-center mb-2 font-light text-sm">Current plan</div>
 
-                  <div className="des my-2">
+                  <div className="des my-2 pb-4 border-b border-gray-50">
                      <h1 className="text-lg">Basic</h1>
                      <h1 className="text-5xl text-black">
                         $150
@@ -21,7 +21,7 @@ export default function Home() {
                      </h1>
                   </div>
 
-                  <div className="feature">
+                  <div className="feature pb-4 border-b border-gray-50">
                      <li>feature goes here</li>
                      <li>feature goes here</li>
                      <li>feature goes here</li>
@@ -35,7 +35,7 @@ export default function Home() {
                <div className="flex flex-col">
                   <div className="opacity-0 bg-blue-100 text-pes rounded-xl py-1 px-2 text-center mb-2">Current plan</div>
 
-                  <div className="des my-2">
+                  <div className="des my-2 pb-4 border-b border-gray-50">
                      <h1 className="text-lg">Basic</h1>
                      <h1 className="text-5xl text-black">
                         $150
@@ -43,11 +43,11 @@ export default function Home() {
                      </h1>
                   </div>
 
-                  <div className="feature">
+                  <ul className="feature pb-4 border-b border-gray-50">
                      <li>feature goes here</li>
                      <li>feature goes here</li>
                      <li>feature goes here</li>
-                  </div>                  
+                  </ul>                  
                </div>
 
                <div className="button border border-pes rounded-md m-2 p-2 text-pes text-center">Renew plan</div>
@@ -60,7 +60,7 @@ export default function Home() {
                      <p className="text-white absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 text-sm font-light">Recommended</p>
                   </div>
 
-                  <div className="des my-2">
+                  <div className="des my-2 pb-4 border-b border-blue-400">
                      <h1 className="text-lg">Basic</h1>
                      <h1 className="text-5xl ">
                         $150
@@ -68,7 +68,7 @@ export default function Home() {
                      </h1>
                   </div>
 
-                  <div className="feature">
+                  <div className="feature pb-4 border-b border-gray-50">
                      <li>feature goes here</li>
                      <li>feature goes here</li>
                      <li>feature goes here</li>
