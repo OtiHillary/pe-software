@@ -88,7 +88,7 @@ export default function Home() {
                      </ul>                  
                   </div>
 
-                  <p className="mt-4">
+                  <p className="mt-4 text-sm">
                      Upgrade to the plan to with a one time payment of
                      <span className="text-black font-bold text-lg mx-1">
                         $300
@@ -102,63 +102,73 @@ export default function Home() {
 
             <div className="price-card bg-pes h-112 w-72 border rounded-3xl flex flex-col justify-between p-4 text-white">
                <div className="flex flex-col">
-                  <div className="py-1 px-2 mb-2 flex relative h-8">
-                     <div className="bg-white opacity-20 rounded-xl w-full h-full"></div>
-                     <p className="text-white absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 text-sm font-light">Recommended</p>
+                  <div className="flex flex-col">
+                     <div className="py-1 px-2 mb-2 flex relative h-8">
+                        <div className="bg-white opacity-20 rounded-xl w-full h-full"></div>
+                        <p className="text-white absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 text-sm font-light">Recommended</p>
+                     </div>
+
+                     <div className="des my-2 pb-4 border-b border-blue-400">
+                        <h1 className="text-lg font-bold">Premium</h1>
+                        <h1 className="text-5xl ">
+                           $150
+                           <span className="text-xs">/year</span>
+                        </h1>
+                     </div>
+
+                     <ul className="feature pb-4 border-b border-gray-50 font-light text-sm">
+                        <li className="flex">
+                           <p className="me-4">
+                              {String.fromCharCode(10004)} 
+                           </p>
+                           All features in Standard
+                        </li>
+
+                        <li className="flex">
+                           <p className="me-4">
+                              {String.fromCharCode(10004)} 
+                           </p> 
+                           feature goes here
+                        </li>
+
+                        <li className="flex">
+                           <p className="me-4">
+                              {String.fromCharCode(10004)} 
+                           </p> 
+                           feature goes here
+                        </li>
+
+                        <li className="flex">
+                           <p className="me-4">
+                              {String.fromCharCode(10004)} 
+                           </p>
+                           feature goes here
+                        </li>
+
+                        <li className="flex">
+                           <p className="me-4">
+                              {String.fromCharCode(10004)} 
+                           </p> 
+                           feature goes here
+                        </li>
+
+                        <li className="flex">
+                           <p className="me-4">
+                              {String.fromCharCode(10004)} 
+                           </p> 
+                           feature goes here
+                        </li>
+                     </ul>                      
                   </div>
 
-                  <div className="des my-2 pb-4 border-b border-blue-400">
-                     <h1 className="text-lg font-bold">Premium</h1>
-                     <h1 className="text-5xl ">
-                        $150
-                        <span className="text-xs">/year</span>
-                     </h1>
-                  </div>
-
-                  <ul className="feature pb-4 border-b border-gray-50 font-light text-sm">
-                     <li className="flex">
-                        <p className="me-4">
-                           {String.fromCharCode(10004)} 
-                        </p>
-                        All features in Standard
-                     </li>
-
-                     <li className="flex">
-                        <p className="me-4">
-                           {String.fromCharCode(10004)} 
-                        </p> 
-                        feature goes here
-                     </li>
-
-                     <li className="flex">
-                        <p className="me-4">
-                           {String.fromCharCode(10004)} 
-                        </p> 
-                        feature goes here
-                     </li>
-
-                     <li className="flex">
-                        <p className="me-4">
-                           {String.fromCharCode(10004)} 
-                        </p>
-                        feature goes here
-                     </li>
-
-                     <li className="flex">
-                        <p className="me-4">
-                           {String.fromCharCode(10004)} 
-                        </p> 
-                        feature goes here
-                     </li>
-
-                     <li className="flex">
-                        <p className="me-4">
-                           {String.fromCharCode(10004)} 
-                        </p> 
-                        feature goes here
-                     </li>
-                  </ul>                      
+                  <p className="mt-4 text-sm">
+                     Upgrade to the plan to with a one time payment of
+                     <span className="font-bold text-lg mx-1">
+                        $300
+                     </span>
+                  </p>
                </div>
+
 
                <div className="button bg-white border border-white text-pes rounded-md m-2 p-2 text-center">Upgrade</div>
             </div>
