@@ -2,12 +2,13 @@
 import { usePathname } from 'next/navigation';
 import Image from 'next/image'
 import { Home3, Setting4, DollarCircle, People, Award, Teacher } from 'iconsax-react';
+import Link from 'next/link';
 
 export default function Sidebar(): JSX.Element{
    const pathname = usePathname()
 
    const tabs = [
-      { key: 1, name: 'Dashboard', icon: <Home3 />, href: '/' }, 
+      { key: 1, name: 'Dashboard', icon: <Home3 />, href: '/dashboard' }, 
       { key: 2, name: 'Employee Database', icon: <People />, href: '/database' }, 
       { key: 3, name: 'Goals', icon: <Setting4 />, href: '/goals' }, 
       { key: 4, name: 'Assessment', icon: <Award />, href: '/assessment' }, 
@@ -28,10 +29,10 @@ export default function Sidebar(): JSX.Element{
                tabs.map((i) => {
                   const is_active = i.href == pathname
                   return(
-                  <div key={ i.key } className={`${ is_active? 'bg-gray-200 text-pes' : 'bg-transparent text-gray-400'} hover:bg-gray-200 hover:text-pes p-3 ps-8 my-1 text-md flex`}>
+                  <Link href={ i.href } key={ i.key } className={`${ is_active? 'bg-gray-200 text-pes' : 'bg-transparent text-gray-400'} hover:bg-gray-200 hover:text-pes p-3 ps-8 my-1 text-md flex`}>
                      { i.icon }
                      <p className='mx-3'> { i.name }</p>
-                  </div>
+                  </Link>
                   )
                })
             }
