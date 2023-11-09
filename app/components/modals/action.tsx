@@ -1,7 +1,7 @@
 import { InfoCircle, Logout } from "iconsax-react"
 import Link from "next/link"
 
-export default function Action(){
+export default function Action( { visibility, setVisibility } ){
   return (
     <div className = "logout rounded-sm shadow-lg bg-white px-6 py-8 z-20 flex flex-col absolute top-24 right-8">
       <Link href={`/`} className='flex py-2 px-2 justify-start w-52'>
