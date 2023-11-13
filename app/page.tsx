@@ -1,6 +1,10 @@
-import { People, Award, Timer  } from 'iconsax-react';
 import Image from 'next/image';
 import Link from 'next/link';
+import { useDispatch, useSelector } from 'react-redux';
+import { RootState } from './state/store'
+import { login } from './state/logged/loggedSlice'
+
+const dispatch = useDispatch()
 
 async function getUser(url: string) {
   try {
@@ -12,14 +16,23 @@ async function getUser(url: string) {
     console.log(error)
   }
   finally{
+    dispatch( login() )
     // change window according to login priviledge
   }
 
 }
 
 export default async function Home() {
+  const isLoggedIn = useSelector( (state: RootState) => state.logged.value )
   let data = getUser('localhost:3000/api/login')
-
+  if (isLoggedIn){
+    return {
+      redirect: {
+        destination: '/dashboard',
+        permanent: false,
+      },
+    }
+  } 
   
   return(
     <main className="w-full flex overflow-hidden">
