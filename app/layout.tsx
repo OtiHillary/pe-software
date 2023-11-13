@@ -20,12 +20,12 @@ export const metadata: Metadata = {
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <Provider store={ store }>
+    // <Provider store={ store }>
       <html lang="en">
           <body className={ lato.className + ' bg-gray-10 flex flex-row relative justify-center max-w-screen h-screen' }>
             {children}          
           </body>        
       </html>
-    </Provider>
+    // </Provider>
   )
 }

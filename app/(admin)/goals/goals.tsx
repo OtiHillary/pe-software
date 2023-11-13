@@ -6,12 +6,12 @@ import { Status, CalendarRemove } from 'iconsax-react'
 
 const data = !true;
 const goals = [
-    { name: 'Sales Growth' , status: 70 , daysLeft: 5 },
-    { name: 'Developement' , status: 'Not started', daysLeft: 12 },
-    { name: 'Developement' , status: 'Not started', daysLeft: 12 },
-    { name: 'Databases' , status: 'Not started', daysLeft: 12 },
-    { name: 'Customer Satisfaction' , status: 12, daysLeft: 11 },
-    { name: 'Customer Satisfction' , status: 15, daysLeft: 20 },
+    { name: 'Sales Growth' , status: 70 , description: 'Growth of sales by X% by 2025, using daily metrics',daysLeft: 5 },
+    { name: 'Developement' , status: 'Not started', description: 'Growth of sales by X% by 2025, using daily metrics',daysLeft: 12 },
+    { name: 'Developement' , status: 'Not started', description: 'Growth of sales by X% by 2025, using daily metrics',daysLeft: 12 },
+    { name: 'Databases' , status: 'Not started', description: 'Growth of sales by X% by 2025, using daily metrics',daysLeft: 12 },
+    { name: 'Customer Satisfaction' , status: 12, description: 'Growth of sales by X% by 2025, using daily metrics',daysLeft: 11 },
+    { name: 'Customer Satisfction' , status: 15, description: 'Growth of sales by X% by 2025, using daily metrics',daysLeft: 20 },
 ]
 
 function colorGrade( num: any ): string{

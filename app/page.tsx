@@ -1,38 +1,32 @@
 import Image from 'next/image';
 import Link from 'next/link';
-import { useDispatch, useSelector } from 'react-redux';
-import { RootState } from './state/store'
-import { login } from './state/logged/loggedSlice'
+// import { useDispatch, useSelector } from 'react-redux';
+// import { RootState } from './state/store'
 
-const dispatch = useDispatch()
 
-async function getUser(url: string) {
+async function login(url: string) {
   try {
-    const jsonData = await fetch(url)
-    let data = jsonData.json()
-    return data
+    const req = await fetch(url)
+    let res = req.json()
+    console.log(res)
+
+    // localStorage.setItem('access_token', res.data.token);
+    // return data
 
   } catch (error) {
     console.log(error)
   }
   finally{
-    dispatch( login() )
     // change window according to login priviledge
   }
 
 }
 
+
 export default async function Home() {
-  const isLoggedIn = useSelector( (state: RootState) => state.logged.value )
-  let data = getUser('localhost:3000/api/login')
-  if (isLoggedIn){
-    return {
-      redirect: {
-        destination: '/dashboard',
-        permanent: false,
-      },
-    }
-  } 
+  // const isLoggedIn = useSelector( (state: RootState) => state.logged.value )
+  // const dispatch = useDispatch()
+  let data = await login('localhost:3000/api/login')
   
   return(
     <main className="w-full flex overflow-hidden">
