@@ -1,21 +1,21 @@
 import { createSlice } from '@reduxjs/toolkit'
 
-type goalState = {
+type dimmerState = {
     visible: boolean;
 }
-const initialState: goalState = {
+const initialState: dimmerState = {
     visible: false,
 }
-const goalSlice = createSlice({
+const dimmerSlice = createSlice({
     name: 'logged',
     initialState,
     reducers:{
-        newGoal: (state) => {
+        dimmer: (state) => {
             state.visible = !state.visible
         },
 
     }
 })
 
-export const { newGoal } = goalSlice.actions
-export default goalSlice.reducer
+export const { dimmer } = dimmerSlice.actions
+export default dimmerSlice.reducer

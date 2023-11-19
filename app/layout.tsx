@@ -1,3 +1,5 @@
+'use client'
+
 import './globals.css'
 import type { Metadata } from 'next'
 import { Inter, Montserrat, Lato } from 'next/font/google'
@@ -13,19 +15,19 @@ const lato = Lato(
    }
   )
 
-export const metadata: Metadata = {
-  title: 'PES | Sign In',
-  description: 'Performance Appraisal Software',
-}
+// export const metadata: Metadata = {
+//   title: 'PES | Sign In',
+//   description: 'Performance Appraisal Software',
+// }
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    // <Provider store={ store }>
+    <Provider store={ store }>
       <html lang="en">
           <body className={ lato.className + ' bg-gray-10 flex flex-row relative justify-center max-w-screen h-screen' }>
             {children}          
           </body>        
       </html>
-    // </Provider>
+    </Provider>
   )
 }

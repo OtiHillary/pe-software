@@ -1,7 +1,7 @@
 import Image from 'next/image';
 import Link from 'next/link';
-// import { useDispatch, useSelector } from 'react-redux';
-// import { RootState } from './state/store'
+import { useDispatch, useSelector } from 'react-redux';
+import { RootState } from './state/store'
 
 
 async function login(url: string) {
@@ -24,8 +24,8 @@ async function login(url: string) {
 
 
 export default async function Home() {
-  // const isLoggedIn = useSelector( (state: RootState) => state.logged.value )
-  // const dispatch = useDispatch()
+  const isLoggedIn = useSelector( (state: RootState) => state.logged.value )
+  const dispatch = useDispatch()
   let data = await login('localhost:3000/api/login')
   
   return(
