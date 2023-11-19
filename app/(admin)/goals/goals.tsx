@@ -2,6 +2,9 @@
 
 import Image from "next/image"
 import { useState } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
+import { RootState } from '../../state/store'
+import { newGoal } from "@/app/state/goals/newgoalSlice";
 import { Status, CalendarRemove } from 'iconsax-react'
 
 const data = !true;
@@ -20,6 +23,9 @@ function colorGrade( num: any ): string{
 
 export default function Goals(){
     const [grid, setGrid] = useState(false)
+    const new_goal = useSelector( (state: RootState) => state.newGoal.visible )
+    confirm(`${ new_goal }`)
+    const dispatch = useDispatch()
 
     return(
         <main className="m-6">
@@ -33,7 +39,7 @@ export default function Goals(){
                     <div className={`${ grid? '': 'border-pes text-pes' } list border rounded-md mx-3 my-auto p-1 hover:border-pes`} onClick={ () => setGrid(false) }>
                         <Image width={ 25 } height={ 25 } src={ `/list.svg` } alt={`list`}/>
                     </div>
-                    <div className="bg-pes py-3 px-8 rounded-md text-white new ms-12">
+                    <div className="bg-pes py-3 px-8 rounded-md text-white new ms-12" onClick={ () => dispatch( newGoal() )}>
                         Set new Goal
                     </div>
                 </div>
