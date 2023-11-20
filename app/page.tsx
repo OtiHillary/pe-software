@@ -24,8 +24,8 @@ async function login(url: string) {
 
 
 export default async function Home() {
-  const isLoggedIn = useSelector( (state: RootState) => state.logged.value )
-  const dispatch = useDispatch()
+  // const isLoggedIn = useSelector( (state: RootState) => state.logged.value )
+  // const dispatch = useDispatch()
   let data = await login('localhost:3000/api/login')
   
   return(

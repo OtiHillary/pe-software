@@ -4,7 +4,7 @@ import Image from "next/image"
 import { useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { RootState } from '../../state/store'
-import { newGoal } from "@/app/state/goals/newgoalSlice";
+import { newGoal } from "@/app/state/goals/goalSlice";
 import { Status, CalendarRemove } from 'iconsax-react'
 
 const data = !true;
@@ -23,7 +23,7 @@ function colorGrade( num: any ): string{
 
 export default function Goals(){
     const [grid, setGrid] = useState(false)
-    const new_goal = useSelector( (state: RootState) => state.newGoal.visible )
+    const new_goal = useSelector( (state: RootState) => state.newGoal.new )
     confirm(`${ new_goal }`)
     const dispatch = useDispatch()
 

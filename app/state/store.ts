@@ -1,7 +1,7 @@
 import { configureStore } from '@reduxjs/toolkit'
 import loggedReducer from './logged/loggedSlice'
-import newGoalReducer from './goals/newgoalSlice'
-import editGoalReducer from './goals/editgoalSlice'
+import editGoalReducer from './goals/goalSlice'
+import newGoalReducer from './goals/goalSlice'
 
 export const store = configureStore({
     reducer: {

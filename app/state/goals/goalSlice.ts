@@ -1,21 +1,26 @@
 import { createSlice } from '@reduxjs/toolkit'
 
 type goalState = {
-    visible: boolean;
+    new: boolean;
+    edit: boolean;
 }
 const initialState: goalState = {
-    visible: false,
+    new: false,
+    edit: false,
 }
 const goalSlice = createSlice({
     name: 'logged',
     initialState,
     reducers:{
         newGoal: (state) => {
-            state.visible = !state.visible
+            state.new = !state.new
+        },
+        editGoal: (state) => {
+            state.edit = !state.edit
         },
 
     }
 })
 
-export const { newGoal } = goalSlice.actions
+export const { newGoal, editGoal } = goalSlice.actions
 export default goalSlice.reducer
