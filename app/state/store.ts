@@ -1,13 +1,11 @@
-import { configureStore } from '@reduxjs/toolkit'
+import { Action, ThunkAction, configureStore } from '@reduxjs/toolkit'
 import loggedReducer from './logged/loggedSlice'
-import editGoalReducer from './goals/goalSlice'
-import newGoalReducer from './goals/goalSlice'
+import goalReducer from './goals/goalSlice'
 
 export const store = configureStore({
     reducer: {
         logged: loggedReducer,
-        newGoal: newGoalReducer,
-        editGoal: editGoalReducer,
+        goal: goalReducer,
     },
 })
 export type RootState = ReturnType<typeof store.getState>;

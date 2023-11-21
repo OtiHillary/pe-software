@@ -23,8 +23,8 @@ function colorGrade( num: any ): string{
 
 export default function Goals(){
     const [grid, setGrid] = useState(false)
-    const new_goal = useSelector( (state: RootState) => state.newGoal.new )
-    confirm(`${ new_goal }`)
+    const new_goal = useSelector( (state: RootState) => state.goal.new )
+    // confirm(`${ new_goal }`)
     const dispatch = useDispatch()
 
     return(

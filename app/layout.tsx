@@ -1,8 +1,11 @@
+'use client'
+
 import './globals.css'
 import type { Metadata } from 'next'
 import { Inter, Montserrat, Lato } from 'next/font/google'
 import { Provider } from 'react-redux'
 import { store } from './state/store'
+import Dimmer from './components/dimmer'
 
 const inter = Inter( {subsets: ['latin'] })
 const montserrat = Montserrat( {subsets: ['latin'] })
@@ -13,10 +16,10 @@ const lato = Lato(
    }
   )
 
-export const metadata: Metadata = {
-  title: 'PES | Sign In',
-  description: 'Performance Appraisal Software',
-}
+// export const metadata: Metadata = {
+//   title: 'PES | Sign In',
+//   description: 'Performance Appraisal Software',
+// }
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
