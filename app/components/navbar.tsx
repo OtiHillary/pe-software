@@ -1,8 +1,14 @@
 'use client'
 import Image from 'next/image'
 import { SearchNormal, Notification  } from 'iconsax-react';
+import { useDispatch, useSelector } from 'react-redux';
+import { notificationView } from '@/app/state/notification/notificationSlice';
+import { actionView } from "@/app/state/action/actionSlice";
+import { RootState } from '@/app/state/store'
 
 export default function Navbar(): JSX.Element{
+   const isVisible = useSelector((state: RootState)=> state.notification.visible )
+   const dispatch = useDispatch()
 
    return(
       <div className="nav w-full h-20 bg z-10 sticky">
@@ -14,9 +20,9 @@ export default function Navbar(): JSX.Element{
 
             <div className="profile flex my-auto mx-4">
             <div className="notification my-auto mx-2 text-gray-400">
-               <Notification />
+               <Notification onClick ={() => dispatch( notificationView() )} />
             </div>
-            <div className="image flex justify-between text-gray-600">
+            <div className="image flex justify-between text-gray-600 hover:underline" onClick ={() => dispatch( actionView() )}>
                <Image src={ '/young oti.PNG' } alt='profile image' width={ 40 } height={ 0 } className='mx-2 rounded-full'/>
                <p className='mx-2 my-auto'>{ 'Otonye Hillary' }</p>
             </div>

@@ -4,7 +4,7 @@ import Image from "next/image"
 import { useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { RootState } from '../../state/store'
-import { newGoal } from "@/app/state/goals/goalSlice";
+import { newGoal, editGoal } from "@/app/state/goals/goalSlice";
 import { Status, CalendarRemove } from 'iconsax-react'
 
 const data = !true;
@@ -24,7 +24,6 @@ function colorGrade( num: any ): string{
 export default function Goals(){
     const [grid, setGrid] = useState(false)
     const new_goal = useSelector( (state: RootState) => state.goal.new )
-    // confirm(`${ new_goal }`)
     const dispatch = useDispatch()
 
     return(
@@ -57,7 +56,7 @@ export default function Goals(){
                         {
                             goals.map((i, key) => {
                                 return(
-                                    <div className={ `${ grid? 'w-72 py-6': 'flex justify-between w-full py-1' } bg-white  rounded-md border border-gray-100 px-12` }>
+                                    <div className={ `${ grid? 'w-72 py-6': 'flex justify-between w-full py-1' } bg-white  rounded-md border border-gray-100 px-12` } onClick={ () => dispatch( editGoal({ payload: i, type: 'edit' }) ) }>
                                         <h1 className={ `${ grid? 'text-xl font-bold': '' } my-2` }>
                                             { i.name }
                                         </h1>
