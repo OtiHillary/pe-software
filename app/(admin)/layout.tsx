@@ -12,6 +12,8 @@ import type { Metadata } from 'next'
 import { Inter, Montserrat, Lato } from 'next/font/google'
 import { Provider } from 'react-redux'
 import { store } from '../state/store'
+import Deletegoal from '../components/modals/deletegoal'
+import SetNotification from '../components/modals/setnotification'
 
 const inter = Inter( {subsets: ['latin'] })
 const montserrat = Montserrat( {subsets: ['latin'] })
@@ -34,9 +36,11 @@ export default function RootLayout({ children, }: { children: React.ReactNode })
         <body className={ lato.className + 'bg-gray-10 flex flex-row relative justify-center w-screen' }>
           <Dimmer />
           <Notification />
+          <SetNotification />
           <Action />
           <Newgoal/>
           <Editgoal/>
+          <Deletegoal/>
 
           <Sidebar />
           <div className="flex flex-col w-4/5">

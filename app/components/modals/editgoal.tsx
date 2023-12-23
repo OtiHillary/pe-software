@@ -1,5 +1,5 @@
 import { useDispatch, useSelector } from 'react-redux';
-import { editGoal } from '@/app/state/goals/goalSlice';
+import { editGoal, deleteGoal } from '@/app/state/goals/goalSlice';
 import { RootState } from '@/app/state/store'
 import { CloseCircle } from 'iconsax-react'
 
@@ -41,7 +41,7 @@ export default function Editgoal(){
 
                 <div className="actions flex">
                     <button className='bg-pes rounded-md text-white w-7/12 py-4 mt-6 me-2'>Edit</button>
-                    <button className='bg-red-500 rounded-md text-white w-4/12 py-4 mt-6'>Delete</button>
+                    <button className='bg-red-500 rounded-md text-white w-4/12 py-4 mt-6' onClick={ () => dispatch( deleteGoal()) } >Delete</button>
                 </div>
 
             </div>

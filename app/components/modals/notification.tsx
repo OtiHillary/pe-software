@@ -5,7 +5,6 @@ import { RootState } from '@/app/state/store'
 
 export default function Notification(){
     const isVisible = useSelector((state: RootState)=> state.notification.visible )
-    console.log(isVisible)
     const dispatch = useDispatch()
 
     return (

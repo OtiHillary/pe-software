@@ -2,6 +2,7 @@ import { configureStore } from '@reduxjs/toolkit'
 import loggedReducer from './logged/loggedSlice'
 import goalReducer from './goals/goalSlice'
 import notificationReducer from './notification/notificationSlice'
+import setNotificationReducer from './setnotification/setNotificationSlice'
 import actionReducer from './action/actionSlice'
 export const store = configureStore({
     reducer: {
@@ -9,6 +10,7 @@ export const store = configureStore({
         goal: goalReducer,
         notification: notificationReducer,
         action: actionReducer,
+        setNotification: setNotificationReducer,
     },
 })
 export type RootState = ReturnType<typeof store.getState>;

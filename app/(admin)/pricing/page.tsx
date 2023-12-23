@@ -4,7 +4,7 @@ export default function Home() {
    return(
       <main className="w-full flex flex-col">
          <div className= "px-12 pt-8 pb-4 ms-6 mt-6 me-6 border-b border-gray-100 bg-white">
-            <h1 className="text-xl my-3 font-bold">Pricing</h1>
+            <h1 className="text-2xl my-3 font-bold">Pricing</h1>
             <p className="text-sm">Simple pricing. No hidden fees. Advanced features for your company</p>
          </div>
 
