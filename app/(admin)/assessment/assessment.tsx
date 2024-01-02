@@ -3,27 +3,58 @@
 import { useDispatch } from 'react-redux';
 import { setNotificationView } from '@/app/state/setnotification/setNotificationSlice';
 import { Warning2, ArrowRight } from 'iconsax-react'
+import Dept from '../../components/assessment/Dept'
 
 const assData = [
    {
       dept: 'ABC',
       entries: 15,
+      completed: false,
+      info: 'Two Outliers Found',
+      assess:[
+         {
+            name: "otonye edwin",
+            role: "team lead",
+         },
+         {
+            name: "alabo edwin",
+            role: "lead frontend",
+         }
+      ],
    },
    {
       dept: 'DEF',
       entries: 14,
+      completed:true,
+      info: 'Assessment Complete',
    },
    {
       dept: 'GHI',
       entries: 8,
+      completed:true,
+      info: 'Assessment Complete',
    },
    {
       dept: 'JKL:',
       entries: 30,
+      completed: false,
+      info: '3 outliers',
+      assess:[
+         {
+            name: "royce edwin",
+            role: "team lead",
+         },
+         {
+            name: "damien edwin",
+            role: "lead frontend",
+         }
+      ],
    },
    {
       dept: 'MNO',
       entries: 12,
+      completed:true,
+      info: 'Assessment Complete',
    }
 ]
 
@@ -71,22 +102,7 @@ export default function Assesment(){
                {
                   assData.map((i, key) => {
                      return(
-                        <div key={key} className={`flex justify-between p-6 my-2 mx-4 border rounded-md bg-white`} >
-                           <div className="flex flex-col">
-                              <p className='font-semibold text-md'>{i.dept} department</p>
-                              <p className='text-gray-300 text-sm'>{i.entries} data entries recorded</p>
-                           </div>
-
-                           {
-                              <>
-                                 {/* <a role='button' className='text-pes border border-pes rounded-md py-3 px-8'>
-                                    Assess Employees
-                                 </a> */}
-                                 <img src={`/loading.svg`} className='animate-spin'/>                              
-                              </>
-
-                           }
-                        </div>                     
+                        <Dept key={key} data={i} />                 
                      )
                   })
                }

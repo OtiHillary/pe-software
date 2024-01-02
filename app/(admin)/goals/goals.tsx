@@ -48,7 +48,7 @@ export default function Goals(){
             {
                 data ? 
                 <p className="mt-48 mx-auto text-sm text-gray-500 font-light">
-                    Currently, No Goals Created. Click 'Set New Goals' to Begin Your Journey of Achievement and Growth.
+                    {`Currently, No Goals Created. Click 'Set New Goals' to Begin Your Journey of Achievement and Growth.`}
                 </p> 
                 : 
                 <div className={ `${ grid? 'grid grid-cols-3 gap-4': 'flex flex-col' } my-8 ` } >
