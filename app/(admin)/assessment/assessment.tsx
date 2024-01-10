@@ -10,15 +10,17 @@ const assData = [
       dept: 'ABC',
       entries: 15,
       completed: false,
-      info: 'Two Outliers Found',
+      info: '2 Outliers Found',
       assess:[
          {
             name: "otonye edwin",
             role: "team lead",
+            team: "The Fantastic Four"
          },
          {
             name: "alabo edwin",
             role: "lead frontend",
+            team: "The Suicide Squad"
          }
       ],
    },
@@ -38,15 +40,17 @@ const assData = [
       dept: 'JKL:',
       entries: 30,
       completed: false,
-      info: '3 outliers',
+      info: '3 outliers found',
       assess:[
          {
             name: "royce edwin",
             role: "team lead",
+            team: "Team avengers",
          },
          {
             name: "damien edwin",
             role: "lead frontend",
+            team: "Guardians of the galaxy",
          }
       ],
    },
@@ -71,7 +75,7 @@ export default function Assesment(){
             <h1 className="text-pes my-auto">View Past Appraisal Results</h1>
          </div>
          
-         <div className={`flex flex-col bg-white h-full`}>
+         <div className={`flex flex-col bg-white min-h-full mb-2`}>
 
          {
             data ? 

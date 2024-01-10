@@ -14,6 +14,7 @@ import { Provider } from 'react-redux'
 import { store } from '../state/store'
 import Deletegoal from '../components/modals/deletegoal'
 import SetNotification from '../components/modals/setnotification'
+import NotificationSent from '../components/modals/notification_sent'
 
 const inter = Inter( {subsets: ['latin'] })
 const montserrat = Montserrat( {subsets: ['latin'] })
@@ -41,6 +42,7 @@ export default function RootLayout({ children, }: { children: React.ReactNode })
           <Newgoal/>
           <Editgoal/>
           <Deletegoal/>
+          <NotificationSent/>
 
           <Sidebar />
           <div className="flex flex-col w-4/5">

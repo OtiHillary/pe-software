@@ -20,18 +20,30 @@ export default function Dept ({ data, key }){
             loaded?
             <div className='flex flex-col border rounded-md bg-white my-2 mx-4'>
                <div key={key} className={`flex justify-between p-6`} >
-                  <div className="flex flex-col">
+                  <div className="flex flex-col my-auto">
                      <p className='font-semibold text-md'>{data.dept} department</p>
                      <p className='text-gray-300 text-sm'>{data.entries} data entries recorded</p>
                   </div>
 
                   <p className={`${data.completed? 'text-green-500': 'text-red-500'} my-auto`}>{data.info}</p>
 
+                  {
+                     data.completed?
+                     <div className='flex flex-col'>
+                        <a role='button' className='flex justify-center text-white bg-pes border border-pes rounded-md py-3 px-8 mb-1 w-[212px] hover:bg-pes transition-all' >
+                           Share
+                        </a>
+                        <a role='button' className='flex justify-center text-pes border border-pes rounded-md py-3 px-8 mt-1 w-[212px] hover:text-white hover:bg-pes transition-all' >
+                           View Result
+                        </a>                        
+                     </div>
+                     :
+                        <a role='button' className='text-pes border border-pes rounded-md py-3 px-8 hover:text-white hover:bg-pes transition-all' onClick={ () => setExpand(!expand) }>
+                           Request Data Review
+                        </a>
+                  }
 
 
-                  <a role='button' className='text-pes border border-pes rounded-md py-3 px-8 hover:text-white hover:bg-pes transition-all' onClick={ () => setExpand(!expand) }>
-                     View Results
-                  </a>
                </div> 
                {
                   expand?
@@ -40,18 +52,29 @@ export default function Dept ({ data, key }){
                      <ul className='px-6 py-3'>
                         {
                            data.assess.map((i, key) => {
-                              return(
-                                 <li key={key} className='flex justify-between w-4/12'>
-                                    <span>
-                                       {i.name}
+                              return (
+                                <li key={key} className='flex justify-between w-5/12 my-3'>
+                                  <span className='flex'>
+                                    <span className='relative h-10 w-10 my-auto mx-3'>
+                                       <div className='absolute h-[0.6rem] w-[0.6rem] bg-green-500 rounded-full bottom-[4%] right-[5%]'></div>
+                                       <img src='young oti.PNG' className='rounded-full w-10 h-10'/>
                                     </span>
-                                    
-                                    <span>
-                                       {i.role}
+                            
+                                    <span className='flex flex-col my-auto'>
+                                      {i.name}
+                                      <span className="text-xs text-gray-300">
+                                          {i.team}
+                                      </span>
                                     </span>
-                                 </li>
+                                  </span>
+                            
+                                  <span className="text-yellow-500 text-sm bg-yellow-100 rounded-full px-4 my-1 flex flex-col justify-center">
+                                    {i.role}
+                                  </span>
+                                </li>
                               )
-                           })
+                            })
+                            
                         }                        
                      </ul>
                   </div>
@@ -62,7 +85,7 @@ export default function Dept ({ data, key }){
 
             :
                <div key={key} className={`flex justify-between p-6 my-2 mx-4 border rounded-md bg-white`} >
-                  <div className="flex flex-col">
+                  <div className="flex flex-col my-auto">
                      <p className='font-semibold text-md'>{data.dept} department</p>
                      <p className='text-gray-300 text-sm'>{data.entries} data entries recorded</p>
                   </div>

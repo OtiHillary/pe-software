@@ -4,6 +4,7 @@ import goalReducer from './goals/goalSlice'
 import notificationReducer from './notification/notificationSlice'
 import setNotificationReducer from './setnotification/setNotificationSlice'
 import actionReducer from './action/actionSlice'
+import notificationSentReducer from './notificationsent/notificationSentSlice'
 export const store = configureStore({
     reducer: {
         logged: loggedReducer,
@@ -11,6 +12,7 @@ export const store = configureStore({
         notification: notificationReducer,
         action: actionReducer,
         setNotification: setNotificationReducer,
+        notificationSent: notificationSentReducer,
     },
 })
 export type RootState = ReturnType<typeof store.getState>;
