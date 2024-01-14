@@ -13,7 +13,7 @@ export default function Navbar(): JSX.Element{
    return(
       <div className="nav w-full h-20 bg z-10 sticky">
          <div className="flex shadow-md shadow-gray-100 justify-between bg-white w-full h-full p-5">
-            <div className="search relative">
+            <div className="search relative h-fit">
                <SearchNormal className='text-gray-300 absolute top-1/2 left-8 -translate-y-1/2'/>
                <input type='text' name='search' className=' ms-2 py-3 px-16 text-sm border focus:outline-blue-800 rounded-xl' placeholder='Search anything' />
             </div>
