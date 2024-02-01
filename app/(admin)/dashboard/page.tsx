@@ -71,10 +71,10 @@ export default function Home() {
             <div className="w-full shadow-md shadow-gray-100 p-4 bg-white">
               <div className='flex justify-between w-full p-4'>
                 <p className='text-3xl text-black my-auto'>Goals</p>
-                <p className='text-md font-light my-auto text-pes flex'>
+                <a href={'/goals'} className='text-md font-light my-auto text-pes flex'>
                   Set new Goal
                   <Add className='mx-2 font-thin' />
-                </p>                
+                </a>                
               </div>
 
               <div className= 'text-white flex justify-between w-full py-4'>
@@ -109,7 +109,7 @@ export default function Home() {
               </div>
 
               <div className="viewgoals flex justify-end my-4">
-                  <Link href={`/`} className='bg-pes rounded-md py-2 px-4 text-white flex'>View Goals <ArrowRight className='ms-2 text-sm'/> </Link>
+                  <Link href={`/goals`} className='bg-pes rounded-md py-2 px-4 text-white flex'>View Goals <ArrowRight className='ms-2 text-sm'/> </Link>
               </div>
 
             </div>

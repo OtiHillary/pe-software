@@ -6,6 +6,7 @@ import Link from 'next/link';
 
 export default function Sidebar(): JSX.Element{
    const pathname = usePathname()
+   console.log(pathname.split('/'))
 
    const tabs = [
       { key: 1, name: 'Dashboard', icon: <Home3 />, href: '/dashboard' }, 
@@ -17,7 +18,7 @@ export default function Sidebar(): JSX.Element{
    ]
    
    return(
-      <div className=" w-1/5 h-full shadow-custom shadow-gray-100 me-auto relative">
+      <div className=" w-1/5 h-full shadow-sm shadow-gray-50 me-auto relative">
          <div className="bg-white h-screen fixed w-1/5 py-3 flex flex-col justify-start">
             <div className = 'my-4 text-pes text-2xl font-extrabold flex justify-center w-2/4 ms-12 me-auto'>
                <Image src={'/Vector.svg'} alt='PES' width={55} height={55} />
@@ -27,7 +28,7 @@ export default function Sidebar(): JSX.Element{
             <div className='tabs my-16 flex flex-col justify-between'>
             {
                tabs.map((i) => {
-                  const is_active = i.href == pathname
+                  const is_active = i.href == pathname || `/${pathname.split('/')[1]}` == i.href
                   return(
                   <Link href={ i.href } key={ i.key } className={`${ is_active? 'bg-gray-200 text-pes' : 'bg-transparent text-gray-400'} hover:bg-gray-200 hover:text-pes p-3 ps-8 my-1 text-md flex`}>
                      { i.icon }
