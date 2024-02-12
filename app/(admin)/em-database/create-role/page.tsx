@@ -1,6 +1,12 @@
+'use client'
+
 import { ArrowLeft } from "iconsax-react"
+import { useDispatch } from 'react-redux';
+import { roleCreatedView } from '@/app/state/rolecreated/roleCreatedSlice';
 
 export default function CreateRole(){
+   const dispatch = useDispatch()
+
    return(
       <div className='bg-white m-4'>
          <div className='(crt-nav) w-full h-[4rem] flex justify-between'>
@@ -10,6 +16,7 @@ export default function CreateRole(){
                Back to Roles & Permissions
             </a>
          </div>
+
          <div className="flex border">
             <div className="border-r w-1/2">
                <div className="bg-gray-50 border-b h-[3rem] flex">
@@ -34,6 +41,7 @@ export default function CreateRole(){
                   <div className='border-b p-4'>
                      <p>Here, you can set permissions for the selected role. Define what access and actions this role can perform within the platform.</p>
                   </div>
+
                   <div className="border-b p-4">
                      <label className="flex">
                         <input type="checkbox" className="h-6 w-6 mt-1 me-3" />
@@ -102,10 +110,55 @@ export default function CreateRole(){
                      </label>
                   </div>
 
+                  <div className="border-b p-4 flex flex-col">
+                     <label className="flex">
+                        <input type="checkbox" className="h-6 w-6 mt-1 me-3" />
+                        <span className="w-10/12">
+                           <h1 className="text-lg">Manage Performance Reviews</h1>
+                           <p>Schedule, modify, or cancel performance review meetings for any employee.</p>
+                        </span>
+                     </label>
+                     <div className="flex ms-8 my-2 text-gray-400 text-sm font-extralight">
+                        <label className="flex me-4">
+                           <input type="checkbox" className="me-1" />
+                           <span>All Employees</span>
+                        </label>     
+                        <label className="flex me-4">
+                           <input type="checkbox" className="me-1" />
+                           <span>Subordinates</span>
+                        </label>     
+                        <label className="flex me-4">
+                           <input type="checkbox" className="me-1" />
+                           <span>Selected Employees</span>
+                        </label>     
+                     </div>
+                  </div>
+
                </form>
             </div>
          </div>
-         <div></div>
+
+         <div className="flex flex-col">
+            <div className="border-r w-1/2 me-auto">
+               <div className="bg-gray-50 border-b h-[3rem] flex">
+                  <h1 className="my-auto mx-4 font-semibold">Reporting Hierachy</h1>
+               </div>
+               <div className='m-4'>
+                  <p>Here, you can define who a specific role reports to within the organization. Choose the supervisory role that oversees the position you're creating or editing.</p>
+                  <label htmlFor="" className="flex my-8">
+                     <span className="my-auto">Reporting to:</span>
+                     <select name="" id="" className='p-4 mx-2 border rounded-sm'>
+                        <option value="super-admin">Super Admin</option>
+                        <option value="admin">Admin</option>
+                     </select>
+                  </label>                  
+               </div>
+
+            </div>
+            <div className='flex justify-center my-6 w-full'>
+               <a href=""className='bg-pes text-white px-32 py-3 rounded-sm' onClick={ () => dispatch( roleCreatedView() ) }>Create Role</a>
+            </div>
+         </div>
       </div>
    )
 }

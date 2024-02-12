@@ -1,11 +1,10 @@
 'use client'
 
 import React, { useState } from 'react'
-import { useDispatch } from 'react-redux';
-import { setNotificationView } from '@/app/state/setnotification/setNotificationSlice';
 import { Add, SearchNormal1 } from 'iconsax-react'
 
 export default function Roles(){
+
    return(
       <div className='flex justify-center w-full h-full'>
          <div className='m-4 bg-white w-full h-full'>

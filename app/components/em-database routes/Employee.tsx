@@ -25,7 +25,7 @@ export default function Employee(){
             </div>
 
             <div className='flex justify-between my-auto mx-3 text-xs'>
-               <a className='flex justify-center bg-pes text-white px-10 py-2 m-4 border h-fit border-pes my-auto text-center'>
+               <a href='/em-database/add-employee' className='flex justify-center bg-pes text-white px-10 py-2 m-4 border h-fit border-pes my-auto text-center'>
                   <span className='my-auto'>Add an Employee</span>
                   <Add size={20} className='my-auto ms-2'/>
                </a>
