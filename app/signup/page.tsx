@@ -22,13 +22,13 @@ async function getUser(url: string) {
 let slider_index = 0
 
 const first = <>
-  <h1 className='text-3xl text-semibold my-2 w-10/12'>
-    {`Your Company’s journey`} <br/> {`towards`} <span className='text-yellow-400'>Enhanced <br/> Performance</span> {`starts today`}
-  </h1>
-  <p className='text-sm'>
-    {`PES is your company's tool for optimizing team performance. Discover a suite of tools tailored to enhance collaboration and achieve organizational goals`}
-  </p>
-</>
+    <h1 className='text-3xl text-semibold my-2 w-10/12'>
+      {`Your Company's journey`} <br/> {`towards`} <span className='text-yellow-400'>Enhanced <br/> Performance</span> {`starts today`}
+    </h1>
+    <p className='text-sm'>
+      {`PES is your company's tool for optimizing team performance. Discover a suite of tools tailored to enhance collaboration and achieve organizational goals`}
+    </p>
+  </>
 
 const second = <>
   <h1 className='text-3xl text-semibold my-2 w-10/12'>
@@ -58,10 +58,12 @@ export default function Home() {
     setSlide([...slider_arr]);
   };
   
+  async function signin(){
+
+  }
 
   return(
     <main className="w-full flex overflow-hidden relative">
-
       <div className="scroller w-3/12 absolute bottom-4 left-3/12 z-10 flex justify-between">
         <div className="page my-auto flex">
           {          
@@ -137,7 +139,7 @@ export default function Home() {
           </div>
         </div>
 
-        <div className="btn bg-pes text-white px-4 py-3 flex justify-center rounded-lg mb-2">Sign Up</div>
+        <div className="btn bg-pes text-white px-4 py-3 flex justify-center rounded-lg mb-2" onClick={ () => { console.log('signing in') } } >Sign Up</div>
 
         <p className='text-center'>{`Don't have an Account?`} <Link className='text-pes' href={'/'}>Sign In</Link> </p>
       </div>

@@ -6,6 +6,8 @@ import Link from 'next/link';
 export default function Home() {
   const is_logged_in = !false;
   const [ performanceView, setPerformanceView ] = useState('employee')
+  let data = await login('localhost:3000/api/login')
+  console.log(data);
 
   const goals = [
     { name: 'Sales Growth' , status: 70 , daysLeft: 5 },

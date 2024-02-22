@@ -9,26 +9,19 @@ export default function Formone(){
 
    return(
       <div className='flex flex-col'>
-         <div className='(crt-nav) w-full h-[4rem] flex justify-between'>
-            <h1 className="my-auto mx-6 font-semibold text-xl text-gray-600">Add an Employee</h1>
-         </div>
-         <div className="bg-gray-50 h-[3rem] flex justify-between">
-            <h1 className="my-auto mx-6 font-semibold">Employee Details</h1>
-            <h1 className="my-auto mx-6 font-semibold">1/3</h1>
-         </div>
          <div className='flex pt-4'>
             <div className="w-1/2 mx-8">
                <div className="formgroup flex flex-col my-2 w-full">
-                    <label htmlFor=""className='font-bold my-2 text-sm'>{`Employee's Full Name:`}</label>
+                    <label htmlFor=""className='my-2 text-sm'>{`Employee's Full Name:`}</label>
                     <input type="text" className='font-light text-sm text-gray-500 placeholder-gray-300 py-3 px-6 outline-0 border focus:border-gray-400 rounded-sm' placeholder="Enter the Employee's first name and last name" />
                 </div>
 
                 <div className="formgroup flex flex-col my-2 w-full">
-                    <label htmlFor=""className='font-bold my-2 text-sm'>Current Home Address:</label>
+                    <label htmlFor=""className='my-2 text-sm'>Current Home Address:</label>
                     <input type="text" className='font-light text-sm text-gray-500 placeholder-gray-300 py-3 px-6 outline-0 border focus:border-gray-400 rounded-sm' placeholder='' />
                 </div>
                 <div className="formgroup flex flex-col my-2 w-full">
-                    <label htmlFor=""className='font-bold my-2 text-sm'>Faculty/College:</label>
+                    <label htmlFor=""className='my-2 text-sm'>Faculty/College:</label>
                     <select className='font-light text-sm text-gray-500 placeholder-gray-300 py-3 px-6 outline-0 border focus:border-gray-400 rounded-sm' placeholder='Select a faculty'>
                         <option value="">FSS</option>
                     </select>
@@ -37,17 +30,17 @@ export default function Formone(){
 
             <div className="w-1/2 mx-8">
                <div className="formgroup flex flex-col my-2 w-full">
-                    <label htmlFor=""className='font-bold my-2 text-sm'>{`Employee's Email Address:`}</label>
+                    <label htmlFor=""className='my-2 text-sm'>{`Employee's Email Address:`}</label>
                     <input type="text" className='font-light text-sm text-gray-500 placeholder-gray-300 py-3 px-6 outline-0 border focus:border-gray-400 rounded-sm' placeholder="Enter the Employee's email address" />
                 </div>
 
                 <div className="formgroup flex flex-col my-2 w-full">
-                    <label htmlFor=""className='font-bold my-2 text-sm'>Functional G.S.M:</label>
+                    <label htmlFor=""className='my-2 text-sm'>Functional G.S.M:</label>
                     <input type="text" className='font-light text-sm text-gray-500 placeholder-gray-300 py-3 px-6 outline-0 border focus:border-gray-400 rounded-sm' placeholder='' />
                 </div>
 
                 <div className="formgroup flex flex-col my-2 w-full">
-                    <label htmlFor=""className='font-bold my-2 text-sm'>Department:</label>
+                    <label htmlFor=""className='my-2 text-sm'>Department:</label>
                     <input type="text" className='font-light text-sm text-gray-500 placeholder-gray-300 py-3 px-6 outline-0 border focus:border-gray-400 rounded-sm' placeholder='Select a Department' />
                 </div>
             </div>
@@ -55,45 +48,65 @@ export default function Formone(){
 
          <div className="w-[95%] mx-auto flex justify-between">
             <div className="formgroup flex flex-col">
-               <label htmlFor=""className='font-bold my-2 text-sm'>{`Employee's Email Address:`}</label>
+               <label htmlFor=""className='my-2 text-sm'>{`Employee's Email Address:`}</label>
                <input type="text" className='font-light text-sm text-gray-500 placeholder-gray-300 py-3 px-6 outline-0 border focus:border-gray-400 rounded-sm' placeholder="Enter the Employee's email address" />
             </div>
 
             <div className="formgroup flex flex-col">
-               <label htmlFor=""className='font-bold my-2 text-sm'>Functional G.S.M:</label>
+               <label htmlFor=""className='my-2 text-sm'>Functional G.S.M:</label>
                <input type="text" className='font-light text-sm text-gray-500 placeholder-gray-300 py-3 px-6 outline-0 border focus:border-gray-400 rounded-sm' placeholder='' />
             </div>
 
             <div className="formgroup flex flex-col">
-               <label htmlFor=""className='font-bold my-2 text-sm'>Department:</label>
+               <label htmlFor=""className='my-2 text-sm'>Department:</label>
                <input type="text" className='font-light text-sm text-gray-500 placeholder-gray-300 py-3 px-6 outline-0 border focus:border-gray-400 rounded-sm' placeholder='Select a Department' />
             </div>
 
             <div className="formgroup flex flex-col">
-               <label htmlFor=""className='font-bold my-2 text-sm'>Department:</label>
+               <label htmlFor=""className='my-2 text-sm'>Department:</label>
                <input type="text" className='font-light text-sm text-gray-500 placeholder-gray-300 py-3 px-6 outline-0 border focus:border-gray-400 rounded-sm' placeholder='Select a Department' />
             </div>
          </div>
 
          <div className="w-[80%] ms-8 me-auto mb-4 flex justify-between">
             <div className="formgroup flex flex-col">
-               <label htmlFor=""className='font-bold my-2 text-sm'>{`Employee's Email Address:`}</label>
+               <label htmlFor="" className='my-2 text-sm'>{`Employee's Email Address:`}</label>
                <input type="text" className='font-light text-sm text-gray-500 placeholder-gray-300 py-3 px-6 outline-0 border focus:border-gray-400 rounded-sm' placeholder="Enter the Employee's email address" />
             </div>
 
             <div className="formgroup flex flex-col">
-               <label htmlFor=""className='font-bold my-2 text-sm'>Functional G.S.M:</label>
+               <label htmlFor=""className='my-2 text-sm'>Functional G.S.M:</label>
                <input type="text" className='font-light text-sm text-gray-500 placeholder-gray-300 py-3 px-6 outline-0 border focus:border-gray-400 rounded-sm' placeholder='' />
             </div>
 
             <div className="formgroup flex flex-col">
-               <label htmlFor=""className='font-bold my-2 text-sm'>Department:</label>
+               <label htmlFor=""className='my-2 text-sm'>Department:</label>
                <input type="text" className='font-light text-sm text-gray-500 placeholder-gray-300 py-3 px-6 outline-0 border focus:border-gray-400 rounded-sm' placeholder='Select a Department' />
             </div>
          </div>
 
-         <div>
+         <div className="w-[50%] ms-8 me-auto mb-4 flex flex-col">
+            <p className='text-sm text-pes my-3'>Academic & Professional Qualifications held: <span className="text-gray-300">{` (certificates must be attached)`}</span></p>
+            <div className="flex flex-col bg-gray-50 rounded-xs p-4">
+               <div className="flex justify-between m-2">
+                  <input id="title" type="text" placeholder="Title or Qualification" className="font-light text-sm text-gray-500 placeholder-gray-300 py-3 px-6 outline-0 border focus:border-gray-400 rounded-sm" />
 
+                  <select name="year" id="year" placeholder="Year Obtained" defaultValue={`Year Obtained`} className="font-light text-sm text-gray-500 placeholder-gray-300 py-3 px-6 outline-0 border focus:border-gray-400 rounded-sm">
+                     <option value="" className="text-gray-300">Year Obtained</option>
+                  </select>
+               </div>
+               <div className="flex justify-between m-2">
+                  <label htmlFor="file" className="w-[80%] my-auto">
+                     <div className="flex justify-end bg-white rounded-sm w-11/12 relative">
+                        <p className="m-auto text-sm text-gray-300">Choose File to Upload</p>
+                        <div className="bg-gray-100 rounded-sm px-5 py-3 text-sm text-gray-500">Browse Files</div>
+                     </div>
+                     <input type="file" name="file" id="file" className="invisible absolute"/>
+                  </label>
+
+                  <button className="border border-pes rounded-sm text-pes py-2 px-6">Save</button>
+               </div>
+            </div>
          </div>
       </div>
    )

@@ -1,55 +1,47 @@
-// MainForm.js
 "use client";
 
 import { useState } from 'react'
 import Formone from './multistep-form/form_one'
+import { useMultistepForm } from './useMultistep'; 
+import Formtwo from './multistep-form/form_two';
+import Formthree from './multistep-form/form_three';
 
 export default function MainForm (){
-    const [data, setData] = useState({
-        name: "",
-        email: "",
-        dob: "",
-        gender: "male",
-        address: "",
-    })
-
-    const handleChange = (event) => {
-        // const { name, value } = event.target;
-        // setData({
-        //     ...data,
-        //     [name]: value,
-        // });
-    };
-
-
-    const [activeTab, setActiveTab] = useState(0)
-
     const formElements = [
-        <Formone key={0} data={data} handleChange={handleChange} />,
+        { 
+            element: <Formone key={0}/>, 
+            title: "Employee Details"
+        },
+        {
+            element: <Formtwo key={1}/>,
+            title: "Permission Settings",
+        },
+        {
+            element: <Formthree key={2}/>,
+            title: "Reporting Heirachy",
+        }
     ]
+    const { steps, step, stepIndex, next, back } = useMultistepForm(formElements)
 
     return (
-        <div className='bg-white m-4'>
-            <div>
-                {
-                    formElements[activeTab]
-                }
+        <div className='flex flex-col bg-white m-4'>
+            <div className='(crt-nav) w-full h-[4rem] flex justify-between'>
+                <h1 className="my-auto mx-6 font-semibold text-xl text-gray-600">Add an Employee</h1>
             </div>
-            {/* <div className='flex flex-wrap gap-x-6 mx-auto'>
-                <button
-                    disabled = {activeTab === 0 ? "disabled" : ""}
-                    onClick = {() => setActiveTab(prev => prev - 1)}
-                    className = {`px-4 py-2 rounded-xl bg-blue-600 text-white ${activeTab === 0 ? "opacity-50 bg-slate-600" : "opacity-100"}`}>
-                    Back
-                </button>
-                <button
-                    disabled = {activeTab === formElements.length - 1 ? "disabled" : ""}
-                    onClick = {() => setActiveTab(prev => prev + 1)}
-                    className = {`px-4 py-2 rounded-xl bg-blue-600 text-white ${activeTab === formElements.length - 1 ? "opacity-50 bg-slate-600" : "opacity-100"}`}>Next</button>
-                {
-                    activeTab === formElements.length - 1 ? <button className='px-4 py-2 rounded-xl bg-blue-600 text-white' onClick={() => console.log(data)}>Submit</button> : null
-                }
-            </div> */}
+
+            <div className="bg-gray-50 h-[3rem] flex justify-between">
+                <h1 className="my-auto mx-6 font-semibold">{ step.title }</h1>
+                <h1 className="my-auto mx-6 font-semibold">{ stepIndex + 1 } / { steps.length } </h1>
+            </div>
+
+            {
+                step.element
+            }
+
+            <div className="w-full my-4 flex justify-between">
+                <a type='button' className="btn rounded-sm py-2 px-8 border mx-8 border-pes text-pes" onClick={ back }>Previous</a>
+                <a type='button' className="btn rounded-sm py-2 px-16 mx-8 border border-pes bg-pes text-white" onClick={ next }>Next</a>
+            </div>
         </div>
     )
 }

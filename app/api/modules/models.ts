@@ -86,7 +86,7 @@ function util_index(hours_used: number, hours_given: number) {
 }
 
 //PERESONNEL REDUNDANCY INDEX
-function redu_index(hours_used: number, hours_given: number) {
+function red_index(hours_used: number, hours_given: number) {
    return 1 - util_index( hours_used, hours_given );
 }
 
@@ -95,16 +95,11 @@ function prod_index(resrc_input: number, resrc_output: number) {
    return resrc_output / resrc_input;
 }
 
-// Determine number of in rganization for non-academic staff 
-// METHOD 1 <PLAIN ESTIMATING>
-//Basic time
-function basic_time(time:number, rate: number) {
-   return time * (rate / 100);
-}
-// Standard time
-function std_time(time:number, rate: number, relax_time: number, ctgc_time: number) {
-   return basic_time(time, rate) + relax_time + ctgc_time;
-}
+// ---------------------------------------------------------------------------------
+
+// STANDARD HOURS ARE CALCULATED THE SAME WAY REARDLESS OF APPROACH
+
+// ---------------------------------------------------------------------------------
 //Standard man-hours
 function std_hrs(hours: number, no_wrks: number) {
    return hours * no_wrks;
@@ -120,6 +115,61 @@ function T_man_hrs() {
 }
 
 // ---------------------------------------------------------------------------------
+
+// Determine number of staff in Organization for non-academic staff 
+
+// ---------------------------------------------------------------------------------
+
+// METHOD 1 <PLAIN ESTIMATING>
+// ---------------------------
+//Basic time
+function basic_time(time:number, rate: number) {
+   return time * (rate / 100);
+}
+// Standard time
+function std_time(time:number, rate: number, relax_time: number, ctgc_time: number) {
+   return basic_time(time, rate) + relax_time + ctgc_time;
+}
+
+// METHOD 2 <FACTORED ESTIMATING>
+// ------------------------------
+// Pearson's estimate
+function pearson(c_factor: number[], N: number){
+   function sum(num : number[]){
+      let result = 0
+      let i
+      for( i = 0; i<num.length; i++){
+         result += num[i]
+      }
+      return result
+   }
+
+   return sum(c_factor) / N
+} 
+
+// Corrected estimate 
+function c_estimate(c_factor: number[], N: number){
+   return pearson(c_factor, N) *( 1 + pearson(c_factor, N) )
+}
+
+// Basic time
+function basic_time_FE( c_factor: number[], N: number, rating_O: number, rating_N: number ){
+   return c_estimate(c_factor, N) * (rating_O / rating_N)
+}
+
+//Standard time
+function std_time_FE( c_factor: number[], N: number, rating_O: number, rating_N: number, allowance: number ){
+   return basic_time_FE(c_factor, N, rating_O, rating_N) * ( 1 + (allowance / 100) )
+}
+
+// METHOD 3 <WORK SAMPLING APPROACH / WORK CONTENT APPROACH>
+// ---------------------------------------------------------
+// Preliminary numberof observations to determine study params
+function P( time_found_busy: number, no_of_observations: number ){
+   return time_found_busy / no_of_observations;
+}
+
+
 
 export {
    linearRegression,
