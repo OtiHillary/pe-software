@@ -1,13 +1,17 @@
-'use client'
-import React, { useState } from 'react'
+// 'use client'
 import { People, Award, Timer, ArrowUp, ArrowDown, CloudPlus, Logout, InfoCircle, ArrowRight, Add  } from 'iconsax-react';
 import Link from 'next/link';
 
-export default function Home() {
+type performance = {
+  id: number
+  dept: string
+  type: string
+  yield: string
+}
+
+export default async function Home() {
   const is_logged_in = !false;
-  const [ performanceView, setPerformanceView ] = useState('employee')
-  let data = await login('localhost:3000/api/login')
-  console.log(data);
+  const performanceView = 'employee'
 
   const goals = [
     { name: 'Sales Growth' , status: 70 , daysLeft: 5 },
@@ -17,17 +21,18 @@ export default function Home() {
     { name: 'Customer Satisfaction' , status: 12, daysLeft: 11 },
     { name: 'Customer Satisfction' , status: 15, daysLeft: 20 },
   ]
-  const good = [
-    { name: 'Asade Mayowa' , dept: 'Sales and Marketing' , yield: 80 },
-    { name: 'Olwagbade david' , dept: 'Sales and Marketing' , yield: 75 },
-    { name: 'Iduate Edwin' , dept: 'Sales and Marketing' , yield: 50 },
-    { name: 'John Smith' , dept: 'Sales and Marketing' , yield: 15 },
-  ]
-  const bad = [
-    { name: 'Otonye Edwin' , dept: 'Inventory' , yield: 10 },
-    { name: 'Olwagbade david' , dept: 'Logistics' , yield: 11 },
-  ]
-  const performance = { good, bad }
+  
+  async function getData(){
+    let res =  await fetch('http://localhost:3000/api/getUserData')
+    let data =  res.json()
+
+    // console.log(data)
+    return data
+  }
+
+  let performance = await getData()
+
+  console.log("data is: ", performance)
 
   function colorGrade( num: any ): string{
     if( typeof(num) == 'number' ){
@@ -68,7 +73,7 @@ export default function Home() {
           </div>
         </div>
 
-        <div className="(Goals and Insights)-- flex justify-between mx-6 mb-6">
+        {/* <div className="(Goals and Insights)-- flex justify-between mx-6 mb-6">
           <div className="(left_panel)-- w-4_5 flex flex-col">
             <div className="w-full shadow-md shadow-gray-100 p-4 bg-white">
               <div className='flex justify-between w-full p-4'>
@@ -141,7 +146,7 @@ export default function Home() {
 
               <div className='flex flex-col p-4'>
                   {
-                    performance.good.map((i, key) => {
+                    performance.goodPerformance.map((i, key) => {
                       return(
                         <>
                           <div key={ key } className='  goal-metrics w-full flex justify-between my-4 text-sm'>
@@ -163,7 +168,7 @@ export default function Home() {
               
               <div className="flex flex-col p-4">
                   {
-                    performance.bad.map((i, key) => {
+                    performance.badPerformance.map((i, key: number) => {
                       return(
                         <>
                           <div key={ key } className='goal-metrics w-full flex justify-between my-4 text-sm'>
@@ -182,7 +187,7 @@ export default function Home() {
               </div>
             </div>
           </div>
-        </div>
+        </div> */}
     </main>     
   )
 }

@@ -2,18 +2,19 @@
 
 import Image from 'next/image';
 import Link from 'next/link';
+import { useRouter } from 'next/navigation';
 import { useDispatch, useSelector } from 'react-redux';
 import { RootState } from './state/store'
-import { redirect } from 'next/navigation';
 import { Formik, Form, Field, useFormik, FormikHelpers, FormikValues } from "formik";
 import * as Yup from "yup";
+import { AppRouterInstance } from 'next/dist/shared/lib/app-router-context.shared-runtime';
 
 type formdata = {
   email: string;
   password: string;
 }
 
-async function login( url: string, data: formdata ) {
+async function login( url: string, data: formdata , reroute: AppRouterInstance ) {
   try {
     const req = await fetch( url, 
       {
@@ -21,16 +22,16 @@ async function login( url: string, data: formdata ) {
         headers: {
           "Content-Type": "application/json"
         },
-        body: JSON.stringify({email: 'otiedwin', password: 'ototi'}) // Converting the data object to a JSON string
+        body: JSON.stringify(data) // Converting the data object to a JSON string
       }
     )
     
-    let res = req.json()
-    console.log(res)
+    let res = await req.json()
+    console.log(res.data.users)
 
     // localStorage.setItem('access_token', res.data.token);
-    if(await res){
-      redirect('/dashboard')
+    if(res){
+      reroute.push('/dashboard')
     }
   } catch (error) {
     console.log(error)
@@ -45,6 +46,7 @@ async function login( url: string, data: formdata ) {
 export default function Home() {
   // const isLoggedIn = useSelector( (state: RootState) => state.logged.value )
   // const dispatch = useDispatch()
+  const router = useRouter()
 
   const schema = Yup.object({
     email: Yup.string()
@@ -70,7 +72,7 @@ export default function Home() {
         <Image src={ '/pes-alt.svg' } alt='pes hero image' width={ 350 } height={ 350 } className='mx-auto my-auto absolute top-0 right-0'/>
       </div>
 
-      <Formik initialValues={ { email: "", password: ""} } validationSchema={ schema } onSubmit={ (values) => login('/api/login', values) }>
+      <Formik initialValues={ { email: "", password: ""} } validationSchema={ schema } onSubmit={ (values) => login('/api/login', values, router) }>
         <Form className="form w-1/2 h-screen flex flex-col p-28 justify-center">
           <p className='text-4xl text-semibold mb-8'>Sign In</p>
 

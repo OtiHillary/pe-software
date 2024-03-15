@@ -8,11 +8,37 @@ datasource db {
 }
 
 model user {
-  user_id    Int       @id @default(autoincrement())
-  username   String    @unique @db.VarChar(50)
-  password   String    @db.VarChar(50)
-  email      String    @unique @db.VarChar(255)
-  type     String  @db.VarChar(50)
-  created_on DateTime  @db.Timestamp(6)
-  last_login DateTime? @db.Timestamp(6)
+  id         Int       @id @default(autoincrement())
+  email      String    @db.VarChar(80)
+  password   String    @db.VarChar(80)
+  type       String?   @db.VarChar(80)
+  created_on DateTime? @db.Date
+  last_log   DateTime? @db.Date
+}
+
+model users {
+  id          Int           @id @default(autoincrement())
+  name        String        @unique @db.VarChar(255)
+  email       String        @db.VarChar(255)
+  password    String        @db.VarChar(25)
+  type        String?       @db.VarChar(25)
+  created_on  DateTime?     @db.Date
+  last_log    DateTime?     @db.Date
+  performance performance[]
+}
+
+model goals {
+  id       Int    @id @default(autoincrement())
+  name     String @db.VarChar(255)
+  status   String @db.VarChar(25)
+  daysLeft String @db.VarChar(25)
+}
+
+model performance {
+  id      Int    @id @default(autoincrement())
+  dept    String
+  type    String
+  yield   String
+  user_id Int
+  users   users  @relation(fields: [user_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "fk_users")
 }

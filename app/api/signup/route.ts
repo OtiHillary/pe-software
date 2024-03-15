@@ -5,12 +5,14 @@ const prisma = new PrismaClient()
 type reqInfo = {
   email: string
   password: string
+  fullname: string
 }
 
-
-async function getUser(info: reqInfo) {
-  const {email, password} = info
+async function addToDb(info: reqInfo) {
+  const {email, password, fullname} = info
+  await prisma.$queryRaw`INSERT INTO users(email, password, type, created_on, last_log) VALUES(${email}, ${password}, 'admin', null, null); `
   const users = await prisma.$queryRaw`SELECT * FROM users WHERE email = ${email} AND password = ${password};`
+
   return users
 }
 
@@ -19,23 +21,21 @@ export async function GET() {
 }
 
 export async function POST(req: Request) {
-  const { email, password } = await req.json()
+  const { email, password , fullname} = await req.json()
+  console.log(email, password)
+  
   let sID = Math.floor(Math.random())
 
-  let data = await getUser({ email, password })
+  let data = await addToDb({ email, password, fullname })
   .then(async (data) => {
     await prisma.$disconnect()
     return data
   })
-  .catch(async (e) => {
-    console.error(e)
+  .catch(async (error) => {
+    console.error("your error is:",error)
     await prisma.$disconnect()
-    return e
   })
 
-  if ( data ) {
-    return NextResponse.json({ message: 'Login successful!', data: { users: data || [], sID, logged: true } })
-  } else {
-    return NextResponse.json({ message: 'Invalid credentials'})
-  }
+  return NextResponse.json({ message: 'Login successful!', data: { email, password, users: data, sID, logged: true } })
+
 }
