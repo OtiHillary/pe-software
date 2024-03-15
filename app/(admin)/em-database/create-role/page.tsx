@@ -144,7 +144,7 @@ export default function CreateRole(){
                   <h1 className="my-auto mx-4 font-semibold">Reporting Hierachy</h1>
                </div>
                <div className='m-4'>
-                  <p>Here, you can define who a specific role reports to within the organization. Choose the supervisory role that oversees the position you're creating or editing.</p>
+                  <p>{`Here, you can define who a specific role reports to within the organization. Choose the supervisory role that oversees the position you're creating or editing.`}</p>
                   <label htmlFor="" className="flex my-8">
                      <span className="my-auto">Reporting to:</span>
                      <select name="" id="" className='p-4 mx-2 border rounded-sm'>
