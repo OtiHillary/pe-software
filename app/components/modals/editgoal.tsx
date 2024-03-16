@@ -16,7 +16,7 @@ async function changeGoal() {
 
 export default function Editgoal(){
     const isVisible = useSelector( (state: RootState) => state.goal.edit.visible )
-    const data: goal | {} = useSelector( (state: RootState) => state.goal.edit.data )
+    const data: goal = useSelector( (state: RootState) => state.goal.edit.data )
     // console.log(`your data is${ data }`)
     const dispatch = useDispatch()
 
