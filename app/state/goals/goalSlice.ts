@@ -38,9 +38,9 @@ const goalSlice = createSlice({
         newGoal: (state) => {
             state.new = !state.new
         },
-        editGoal: (state, data) => {
+        editGoal: (state, { payload }) => {
             state.edit.visible = !state.edit.visible
-            if(state.edit.visible) state.edit.data = data.payload
+            if(state.edit.visible) state.edit.data = payload
         },
         deleteGoal: (state) => {
             state.delete = !state.delete
