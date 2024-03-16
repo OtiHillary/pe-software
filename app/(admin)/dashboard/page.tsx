@@ -9,7 +9,7 @@ type performance = {
   yield: string
 }
 
-export default async function Home() {
+export default function Home() {
   const is_logged_in = !false;
   const performanceView = 'employee'
 
@@ -30,7 +30,7 @@ export default async function Home() {
     return data
   }
 
-  let performance = await getData()
+  let performance = getData()
 
   console.log("data is: ", performance)
 
