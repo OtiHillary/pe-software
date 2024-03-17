@@ -1,4 +1,4 @@
-// 'use client'
+'use client'
 import { People, Award, Timer, ArrowUp, ArrowDown, CloudPlus, Logout, InfoCircle, ArrowRight, Add  } from 'iconsax-react';
 import Link from 'next/link';
 
@@ -22,15 +22,15 @@ export default function Home() {
     { name: 'Customer Satisfction' , status: 15, daysLeft: 20 },
   ]
   
-  async function getData(){
-    let res =  await fetch('http://localhost:3000/api/getUserData')
-    let data =  res.json()
+  // async function getData(){
+  //   let res =  await fetch('http://localhost:3000/api/getUserData')
+  //   let data =  res.json()
 
-    // console.log(data)
-    return data
-  }
+  //   // console.log(data)
+  //   return data
+  // }
 
-  let performance = getData()
+  // let performance = getData()
 
   console.log("data is: ", performance)
 
