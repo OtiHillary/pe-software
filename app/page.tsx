@@ -8,6 +8,7 @@ import { RootState } from './state/store'
 import { Formik, Form, Field, useFormik, FormikHelpers, FormikValues } from "formik";
 import * as Yup from "yup";
 import { AppRouterInstance } from 'next/dist/shared/lib/app-router-context.shared-runtime';
+import { loadingSwitch } from '@/app/state/loading/loadingSlice'
 
 type formdata = {
   email: string;
@@ -44,8 +45,8 @@ async function login( url: string, data: formdata , reroute: AppRouterInstance )
 
 
 export default function Home() {
-  // const isLoggedIn = useSelector( (state: RootState) => state.logged.value )
-  // const dispatch = useDispatch()
+  // const loading = useSelector( (state: RootState) => state.logged.value )
+  const dispatch = useDispatch()
   const router = useRouter()
 
   const schema = Yup.object({
@@ -72,7 +73,7 @@ export default function Home() {
         <Image src={ '/pes-alt.svg' } alt='pes hero image' width={ 350 } height={ 350 } className='mx-auto my-auto absolute top-0 right-0'/>
       </div>
 
-      <Formik initialValues={ { email: "", password: ""} } validationSchema={ schema } onSubmit={ (values) => login('/api/login', values, router) }>
+      <Formik initialValues={ { email: "", password: ""} } validationSchema={ schema } onSubmit={ (values) => { login('/api/login', values, router); dispatch( loadingSwitch() ) } }>
         <Form className="form w-1/2 h-screen flex flex-col p-28 justify-center">
           <p className='text-4xl text-semibold mb-8'>Sign In</p>
 

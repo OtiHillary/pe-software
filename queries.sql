@@ -24,7 +24,7 @@ model Performance{
   user       users     @relation(fields: [user_id], references: [id])
 }
 
-CREATE TABLE performance (
+CREATE TABLE Performance (
    id SERIAL PRIMARY KEY,
    dept TEXT NOT NULL,
    type TEXT NOT NULL,
@@ -37,7 +37,7 @@ CREATE TABLE performance (
 INSERT INTO performance (dept, type, yield, user_id)
 VALUES
   ('Sales and Marketing', 'good', '70', 1),
-  ('Sales and Marketing', 'bad', '8', 2),
-  ('Invetory', 'good', '20', 2),
-  ('Sales and Marketing', 'good', '98', 2),
+  ('Sales and Marketing', 'bad', '8', 1),
+  ('Invetory', 'good', '20', 1),
+  ('Sales and Marketing', 'good', '98', 1),
   ('Maintenance', 'bad', '9', 1);

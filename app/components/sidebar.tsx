@@ -9,12 +9,12 @@ export default function Sidebar(): JSX.Element{
    console.log(pathname.split('/'))
 
    const tabs = [
-      { key: 1, name: 'Dashboard', icon: <Home3 />, href: '/dashboard' }, 
-      { key: 2, name: 'Employee Database', icon: <People />, href: '/em-database' }, 
-      { key: 3, name: 'Goals', icon: <Setting4 />, href: '/goals' }, 
-      { key: 4, name: 'Assessment', icon: <Award />, href: '/assessment' }, 
-      { key: 5, name: 'Performance Review', icon: <Teacher />, href: '/performance'}, 
-      { key: 6, name: 'Pricing', icon: <DollarCircle />, href: '/pricing' }
+      { key: 1, name: 'Dashboard', icon: <Home3 />, href: '/dashboard', priviledge: 'all'}, 
+      { key: 2, name: 'Employee Database', icon: <People />, href: '/em-database', priviledge: 'admin'}, 
+      { key: 3, name: 'Goals', icon: <Setting4 />, href: '/goals', priviledge: 'all'}, 
+      { key: 4, name: 'Assessment', icon: <Award />, href: '/assessment', priviledge: 'admin'}, 
+      { key: 5, name: 'Performance Review', icon: <Teacher />, href: '/performance', priviledge: 'all'}, 
+      { key: 6, name: 'Pricing', icon: <DollarCircle />, href: '/pricing', priviledge: 'all'}
    ]
    
    return(
