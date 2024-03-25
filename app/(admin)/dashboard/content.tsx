@@ -1,7 +1,9 @@
 'use client'
 import { People, Award, Timer, ArrowUp, ArrowDown, CloudPlus, Logout, InfoCircle, ArrowRight, Add  } from 'iconsax-react';
 import Link from 'next/link';
-import { useState } from 'react';
+import React, { useEffect, useState } from 'react';
+import jwt from 'jsonwebtoken';
+
 
 type performance_type = {
    id: number
@@ -9,12 +11,37 @@ type performance_type = {
    dept: string
    type: string
    yield: string
- }
+}
 
-export default function Dashboard(){
+type DashboardProps = {
+   performance: performance_type;
+}
+
+type User = {
+   name: string;
+   email: string;
+}
+
+const Dashboard: React.FC<DashboardProps> = ({ performance }) => {
    const is_logged_in = !false;
    const [performanceView, setPerformanceView] = useState('employee')
+   const [user, setUser] = useState<User | null> (null);
+
+   useEffect(() => {
+     // Retrieve the token (from local storage or cookies)
+     const token = localStorage.getItem('token');
  
+   if (token) {
+      try {
+         // Verify the token and extract user data
+         const decodedUser = jwt.verify(token, 'your-secret-key') as User;
+         setUser(decodedUser);
+         } catch (err: any) {
+         console.error('Invalid token:', err.message);
+         }
+      }
+   }, []);
+
    const goals = [
      { name: 'Sales Growth' , status: 70 , daysLeft: 5 },
      { name: 'Developement' , status: 'Not started', daysLeft: 12 },
@@ -188,3 +215,5 @@ export default function Dashboard(){
       </main> 
    )
 }
+
+export default Dashboard;

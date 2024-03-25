@@ -4,7 +4,6 @@ import { Verify } from 'iconsax-react'
 
 
 export default function Loading(){
-    // const isVisible = useSelector( (state: RootState) => state.loading.visible )
 
     return (
         <div className={`notification rounded-sm shadow-lg p-12 z-30 flex flex-col w-4/12 bg-white`}>
