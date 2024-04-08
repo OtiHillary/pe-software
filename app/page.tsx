@@ -6,7 +6,6 @@ import { useRouter } from 'next/navigation';
 import { useDispatch, useSelector } from 'react-redux';
 import { RootState } from './state/store'
 import { Formik, Form, Field, useFormik, FormikHelpers, FormikValues } from "formik";
-import jwt from 'jsonwebtoken'
 import * as Yup from "yup";
 import { AppRouterInstance } from 'next/dist/shared/lib/app-router-context.shared-runtime';
 import { loadingSwitch } from '@/app/state/loading/loadingSlice'
@@ -14,6 +13,9 @@ import { loadingSwitch } from '@/app/state/loading/loadingSlice'
 type formdata = {
   email: string;
   password: string;
+}
+type resObj ={
+  token: string
 }
 
 async function login( url: string, data: formdata , reroute: AppRouterInstance ) {
@@ -27,38 +29,23 @@ async function login( url: string, data: formdata , reroute: AppRouterInstance )
         body: JSON.stringify(data) // Converting the data object to a JSON string
       }
     )
-    
     let res = await req.json()
 
-    // Generating a JWT token
-    const token = jwt.sign(res, 'your-secret-key');
-
-    // Saving the token (e.g., in local storage or cookies)
-    console.log('JWT Token:', token);
-    localStorage.setItem('access_token', token);
-
-    // console.log(res.data.users)
-
     if(res){
+      console.log('token after storage:', res.token )
+      localStorage.setItem('access_token', res.token );
       reroute.push('/dashboard')
     }
   } catch (error) {
     console.log(error)
   }
-  finally{
-    // change window according to login priviledge
-  }
-
 }
 
 
 export default function Home() {
-  // const loading = useSelector( (state: RootState) => state.logged.value )
   const isVisible = useSelector( (state: RootState) => state.loading.visible )
-
   const dispatch = useDispatch()
   const router = useRouter()
-
   const schema = Yup.object({
     email: Yup.string()
       .email("Invalid email address format")

@@ -8,73 +8,37 @@ datasource db {
 }
 
 model users {
+  id          Int           @id @default(autoincrement())
+  name        String        @unique @db.VarChar(255)
+  email       String        @db.VarChar(255)
+  password    String        @db.VarChar(25)
+  type        String?       @db.VarChar(25)
+  created_on  DateTime?     @db.Date
+  last_log    DateTime?     @db.Date
+  performance performance[]
+}
+
+model goals {
+  id       Int    @id @default(autoincrement())
+  name     String @db.VarChar(255)
+  status   String @db.VarChar(25)
+  daysLeft String @db.VarChar(25)
+}
+
+model performance {
+  id      Int    @id @default(autoincrement())
+  dept    String
+  type    String
+  yield   String
+  user_id String
+  users   users  @relation(fields: [user_id], references: [name], onDelete: NoAction, onUpdate: NoAction, map: "fk_users")
+}
+
+model user {
   id         Int       @id @default(autoincrement())
-  fullname   String?   @db.VarChar(50)
-  email      String    @db.VarChar(255)
-  password   String    @db.VarChar(25)
-  type       String?   @db.VarChar(25)
+  email      String    @db.VarChar(80)
+  password   String    @db.VarChar(80)
+  type       String?   @db.VarChar(80)
   created_on DateTime? @db.Date
   last_log   DateTime? @db.Date
-}
-
-model cathay_transactions {
-  index        Int          @id @default(autoincrement())
-  cr_dr        String?      @db.VarChar(255)
-  amount       String       @db.VarChar
-  iban         String
-  swift        String       @db.VarChar
-  person       String       @db.VarChar
-  time_stamp   String
-  user_id      BigInt
-  cathay_users cathay_users @relation(fields: [user_id], references: [account_no], onDelete: NoAction, onUpdate: NoAction, map: "fk_users")
-}
-
-model cathay_users {
-  account_no          BigInt                @id
-  first_name          String                @db.VarChar(255)
-  last_name           String                @db.VarChar(255)
-  user_name           String                @db.VarChar(255)
-  email               String                @db.VarChar(255)
-  profile             String                @db.VarChar(255)
-  balance             BigInt
-  currency            String                @db.VarChar(255)
-  password            String                @db.VarChar(25)
-  cotp                String                @db.VarChar(25)
-  imf                 String                @db.VarChar(25)
-  auth                String                @db.VarChar(25)
-  swift               String                @db.VarChar(255)
-  iban                String                @db.VarChar(255)
-  base_password       String                @db.VarChar(25)
-  status              String                @db.VarChar(255)
-  account_status      String                @db.VarChar(255)
-  cathay_transactions cathay_transactions[]
-  user_marker         user_marker[]
-}
-
-model chat_sessions {
-  sesh_id String  @id
-  chats   chats[]
-}
-
-model chats {
-  index         Int           @id @default(autoincrement())
-  text          String
-  type          String
-  user_id       String
-  chat_sessions chat_sessions @relation(fields: [user_id], references: [sesh_id], onDelete: NoAction, onUpdate: NoAction, map: "fk_users")
-}
-
-model sessions {
-  sid     String   @id @db.VarChar(255)
-  sess    Json     @db.Json
-  expired DateTime @db.Timestamptz(6)
-
-  @@index([expired], map: "sessions_expired_index")
-}
-
-model user_marker {
-  index        Int          @id @default(autoincrement())
-  mark         String
-  user_id      BigInt
-  cathay_users cathay_users @relation(fields: [user_id], references: [account_no], onDelete: NoAction, onUpdate: NoAction, map: "fk_users")
 }

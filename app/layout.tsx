@@ -6,8 +6,6 @@ import { Inter, Montserrat, Lato } from 'next/font/google'
 import { Provider } from 'react-redux'
 import { store } from './state/store'
 import Dimmer from './components/dimmer'
-import Loading from "./loading";
-
 const inter = Inter( {subsets: ['latin'] })
 const montserrat = Montserrat( {subsets: ['latin'] })
 const lato = Lato( 
@@ -27,7 +25,6 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
     <Provider store={ store }>
       <html lang="en">
           <body className={ lato.className + ' bg-gray-10 flex flex-row relative justify-center max-w-screen h-screen' }>
-            <Loading />
             {children}          
           </body>        
       </html>

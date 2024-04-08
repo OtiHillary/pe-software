@@ -1,10 +1,3 @@
-create table "usereee"(
-   id          SERIAL PRIMARY KEY,
-   email       varchar(80) NOT NULL,
-   password    varchar(80) NOT NULL,
-   type        varchar(80)
-);
-
 CREATE TABLE "user"(
    id SERIAL PRIMARY KEY,
    fullname VARCHAR(50),
@@ -15,29 +8,35 @@ CREATE TABLE "user"(
    last_log    date
 );
 
-model Performance{
-  id         Int       @id @default(autoincrement())
-  dept       String    @db.VarChar(25)
-  type       String    @db.VarChar(25)
-  yield      String    @db.VarChar(25)
-  user_id    Int
-  user       users     @relation(fields: [user_id], references: [id])
-}
 
 CREATE TABLE Performance (
    id SERIAL PRIMARY KEY,
    dept TEXT NOT NULL,
    type TEXT NOT NULL,
    yield TEXT NOT NULL,
-   user_id INT NOT NULL,
-   CONSTRAINT fk_users FOREIGN KEY (user_id) REFERENCES users (id)
+   user_id TEXT NOT NULL,
+   CONSTRAINT fk_users FOREIGN KEY (user_id) REFERENCES users (name)
 );
 
+CREATE TABLE goals (
+   id SERIAL PRIMARY KEY,
+   name TEXT NOT NULL,
+   status INT NOT NULL,
+   daysLeft INT NOT NULL,
+   user_id TEXT NOT NULL,
+   CONSTRAINT fk_users FOREIGN KEY (user_id) REFERENCES users (name)
+);
 
 INSERT INTO performance (dept, type, yield, user_id)
 VALUES
-  ('Sales and Marketing', 'good', '70', 1),
-  ('Sales and Marketing', 'bad', '8', 1),
-  ('Invetory', 'good', '20', 1),
-  ('Sales and Marketing', 'good', '98', 1),
-  ('Maintenance', 'bad', '9', 1);
+  ('Sales and Marketing', 'good', '70', 'otonye edwin'),
+  ('Sales and Marketing', 'bad', '8', 'otonye edwin'),
+  ('Invetory', 'good', '20', 'otonye edwin'),
+  ('Sales and Marketing', 'good', '98', 'otonye edwin'),
+  ('Maintenance', 'bad', '9', 'otonye edwin');
+
+INSERT INTO goals (name, status, daysLeft, user_id)
+VALUES
+  ('Sales Growth' , '70' , 5, 'otonye edwin' ),
+  ('development' , '100000' , 5, 'otonye edwin' ),
+  ('Consumer satisfaction' , '73' , 1, 'otonye edwin' )
