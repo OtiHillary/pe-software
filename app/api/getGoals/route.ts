@@ -1,15 +1,17 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { PrismaClient } from '@prisma/client'
+import prisma from '../prisma.dev'
 import jwt from 'jsonwebtoken'
-const prisma = new PrismaClient()
 
 type Goals = {
   id: number
   name: string
+  description: string
   status: string
-  daysLeft: string
+  day_started: string
+  due_date: string
   user_id: string
 }
+
 interface payload{
   token: string
 }
@@ -23,10 +25,9 @@ async function getData( user: string | null ) {
 }
 
 export async function POST(request: NextRequest) {
-  const {token} = await request.json();
-  console.log( 'access token is', token)
-
-  const user = jwt.verify( token, 'oti') as string;
+  const token = await request.json();
+  console.log(token);
+  const user = token.name;
   if (token) {
     try {
       let goals = await getData(user)
@@ -35,7 +36,7 @@ export async function POST(request: NextRequest) {
   
     } catch(err) {
       console.error(err)
-      return NextResponse.json({ data: ['no data'] })
+      return NextResponse.json([])
     }    
   }
   NextResponse.redirect(new URL('/not-found', request.url))

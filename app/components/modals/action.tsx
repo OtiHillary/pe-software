@@ -1,11 +1,19 @@
+'use client'
+
 import { InfoCircle, Logout } from "iconsax-react"
 import Link from "next/link"
 import { useSelector } from 'react-redux';
 import { RootState } from '@/app/state/store'
+import { useRouter } from "next/navigation";
 
 export default function Action(){
   const isVisible = useSelector((state: RootState)=> state.action.visible )
-  console.log(isVisible)
+  const router = useRouter()
+
+  function handleLogout(){
+    localStorage.removeItem('access_token')
+    router.push('/')
+  }
 
   return (
     <div className = {`${ isVisible? 'visible' : 'invisible' } logout rounded-sm shadow-lg bg-white py-8 z-10 flex flex-col absolute top-24 right-8`}>
@@ -14,10 +22,10 @@ export default function Action(){
         Get help
       </Link>
 
-      <Link href={`/`} className='text-red-500 flex py-2 px-2 justify-start ps-8 pe-20 hover:bg-gray-100'>
+      <div onClick={ handleLogout } className='text-red-500 flex py-2 px-2 justify-start ps-8 pe-20 hover:bg-gray-100'>
         <Logout className='me-2'/>
         logout
-      </Link>
+      </div>
     </div>
   )
 }

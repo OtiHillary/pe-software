@@ -14,7 +14,6 @@ async function getUser(info: reqInfo) {
       password: password
    })
 
-   // const user = await prisma.$queryRaw`SELECT * FROM users WHERE email = ${email} AND password = ${password};`
    return user
 }
 

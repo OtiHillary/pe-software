@@ -1,10 +1,13 @@
 import { createSlice } from '@reduxjs/toolkit'
 
 type goal = {
-    name: string;
-    status: any;
-    description: string;
-    daysLeft: any
+    name: string
+    day_started: string
+    description:string
+    due_date: string
+    id: number
+    status: number
+    user_id:string
 }
 
 type goalState = {
@@ -25,7 +28,10 @@ const initialState: goalState = {
             name: '',
             status: 0,
             description: '',
-            daysLeft: 0 
+            day_started: '',
+            due_date: '',
+            id: 0,
+            user_id: ''
         },
     },
     delete: false
@@ -39,8 +45,9 @@ const goalSlice = createSlice({
             state.new = !state.new
         },
         editGoal: (state, { payload }) => {
+            console.log('the payload is: ',payload)
             state.edit.visible = !state.edit.visible
-            if(state.edit.visible) state.edit.data = payload
+            if(state.edit.visible) state.edit.data = payload.payload
         },
         deleteGoal: (state) => {
             state.delete = !state.delete

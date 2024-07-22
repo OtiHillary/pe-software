@@ -1,12 +1,6 @@
 'use client'
 
-import { ArrowLeft } from "iconsax-react"
-import { useDispatch } from 'react-redux';
-import { roleCreatedView } from '@/app/state/rolecreated/roleCreatedSlice';
-
-export default function Formtwo(){
-   const dispatch = useDispatch()
-
+export default function Formtwo({ formdata, setFormdata }){
    return(
       <>
          <div className="w-full">
@@ -16,7 +10,7 @@ export default function Formtwo(){
          <div className="grid grid-cols-2 m-4">
             <div className="border-b border-e p-4 flex flex-col">
                <label className="flex">
-                  <input type="checkbox" className="h-6 w-6 mt-1 me-3" />
+                  <input name="manage_user" onChange={ (event) => setFormdata({...formdata, [event?.target.name]: event.target.value }) } type="checkbox" className="h-6 w-6 mt-1 me-3" />
                   <span className="w-10/12">
                      <h1 className="text-lg">Manage User Roles</h1>
                      <p>Create, Edit, and Delete User roles.</p>
@@ -26,7 +20,7 @@ export default function Formtwo(){
 
             <div className="border-b border-e p-4 flex flex-col">
                <label className="flex">
-                  <input type="checkbox" className="h-6 w-6 mt-1 me-3" />
+                  <input name="access_em" onChange={ (event) => setFormdata({...formdata, [event?.target.name]: event.target.value }) } type="checkbox" className="h-6 w-6 mt-1 me-3" />
                   <span className="w-10/12">
                      <h1 className="text-lg">Access Employee Data</h1>
                      <p>View and edit the details of employees.</p>
@@ -34,15 +28,15 @@ export default function Formtwo(){
                </label>
                <div className="flex ms-8 my-2 text-gray-400 text-sm font-extralight">
                   <label className="flex me-4">
-                     <input type="checkbox" className="me-1" />
+                     <input name="ae_all" onChange={ (event) => setFormdata({...formdata, [event?.target.name]: event.target.value }) } type="checkbox" className="me-1" />
                      <span>All Employees</span>
                   </label>     
                   <label className="flex me-4">
-                     <input type="checkbox" className="me-1" />
+                     <input name="ae_sub" onChange={ (event) => setFormdata({...formdata, [event?.target.name]: event.target.value }) } type="checkbox" className="me-1" />
                      <span>Subordinates</span>
                   </label>     
                   <label className="flex me-4">
-                     <input type="checkbox" className="me-1" />
+                     <input name="ae_sel" onChange={ (event) => setFormdata({...formdata, [event?.target.name]: event.target.value }) } type="checkbox" className="me-1" />
                      <span>Selected Employees</span>
                   </label>     
                </div>
@@ -50,7 +44,7 @@ export default function Formtwo(){
 
             <div className="border-b border-e p-4 flex flex-col">
                <label className="flex">
-                  <input type="checkbox" className="h-6 w-6 mt-1 me-3" />
+                  <input name="define_performance" onChange={ (event) => setFormdata({...formdata, [event?.target.name]: event.target.value }) } type="checkbox" className="h-6 w-6 mt-1 me-3" />
                   <span className="w-10/12">
                      <h1 className="text-lg">Define Performance Metrics</h1>
                      <p>View and edit the Performance Metrics of employees.</p>
@@ -58,15 +52,15 @@ export default function Formtwo(){
                </label>
                <div className="flex ms-8 my-2 text-gray-400 text-sm font-extralight">
                   <label className="flex me-4">
-                     <input type="checkbox" className="me-1" />
+                     <input name="dp_all" onChange={ (event) => setFormdata({...formdata, [event?.target.name]: event.target.value }) } type="checkbox" className="me-1" />
                      <span>All Employees</span>
                   </label>     
                   <label className="flex me-4">
-                     <input type="checkbox" className="me-1" />
+                     <input name="dp_sub" onChange={ (event) => setFormdata({...formdata, [event?.target.name]: event.target.value }) } type="checkbox" className="me-1" />
                      <span>Subordinates</span>
                   </label>     
                   <label className="flex me-4">
-                     <input type="checkbox" className="me-1" />
+                     <input name="dp_sel" onChange={ (event) => setFormdata({...formdata, [event?.target.name]: event.target.value }) } type="checkbox" className="me-1" />
                      <span>Selected Employees</span>
                   </label>     
                </div>
@@ -74,7 +68,7 @@ export default function Formtwo(){
 
             <div className="border-b border-e p-4 flex flex-col">
                <label className="flex">
-                  <input type="checkbox" className="h-6 w-6 mt-1 me-3" />
+                  <input name="access_hierachy" onChange={ (event) => setFormdata({...formdata, [event?.target.name]: event.target.value }) } type="checkbox" className="h-6 w-6 mt-1 me-3" />
                   <span className="w-10/12">
                      <h1 className="text-lg">Access Reporting Hierarchy</h1>
                      <p>Define and modify the organizational reporting structure. Assigning managers to employees and creating teams</p>
@@ -84,7 +78,7 @@ export default function Formtwo(){
 
             <div className="border-b border-e p-4 flex flex-col">
                <label className="flex">
-                  <input type="checkbox" className="h-6 w-6 mt-1 me-3" />
+                  <input name="manage_review" onChange={ (event) => setFormdata({...formdata, [event?.target.name]: event.target.value }) } type="checkbox" className="h-6 w-6 mt-1 me-3" />
                   <span className="w-10/12">
                      <h1 className="text-lg">Manage Performance Reviews</h1>
                      <p>Schedule, modify or cancel performance review meetings for any employee</p>
@@ -92,23 +86,19 @@ export default function Formtwo(){
                </label>
                <div className="flex ms-8 my-2 text-gray-400 text-sm font-extralight">
                   <label className="flex me-4">
-                     <input type="checkbox" className="me-1" />
+                     <input name="mr_all" onChange={ (event) => setFormdata({...formdata, [event?.target.name]: event.target.value }) } type="checkbox" className="me-1" />
                      <span>All Employees</span>
                   </label>     
                   <label className="flex me-4">
-                     <input type="checkbox" className="me-1" />
+                     <input name="mr_sub" onChange={ (event) => setFormdata({...formdata, [event?.target.name]: event.target.value }) } type="checkbox" className="me-1" />
                      <span>Subordinates</span>
                   </label>     
                   <label className="flex me-4">
-                     <input type="checkbox" className="me-1" />
+                     <input name="mr_sel" onChange={ (event) => setFormdata({...formdata, [event?.target.name]: event.target.value }) } type="checkbox" className="me-1" />
                      <span>Selected Employees</span>
                   </label>     
                </div>
             </div>
-         </div>
-
-         <div>
-            <a href='/' className="text-pes mx-8 mb-8">Edit Persimssion Settings</a>
          </div>
       </>
    )

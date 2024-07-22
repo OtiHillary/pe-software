@@ -7,7 +7,6 @@ type formElement = {
 
 export function useMultistepForm( steps: formElement[] ){
    const [ stepIndex, setStepIndex ] = useState(0)
-
    function next(){
       setStepIndex( i => {
          if( i >= steps.length -1 ) return i
@@ -26,12 +25,13 @@ export function useMultistepForm( steps: formElement[] ){
       setStepIndex(index)
    }
 
+
    return{
       stepIndex,
       steps,
       step: steps[stepIndex],
       goTo,
       next,
-      back
+      back,
    }
 }

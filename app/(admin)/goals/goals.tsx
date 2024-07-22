@@ -1,30 +1,46 @@
 'use client'
-
 import Image from "next/image"
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { RootState } from '../../state/store'
 import { newGoal, editGoal } from "@/app/state/goals/goalSlice";
 import { Status, CalendarRemove } from 'iconsax-react'
-
-const data = !true;
-const goals = [
-    { name: 'Sales Growth' , status: 70 , description: 'Growth of sales by X% by 2025, using daily metrics',daysLeft: 5 },
-    { name: 'Developement' , status: 'Not started', description: 'Growth of sales by X% by 2025, using daily metrics',daysLeft: 12 },
-    { name: 'Developement' , status: 'Not started', description: 'Growth of sales by X% by 2025, using daily metrics',daysLeft: 12 },
-    { name: 'Databases' , status: 'Not started', description: 'Growth of sales by X% by 2025, using daily metrics',daysLeft: 12 },
-    { name: 'Customer Satisfaction' , status: 12, description: 'Growth of sales by X% by 2025, using daily metrics',daysLeft: 11 },
-    { name: 'Customer Satisfction' , status: 15, description: 'Growth of sales by X% by 2025, using daily metrics',daysLeft: 20 },
-]
+import jwt, { JwtPayload } from "jsonwebtoken";
 
 function colorGrade( num: any ): string{
     return (num < 50)? 'red' : 'green';       
 }
 
+type storage_token = {
+    name: string
+    role: string
+}
+
 export default function Goals(){
     const [grid, setGrid] = useState(false)
+    const [goals, setGoals] = useState([])
     const new_goal = useSelector( (state: RootState) => state.goal.new )
     const dispatch = useDispatch()
+
+
+    useEffect(() => {
+        const access_token = localStorage.getItem('access_token')
+        const tokenData = jwt.decode(access_token, 'oti')
+
+        async function fetchGoal() {
+            const data = await fetch('/api/getGoals', {
+                method: 'POST',
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify(tokenData)
+
+            })
+            const goalData = await data.json()
+            setGoals(goalData)          
+        }
+        fetchGoal()
+    }, [])
 
     return(
         <main className="m-6">
@@ -46,16 +62,22 @@ export default function Goals(){
             
             <div className="flex flex-col justify-center">
             {
-                data ? 
-                <p className="mt-48 mx-auto text-sm text-gray-500 font-light">
-                    {`Currently, No Goals Created. Click 'Set New Goals' to Begin Your Journey of Achievement and Growth.`}
-                </p> 
+                (goals.length == 0) ? 
+                <div className="flex flex-col my-8">
+                    <div className="h-12 w-full rounded-md animate-pulse bg-gray-100 m-1"></div>
+                    <div className="h-12 w-full rounded-md animate-pulse bg-gray-100 m-1"></div>
+                    <div className="h-12 w-full rounded-md animate-pulse bg-gray-100 m-1"></div>
+                    <div className="h-12 w-full rounded-md animate-pulse bg-gray-100 m-1"></div>
+                </div>
+                // <p className="mt-48 mx-auto text-sm text-gray-500 font-light">
+                //     {`Currently, No Goals Created. Click 'Set New Goals' to Begin Your Journey of Achievement and Growth.`}
+                // </p> 
                 : 
                 <div className={ `${ grid? 'grid grid-cols-3 gap-4': 'flex flex-col' } my-8 ` } >
                     {
-                        goals.map((i, key) => {
+                        goals?.map((i, key) => {
                             return(
-                                <div key={key} className={ `${ grid? 'w-72 py-6': 'flex justify-between w-full py-1' } bg-white rounded-md border border-gray-100 px-12` } onClick={ () => dispatch( editGoal({ payload: i, type: 'edit' }) ) }>
+                                <div key={key} className={ `${ grid? 'w-72 py-6': 'flex justify-between w-full py-1' } bg-white rounded-md border border-gray-100 px-12` } onClick={ () => { console.log(i); dispatch( editGoal({ payload: i, type: 'edit' }) )} }>
                                     <h1 className={ `${ grid? 'text-xl font-bold': '' } my-2` }>
                                         { i.name }
                                     </h1>

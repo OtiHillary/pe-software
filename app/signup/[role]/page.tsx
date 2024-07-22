@@ -1,24 +1,14 @@
 'use client'
 import { ArrowRight  } from 'iconsax-react';
-import { useState } from "react";
-import { useSearchParams } from 'next/dist/client/components/navigation';
+import { FormEvent, useState } from "react";
 import Image from 'next/image';
 import Link from 'next/link';
+import { useRouter } from 'next/navigation';
 
-async function getUser(url: string) {
-  try {
-    const jsonData = await fetch(url)
-    let data = jsonData.json()
-    return data
-
-  } catch (error) {
-    console.log(error)
-  }
-  finally{
-    // change window according to login priviledge
-  }
-
+type roleParams = {
+  role: string
 }
+
 let slider_index = 0
 
 const first = <>
@@ -44,11 +34,15 @@ const third = <>
 </>
 
 
-export default function Home() {
+export default function Home({ params }: { params: roleParams }) {
+  console.log(params);
+  
   const slider_arr = [ true, false, false ]
   const content_arr = [ first, second, third ]
-  // const content_arr = [ 'first', 'second', 'third' ]
   const [ slide, setSlide ] = useState(slider_arr)
+  const router = useRouter()
+  const [message, setMessage] = useState({ visibility: 'invisible', text: '', color: '' })
+  const [formData, setFormData] = useState({ name: '', email: '', password: '', type: params.role })
 
   const switchSlide = () => {
     slider_index++;
@@ -57,13 +51,53 @@ export default function Home() {
     }
     setSlide([...slider_arr]);
   };
-  
-  async function signin(){
 
+  function handleChange(event: { target: { name: any; value: any; }; }){
+    setFormData({
+      ...formData,
+      [event?.target.name]: event?.target.value
+    })
+  }
+  
+  async function signup( event: FormEvent<HTMLFormElement>) {
+    event.preventDefault()
+    setMessage({  visibility: 'visible', text: 'Signing in, Please wait...', color: 'green' })
+    // TODO - change dynamic route from "/signup/[role]" to "/signup/[type]" to avoid future problems
+  
+    try {
+      const req = await fetch( '/api/signup', 
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json"
+          },
+          body: JSON.stringify(formData)
+        }
+      )
+      let res = await req.json()
+  
+      if(res.status == 200){
+        console.log('token before storage:', res.token )
+        localStorage.setItem('access_token', res.token );
+        console.log(res.name)
+        router.push('/dashboard')
+      }
+      if (res.status == 500) {
+        setMessage({  visibility: 'visible', text: 'signup failed, check details', color: 'red' })
+      }
+    } catch (error) {
+      console.log(error)
+      setMessage({  visibility: 'visible', text: error.message , color: 'red' })
+
+    }
   }
 
   return(
     <main className="w-full flex overflow-hidden relative">
+      <div style={{ borderColor: message.color, borderInlineWidth: '6px', borderBlockWidth: '1px' }} className={ `z-10 bg-white absolute p-6 px-12 shadow-md rounded-md text-gray-600 font-semibold ${message.visibility} top-3 left-1/2 -translate-x-1/2` }>
+        {message.text}
+      </div>
+
       <div className="scroller w-3/12 absolute bottom-4 left-3/12 z-10 flex justify-between">
         <div className="page my-auto flex">
           {          
@@ -107,24 +141,23 @@ export default function Home() {
         </div>
       </div>
 
-
-      <div className="form w-1/2 h-screen flex flex-col p-28 justify-center">
+      <form onSubmit={ signup } className="form w-1/2 h-screen flex flex-col p-28 justify-center">
         <p className='text-3xl text-extrabold'>Create your Account</p>
         <p className='text-sm mb-8'>{`Enter your details and let's get started`}</p>
 
         <div className="input flex flex-col justify-center mb-4">
           <label htmlFor="name" className='mb-1 font-bold text-sm'>Name:</label>
-          <input className='bg-transparent border border-gray-200 text-gray-300 placeholder:text-gray-300 text-sm focus:outline-pes ps-4 py-3 rounded-md' type="text" name="name" id="" placeholder='Enter your Institution or company name' required/>
+          <input onChange={handleChange} value={formData.name} className='bg-transparent border border-gray-200 text-gray-300 placeholder:text-gray-300 text-sm focus:outline-pes ps-4 py-3 rounded-md' type="text" name="name" id="" placeholder='Enter your Institution or company name' required/>
         </div>
 
         <div className="input flex flex-col justify-center mb-4">
           <label htmlFor="email" className='mb-1 font-bold text-sm'>Email Address:</label>
-          <input className='bg-transparent border border-gray-200 text-gray-300 placeholder:text-gray-300 text-sm focus:outline-pes ps-4 py-3 rounded-md' type="email" name="email" id="" placeholder='Enter your Institution or company email' required/>
+          <input onChange={handleChange} value={formData.email} className='bg-transparent border border-gray-200 text-gray-300 placeholder:text-gray-300 text-sm focus:outline-pes ps-4 py-3 rounded-md' type="email" name="email" id="" placeholder='Enter your Institution or company email' required/>
         </div>
 
         <div className="input flex flex-col justify-center mb-4">
           <label htmlFor="password" className='mb-1 font-bold text-sm'>Password:</label>
-          <input className='bg-transparent border border-gray-200 text-gray-300 placeholder:text-gray-300 text-sm focus:outline-pes ps-4 py-3 rounded-md' type="password" name="password" id="password" placeholder='Enter your Password' required/>
+          <input onChange={handleChange} value={formData.password} className='bg-transparent border border-gray-200 text-gray-300 placeholder:text-gray-300 text-sm focus:outline-pes ps-4 py-3 rounded-md' type="password" name="password" id="password" placeholder='Enter your Password' required/>
         </div>
 
         <div className="input flex flex-col justify-center mb-4">
@@ -139,10 +172,10 @@ export default function Home() {
           </div>
         </div>
 
-        <div className="btn bg-pes text-white px-4 py-3 flex justify-center rounded-lg mb-2" onClick={ () => { console.log('signing in') } } >Sign Up</div>
+        <input type='submit' value={'Sign up'} className="btn active:bg-pes hover:bg-[#141444] bg-pes text-white px-4 py-3 flex justify-center rounded-lg mb-2" />
 
-        <p className='text-center'>{`Don't have an Account?`} <Link className='text-pes' href={'/'}>Sign In</Link> </p>
-      </div>
+        <p className='text-center'>{`Don't have an Account?`} <Link className='text-pes' href={'/signup/user'}>Sign In</Link> </p>
+      </form>
     </main>     
   )
 }
