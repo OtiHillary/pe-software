@@ -3,8 +3,8 @@ import prisma from '../prisma.dev'
 import jwt from 'jsonwebtoken'
 
 
-async function getUser( user: string | null ) {
-  const users = await prisma.$queryRawUnsafe('SELECT * FROM pesuser where org = $1', user?.toString())
+async function getRoles( user: string | null ) {
+  const users = await prisma.$queryRawUnsafe('SELECT * FROM roles where org = $1', user?.toString())
   await prisma.$disconnect()
   return users
 }
@@ -15,7 +15,7 @@ export async function POST(request: NextRequest) {
 
   if (token) {
     try {
-      let userInfo = await getUser(user.name)
+      let userInfo = await getRoles(user.name)
       return NextResponse.json(userInfo)
 
     } catch(err) {

@@ -1,9 +1,32 @@
 'use client'
 
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { Add, SearchNormal1 } from 'iconsax-react'
 
 export default function Roles(){
+   const [ roles, setRoles ] = useState([])
+
+   useEffect(() => {
+      async function getRoles() {
+         const data = localStorage.getItem('access_token')
+         try {
+            const req = await fetch('', {
+               method: "POST",
+               headers: {
+               "Content-Type": "appliation/json"
+               },
+               body: JSON.stringify({ token: data })
+            })
+
+            const res = await req.json()
+            console.log(res)      
+            setRoles(res)  
+
+         } catch (error) {
+            console.log(error)
+         }
+      }
+   }, [])
 
    return(
       <div className='flex justify-center w-full h-full'>
@@ -39,9 +62,36 @@ export default function Roles(){
                      Department
                   </div>
                </div>
-
             </div>
-            <div></div>
+            <div className='flex flex-col justify-between'>
+               {
+                  (roles.length > 0)?
+                     roles?.map((i, key) => {
+                        return(
+                           <div key={i.id} className="rw h-12 w-full flex my-1 hover:bg-slate-50">
+                              <div className='w-[10%] my-auto font-semibold ms-4'>
+                                 {key + 1}
+                              </div>
+                              <div className='w-[35%] my-auto font-semibold ms-4'>
+                                 {i.name}
+                              </div>
+                              <div className={ `w-[30%] my-auto font-semibold ms-4`}>
+                                 <p className={` rounded-full w-fit px-4 py-1`}>
+                                    {i.assigned}
+                                 </p>
+                              </div>
+                           </div>
+                        )
+                     })
+                  :
+                     <div className='flex flex-col w-full'>
+                        <div className="rw h-12 my-1 w-full flex bg-gray-100 rounded-md animate-pulse"></div>
+                        <div className="rw h-12 my-1 w-full flex bg-gray-100 rounded-md animate-pulse"></div>
+                        <div className="rw h-12 my-1 w-full flex bg-gray-100 rounded-md animate-pulse"></div>
+                        <div className="rw h-12 my-1 w-full flex bg-gray-100 rounded-md animate-pulse"></div>                  
+                     </div>
+               }            
+            </div>
          </div>
       </div>
    )

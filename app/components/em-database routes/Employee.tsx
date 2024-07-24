@@ -2,7 +2,7 @@
 
 import React, { useEffect, useState } from 'react'
 import { useDispatch } from 'react-redux';
-import { setNotificationView } from '@/app/state/setnotification/setNotificationSlice';
+// import { setNotificationView } from '@/app/state/setnotification/setNotificationSlice';
 import { Add, SearchNormal1 } from 'iconsax-react'
 
 export default function Employee(){
@@ -17,6 +17,7 @@ export default function Employee(){
    }
 
    useEffect( () => {
+      console.log('employee number is',employees.length)
       async function getEmployees() {
          const data = localStorage.getItem('access_token')
          try {
@@ -109,21 +110,17 @@ export default function Employee(){
                         )
                      })
                   :
-                     <>
-                        <div className="rw w-full flex text-gray-400 rounded-full animate-pulse"></div>
-                        <div className="rw w-full flex text-gray-400 rounded-full animate-pulse"></div>
-                        <div className="rw w-full flex text-gray-400 rounded-full animate-pulse"></div>
-                        <div className="rw w-full flex text-gray-400 rounded-full animate-pulse"></div>                  
-                     </>
+                     <div className='flex flex-col w-full'>
+                        <div className="rw h-12 my-1 w-full flex bg-gray-100 rounded-md animate-pulse"></div>
+                        <div className="rw h-12 my-1 w-full flex bg-gray-100 rounded-md animate-pulse"></div>
+                        <div className="rw h-12 my-1 w-full flex bg-gray-100 rounded-md animate-pulse"></div>
+                        <div className="rw h-12 my-1 w-full flex bg-gray-100 rounded-md animate-pulse"></div>                  
+                     </div>
                }            
             </div>
 
          </div>
-         <div>
-
-         </div>
       </div>
-
    </div>
    )
 }
