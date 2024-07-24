@@ -10,7 +10,7 @@ export default function Roles(){
       async function getRoles() {
          const data = localStorage.getItem('access_token')
          try {
-            const req = await fetch('', {
+            const req = await fetch('/api/getRoles', {
                method: "POST",
                headers: {
                "Content-Type": "appliation/json"
@@ -26,6 +26,7 @@ export default function Roles(){
             console.log(error)
          }
       }
+      getRoles()
    }, [])
 
    return(
@@ -77,7 +78,7 @@ export default function Roles(){
                               </div>
                               <div className={ `w-[30%] my-auto font-semibold ms-4`}>
                                  <p className={` rounded-full w-fit px-4 py-1`}>
-                                    {i.assigned}
+                                    { `${i.assigned} ${ (i.assigned > 1) ? 'users' : ' user' }` }
                                  </p>
                               </div>
                            </div>

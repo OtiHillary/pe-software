@@ -68,6 +68,13 @@ CREATE TABLE pesuser (
    org VARCHAR(255)
 );
 
+CREATE TABLE roles (
+   id SERIAL,
+   name VARCHAR(255) PRIMARY KEY NOT NULL,
+   assigned INT,
+   org VARCHAR(255)
+);
+
 CREATE TABLE permission (
    id SERIAL PRIMARY KEY,
    manage_user TEXT,
@@ -88,11 +95,40 @@ CREATE TABLE permission (
    FOREIGN KEY (user_id) REFERENCES pesuser (name)
 );
 
+-- permission entire
+INSERT INTO permission ( manage_user, access_em, ae_all, ae_sub, ae_sel, define_performance, dp_all, dp_sub, dp_sel, access_hierachy, manage_review, mr_all, mr_sub, mr_sel, user_id )
+VALUES (  )
+
+
+-- roles entries
+INSERT INTO roles (name, assigned, org)
+VALUES ( 'admin', 1, 'DevSquad inc');
+
+INSERT INTO roles (name, assigned, org)
+VALUES ( 'professor', 1, 'DevSquad inc');
+
+INSERT INTO roles (name, assigned, org)
+VALUES ( 'UI/UX designer', 1, 'DevSquad inc');
+
+INSERT INTO roles (name, assigned, org)
+VALUES ( 'team-lead', 1, 'DevSquad inc');
+
+INSERT INTO roles (name, assigned, org)
+VALUES ( 'developer', 1, 'DevSquad inc');
+
+INSERT INTO roles (name, assigned, org)
+VALUES ( 'prompt engineer', 1, 'DevSquad inc');
+
+INSERT INTO roles (name, assigned, org)
+VALUES ( 'intern', 1, 'DevSquad inc');
+
+
+-- users entries
 INSERT INTO pesuser (name, email, password, gsm, role, address, faculty_college, dob, doa, poa, doc, post, dopp, level, image, org)
 VALUES ('DevSquad inc', 'oti.dev@gmail.com', 'otonye', '+1234567890', 'admin', 'd74 post service housing estate', 'Computer Science/unilag', '1990-01-01', '2020-09-01', 'teamlead', 'ID Card', 'Computer Science', '2024-05-31', 'Bachelor', 'young oti.PNG', NULL);
 
 
-
+-- others
 INSERT INTO pesuser (name, email, password, gsm, role, address, faculty_college, dob, doa, poa, doc, post, dopp, level, image, org)
 VALUES ('dave chapelle', 'dave.chapelle@example.com', 'otonye', '+9876543210', 'Professor', 'd74 post service housing estate', 'Arts', '1985-07-15', '2010-01-01', 'Contract', 'Diploma', 'History', NULL, 'PhD', 'young oti.PNG', 'DevSquad inc');
 

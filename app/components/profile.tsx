@@ -31,7 +31,7 @@ export default function Profile(){
                <form className=" placeholder-slate-200 m-4">
                   <label htmlFor="description" className="flex">
                      Reporting to:
-                     <input type="text" className='border outline-1 outline-gray-200 rounded-[0.25rem] mt-1 font-thin px-4 py-2 pb-16' id="description" placeholder="Provide a brief description outlining the role's key responsibilities and purpose." />
+                     <input disabled type="text" className='border outline-1 outline-gray-200 rounded-[0.25rem] mt-1 font-thin px-4 py-2 pb-16' id="description" placeholder="Provide a brief description outlining the role's key responsibilities and purpose." />
                   </label>
                </form>
             </div>
@@ -48,7 +48,7 @@ export default function Profile(){
 
                   <div className="border-b p-4">
                      <label className="flex">
-                        <input type="checkbox" checked className="h-6 w-6 mt-1 me-3" />
+                        <input disabled type="checkbox" checked className="h-6 w-6 mt-1 me-3" />
                         <span className="w-10/12">
                            <h1 className="text-lg">Manage User Roles</h1>
                            <p>Create, edit, and delete user roles, defining their specific permissions and responsibilities.</p>
@@ -58,7 +58,7 @@ export default function Profile(){
 
                   <div className="border-b p-4 flex flex-col">
                      <label className="flex">
-                        <input type="checkbox" checked className="h-6 w-6 mt-1 me-3" />
+                        <input disabled type="checkbox" checked className="h-6 w-6 mt-1 me-3" />
                         <span className="w-10/12">
                            <h1 className="text-lg">Access Employee Data</h1>
                            <p>View and edit the details of employees.</p>
@@ -66,15 +66,15 @@ export default function Profile(){
                      </label>
                      <div className="flex ms-8 my-2 text-gray-400 text-sm font-extralight">
                         <label className="flex me-4">
-                           <input type="checkbox" className="me-1" />
+                           <input disabled type="checkbox" className="me-1" />
                            <span>All Employees</span>
                         </label>     
                         <label className="flex me-4">
-                           <input type="checkbox" checked className="me-1" />
+                           <input disabled type="checkbox" checked className="me-1" />
                            <span>Subordinates</span>
                         </label>     
                         <label className="flex me-4">
-                           <input type="checkbox" className="me-1" />
+                           <input disabled type="checkbox" className="me-1" />
                            <span>Selected Employees</span>
                         </label>     
                      </div>
