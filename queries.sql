@@ -92,6 +92,7 @@ CREATE TABLE permission (
       mr_sub TEXT,
       mr_sel TEXT,
       user_id VARCHAR(255),
+      org VARCHAR(255),
    FOREIGN KEY (user_id) REFERENCES pesuser (name)
 );
 

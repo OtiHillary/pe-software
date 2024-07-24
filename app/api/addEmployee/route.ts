@@ -39,20 +39,16 @@ type reqInfo = {
 function generateUniquePassword(length = 8) {
    const chars = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789!@#$%^&*()";
 
-   return new Promise((resolve, reject) => {
-      const randomBytes = randombytes(length);
-      let password = '';
-      for (let i = 0; i < length; i++) {
-         const randomIndex = Math.floor(randomBytes[i] % chars.length);
-         password += chars.charAt(randomIndex);
-      }
-      resolve(password);
-   });
+   const randomBytes = randombytes(length);
+   let password = '';
+   for (let i = 0; i < length; i++) {
+      const randomIndex = Math.floor(randomBytes[i] % chars.length);
+      password += chars.charAt(randomIndex);
+   }
+   return password;
  }
  
  const randPassword = generateUniquePassword()
-   .then(password => console.log("Generated password:", password))
-   .catch(error => console.error("Error generating password:", error));
  
 
 
@@ -92,8 +88,15 @@ async function addUser(info: reqInfo) {
          VALUES (${name}, ${email}, ${ randPassword }, ${gsm}, ${post}, ${address}, ${faculty_college}, ${ new Date(dob) }, ${ new Date(doa) }, ${poa}, ${ new Date(doc) }, ${post}, ${ new Date(dopp) }, ${level}, NULL, ${org});
       `
       await prisma.$queryRaw`
-         INSERT INTO permission (manage_user, access_em, ae_all, ae_sub, ae_sel, define_performance, dp_all, dp_sub, dp_sel, access_hierachy, manage_review, mr_all, mr_sub, mr_sel, user_id)
-         VALUES (${manage_user}, ${access_em}, ${ ae_all }, ${ae_sub}, ${ae_sel}, ${define_performance}, ${dp_all}, ${ dp_sub }, ${ dp_sel }, ${access_hierachy}, ${ manage_review }, ${mr_all}, ${mr_sub}, ${mr_sel}, ${org});
+         INSERT INTO permission (manage_user, access_em, ae_all, ae_sub, ae_sel, define_performance, dp_all, dp_sub, dp_sel, access_hierachy, manage_review, mr_all, mr_sub, mr_sel, user_id, org)
+         VALUES (${manage_user}, ${access_em}, ${ ae_all }, ${ae_sub}, ${ae_sel}, ${define_performance}, ${dp_all}, ${ dp_sub }, ${ dp_sel }, ${access_hierachy}, ${ manage_review }, ${mr_all}, ${mr_sub}, ${mr_sel}, ${name}, ${org});
+      `
+
+      await prisma.$queryRaw`
+         UPDATE roles
+         SET assigned = assigned + 1
+         WHERE name = ${ post };
+         AND org = '${ org }'
       `
 
       await prisma.$disconnect()

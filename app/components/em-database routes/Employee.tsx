@@ -95,8 +95,11 @@ export default function Employee(){
                               <div className='w-[10%] my-auto font-semibold ms-4'>
                                  {key + 1}
                               </div>
-                              <div className='w-[35%] my-auto font-semibold ms-4'>
+                              <div className='w-[35%] my-auto font-semibold ms-4 flex flex-col'>
                                  {i.name}
+                                 <span className='font-thin text-xs'>
+                                    { i.email }
+                                 </span>
                               </div>
                               <div className={ `w-[30%] my-auto font-semibold ms-4`}>
                                  <p className={` rounded-full w-fit px-4 py-1 bg-${ roleColor( i.role ) }-100 text-${ roleColor( i.role ) }-500`}>

@@ -22,6 +22,7 @@ type reqInfo = {
     mr_sel: string
 }
 
+
 async function addUser(info: reqInfo) {
     const { 
         role_name,
@@ -44,8 +45,8 @@ async function addUser(info: reqInfo) {
      
     try {
         await prisma.$queryRaw`
-            INSERT INTO roles (name, description, org)
-            VALUES (${role_name}, ${description}, ${org});
+            INSERT INTO roles (name, assigned, org)
+            VALUES (${role_name}, ${ 1 }, ${org});
         `
 
         await prisma.$queryRaw`

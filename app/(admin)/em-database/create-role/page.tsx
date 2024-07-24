@@ -4,21 +4,26 @@ import { ArrowLeft } from "iconsax-react"
 import { useDispatch } from 'react-redux';
 import { roleCreatedView } from '@/app/state/rolecreated/roleCreatedSlice';
 import { useState } from "react";
+import jwt from 'jsonwebtoken'
+import { useRouter } from "next/navigation";
+
 
 export default function CreateRole(){
    const [ formData, setFormData ] = useState({})
    const dispatch = useDispatch()
+   const router = useRouter()
 
    function handleChange(event) {
       setFormData( { ...formData, [event.target.name] : event.target.value } )
    }
 
-   async function handleSubmit() {
+   async function handleSubmit(event) {
+      event.preventDefault()
       const access_token = localStorage.getItem('access_token')
       const user = jwt.decode(access_token, 'oti')
+      console.log( 'data is: ', formData)
 
       try {
-         console.log( 'data is: ', formData)
          const req = fetch( '/api/addRoles', {
             method: "POST",
             headers: {
@@ -29,6 +34,8 @@ export default function CreateRole(){
 
          const res = (await req).json()
          if (res.status == 200) console.log('success');
+         dispatch( roleCreatedView() )
+         router.push('/em-database')
          
       } catch (error) {
          console.error(error)  
@@ -54,11 +61,11 @@ export default function CreateRole(){
                   <div className=" placeholder-slate-200 m-4">
                      <label htmlFor="role_name" className="flex flex-col mb-4">
                         Role Name:
-                        <input name="role_name" type="text" className='border outline-1 outline-gray-200 rounded-[0.25rem] mt-1 font-thin px-4 py-2 pb-4' id="name" placeholder="Enter a name that represents the role's responsibilities and purpose." />
+                        <input onChange={ handleChange } name="role_name" type="text" className='border outline-1 outline-gray-200 rounded-[0.25rem] mt-1 font-thin px-4 py-2 pb-4' id="name" placeholder="Enter a name that represents the role's responsibilities and purpose." />
                      </label>
                      <label htmlFor="description" className="flex flex-col mb-4">
                         Role Description:
-                        <input name="description" type="text" className='border outline-1 outline-gray-200 rounded-[0.25rem] mt-1 font-thin px-4 py-2 pb-16' id="description" placeholder="Provide a brief description outlining the role's key responsibilities and purpose." />
+                        <input onChange={ handleChange } name="description" type="text" className='border outline-1 outline-gray-200 rounded-[0.25rem] mt-1 font-thin px-4 py-2 pb-16' id="description" placeholder="Provide a brief description outlining the role's key responsibilities and purpose." />
                      </label>
                   </div>
                </div>
@@ -73,7 +80,7 @@ export default function CreateRole(){
 
                      <div className="border-b p-4">
                         <label className="flex">
-                           <input name="manage_user" type="checkbox" className="h-6 w-6 mt-1 me-3" />
+                           <input onChange={ handleChange } name="manage_user" type="checkbox" className="h-6 w-6 mt-1 me-3" />
                            <span className="w-10/12">
                               <h1 className="text-lg">Manage User Roles</h1>
                               <p>Create, edit, and delete user roles, defining their specific permissions and responsibilities.</p>
@@ -83,7 +90,7 @@ export default function CreateRole(){
 
                      <div className="border-b p-4 flex flex-col">
                         <label className="flex">
-                           <input name="access_em" type="checkbox" className="h-6 w-6 mt-1 me-3" />
+                           <input onChange={ handleChange } name="access_em" type="checkbox" className="h-6 w-6 mt-1 me-3" />
                            <span className="w-10/12">
                               <h1 className="text-lg">Access Employee Data</h1>
                               <p>View and edit the details of employees.</p>
@@ -91,15 +98,15 @@ export default function CreateRole(){
                         </label>
                         <div className="flex ms-8 my-2 text-gray-400 text-sm font-extralight">
                            <label className="flex me-4">
-                              <input name="ae_all" type="checkbox" className="me-1" />
+                              <input onChange={ handleChange } name="ae_all" type="checkbox" className="me-1" />
                               <span>All Employees</span>
                            </label>     
                            <label className="flex me-4">
-                              <input name="ae_sub" type="checkbox" className="me-1" />
+                              <input onChange={ handleChange } name="ae_sub" type="checkbox" className="me-1" />
                               <span>Subordinates</span>
                            </label>     
                            <label className="flex me-4">
-                              <input name="ae_sel" type="checkbox" className="me-1" />
+                              <input onChange={ handleChange } name="ae_sel" type="checkbox" className="me-1" />
                               <span>Selected Employees</span>
                            </label>     
                         </div>
@@ -107,7 +114,7 @@ export default function CreateRole(){
 
                      <div className="border-b p-4 flex flex-col">
                         <label className="flex">
-                           <input name="define_performance" type="checkbox" className="h-6 w-6 mt-1 me-3" />
+                           <input onChange={ handleChange } name="define_performance" type="checkbox" className="h-6 w-6 mt-1 me-3" />
                            <span className="w-10/12">
                               <h1 className="text-lg">Define Performance Metrics</h1>
                               <p>View and edit the performance metrics of employees.</p>
@@ -115,15 +122,15 @@ export default function CreateRole(){
                         </label>
                         <div className="flex ms-8 my-2 text-gray-400 text-sm font-extralight">
                            <label className="flex me-4">
-                              <input name="dp_all" type="checkbox" className="me-1" />
+                              <input onChange={ handleChange } name="dp_all" type="checkbox" className="me-1" />
                               <span>All Employees</span>
                            </label>     
                            <label className="flex me-4">
-                              <input name="dp_sub" type="checkbox" className="me-1" />
+                              <input onChange={ handleChange } name="dp_sub" type="checkbox" className="me-1" />
                               <span>Subordinates</span>
                            </label>     
                            <label className="flex me-4">
-                              <input name="dp_sel" type="checkbox" className="me-1" />
+                              <input onChange={ handleChange } name="dp_sel" type="checkbox" className="me-1" />
                               <span>Selected Employees</span>
                            </label>     
                         </div>
@@ -131,7 +138,7 @@ export default function CreateRole(){
 
                      <div className="border-b p-4 flex flex-col">
                         <label className="flex">
-                           <input name="access_hierachy" type="checkbox" className="h-6 w-6 mt-1 me-3" />
+                           <input onChange={ handleChange } name="access_hierachy" type="checkbox" className="h-6 w-6 mt-1 me-3" />
                            <span className="w-10/12">
                               <h1 className="text-lg">Access Reporting Hierachy</h1>
                               <p>Define and modify the organizational reporting structure, assigning managers to employees and creating teams.</p>
@@ -141,7 +148,7 @@ export default function CreateRole(){
 
                      <div className="border-b p-4 flex flex-col">
                         <label className="flex">
-                           <input name="manage_review" type="checkbox" className="h-6 w-6 mt-1 me-3" />
+                           <input onChange={ handleChange } name="manage_review" type="checkbox" className="h-6 w-6 mt-1 me-3" />
                            <span className="w-10/12">
                               <h1 className="text-lg">Manage Performance Reviews</h1>
                               <p>Schedule, modify, or cancel performance review meetings for any employee.</p>
@@ -149,15 +156,15 @@ export default function CreateRole(){
                         </label>
                         <div className="flex ms-8 my-2 text-gray-400 text-sm font-extralight">
                            <label className="flex me-4">
-                              <input name="mr_all" type="checkbox" className="me-1" />
+                              <input onChange={ handleChange } name="mr_all" type="checkbox" className="me-1" />
                               <span>All Employees</span>
                            </label>     
                            <label className="flex me-4">
-                              <input name="mr_sub" type="checkbox" className="me-1" />
+                              <input onChange={ handleChange } name="mr_sub" type="checkbox" className="me-1" />
                               <span>Subordinates</span>
                            </label>     
                            <label className="flex me-4">
-                              <input name="mr_sel" type="checkbox" className="me-1" />
+                              <input onChange={ handleChange } name="mr_sel" type="checkbox" className="me-1" />
                               <span>Selected Employees</span>
                            </label>     
                         </div>
@@ -185,7 +192,7 @@ export default function CreateRole(){
 
                </div>
                <div className='flex justify-center my-6 w-full'>
-                  <a href=""className='bg-pes text-white px-32 py-3 rounded-sm' onClick={ () => dispatch( roleCreatedView() ) }>Create Role</a>
+                  <input type="submit" className='bg-pes text-white px-32 py-3 rounded-sm' value={ 'Create role' }/>
                </div>
             </div>            
          </form>

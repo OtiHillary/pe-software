@@ -6,9 +6,15 @@ import Formtwo from './multistep-form/form_two';
 import Formthree from './multistep-form/form_three';
 import { useState } from "react"
 import jwt from 'jsonwebtoken'
+import { useDispatch } from 'react-redux';
+import { successView } from '@/app/state/success/successSlice';
+import { useRouter } from 'next/navigation';
+
 
 export default function MainForm (){
     const [ formdata, setFormdata ] = useState()
+    const router = useRouter()
+    const dispatch = useDispatch()
     const formElements = [
         { 
             element: <Formone key={0} formdata={formdata} setFormdata={setFormdata}/>, 
@@ -44,11 +50,10 @@ export default function MainForm (){
             )
             let res = await req.json()
         
-            if(res.status == 200){
-              console.log('token before storage:', res.token )
-              localStorage.setItem('access_token', res.token );
-              console.log(res.name)
-              reroute.push('/dashboard')
+            if(res.status == 200){              
+              console.log(res.message)
+              dispatch(successView())
+              router.push('/em-database')
             }
 
             if (res.status == 500) {
