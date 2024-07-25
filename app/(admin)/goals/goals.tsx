@@ -3,7 +3,7 @@ import Image from "next/image"
 import { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { RootState } from '../../state/store'
-import { newGoal, editGoal } from "@/app/state/goals/goalSlice";
+import { newGoal, viewGoal } from "@/app/state/goals/goalSlice";
 import { Status, CalendarRemove } from 'iconsax-react'
 import jwt, { JwtPayload } from "jsonwebtoken";
 
@@ -19,7 +19,6 @@ type storage_token = {
 export default function Goals(){
     const [grid, setGrid] = useState(false)
     const [goals, setGoals] = useState([])
-    const new_goal = useSelector( (state: RootState) => state.goal.new )
     const dispatch = useDispatch()
 
 
@@ -77,7 +76,7 @@ export default function Goals(){
                     {
                         goals?.map((i, key) => {
                             return(
-                                <div key={key} className={ `${ grid? 'w-72 py-6': 'flex justify-between w-full py-1' } bg-white rounded-md border border-gray-100 px-12` } onClick={ () => { console.log(i); dispatch( editGoal({ payload: i, type: 'edit' }) )} }>
+                                <div key={key} className={ `${ grid? 'w-72 py-6': 'flex justify-between w-full py-1' } bg-white rounded-md border border-gray-100 px-12` } onClick={ async () => { console.log(i); dispatch( viewGoal({ payload: i, type: 'view' }) )} }>
                                     <h1 className={ `${ grid? 'text-xl font-bold': '' } my-2` }>
                                         { i.name }
                                     </h1>

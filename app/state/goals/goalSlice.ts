@@ -12,30 +12,27 @@ type goal = {
 
 type goalState = {
     new: boolean;
-    edit: {
-        visible: boolean;
-        data: goal;
-    };
+    view: boolean;
+    edit: boolean;
+    data: goal;
     delete: boolean;
 }
 
 
 const initialState: goalState = {
     new: false,
-    edit: {
-        visible: false,
-        data: {
-            name: '',
-            status: 0,
-            description: '',
-            day_started: '',
-            due_date: '',
-            id: 0,
-            user_id: ''
-        },
+    data: {
+        name: '',
+        status: 0,
+        description: '',
+        day_started: '',
+        due_date: '',
+        id: 0,
+        user_id: ''
     },
+    edit: false,
+    view: false,
     delete: false
-
 }
 const goalSlice = createSlice({
     name: 'goalActions',
@@ -44,14 +41,28 @@ const goalSlice = createSlice({
         newGoal: (state) => {
             state.new = !state.new
         },
-        editGoal: (state, { payload }) => {
-            console.log('the payload is: ',payload)
-            state.edit.visible = !state.edit.visible
-            if(state.edit.visible) state.edit.data = payload.payload
+        viewGoal: (state, { payload }) => {
+            state.view = !state.view
+            state.data = payload.payload
+        },
+        unviewGoal: (state) => {
+            state.view = !state.view
+        },
+        editGoal: (state) => {
+            state.edit = !state.edit
         },
         deleteGoal: (state) => {
+            state.data = {
+                name: '',
+                status: 0,
+                description: '',
+                day_started: '',
+                due_date: '',
+                id: 0,
+                user_id: ''
+            },
             state.delete = !state.delete
-            state.edit.visible = !state.edit.visible
+            state.view = !state.view
         },
         cancelDelete: (state) => {
             state.delete = !state.delete
@@ -60,5 +71,5 @@ const goalSlice = createSlice({
     }
 })
 
-export const { newGoal, editGoal, deleteGoal, cancelDelete } = goalSlice.actions
+export const { newGoal, viewGoal, unviewGoal, editGoal, deleteGoal, cancelDelete } = goalSlice.actions
 export default goalSlice.reducer
