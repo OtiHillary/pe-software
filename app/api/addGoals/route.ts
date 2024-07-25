@@ -10,16 +10,10 @@ type Goals = {
 }
 
 async function updateData( entry: Goals ) {
-   const params = [ entry.name, entry.description, new Date(entry.due_date), entry.id, entry.user_id  ]
+   const params = [ entry.name, entry.description, new Date(entry.due_date), entry.user_id  ]
    const query = `
-      UPDATE goals
-      SET
-         name = $1,
-         description = $2,
-         due_date = $3
-      WHERE id = $4
-      AND user_id = $5
-      RETURNING *;
+        INSERT INTO goals (name, description, status, day_started, due_date, user_id)
+        VALUES ( $1, $2, 70, '1990-01-01', $3, $4 );
    `
    await prisma.$queryRawUnsafe(query, ...params)
   
@@ -27,7 +21,7 @@ async function updateData( entry: Goals ) {
    return { message: 'success', status: 200 }
 }
 
-export async function PUT(request: NextRequest) {
+export async function POST(request: NextRequest) {
   const data = await request.json();
 
   if (data) {

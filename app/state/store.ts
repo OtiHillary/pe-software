@@ -9,6 +9,7 @@ import roleCreatedReducer from './rolecreated/roleCreatedSlice'
 import loadingReducer from './loading/loadingSlice'
 import userReducer from './user/userSlice'
 import successReducer from './success/successSlice'
+import failureReducer from './failure/failureSlice'
 
 export const store = configureStore({
     reducer: {
@@ -21,7 +22,8 @@ export const store = configureStore({
         roleCreated: roleCreatedReducer,
         loading: loadingReducer,
         user: userReducer,
-        success: successReducer
+        success: successReducer,
+        failure: failureReducer
     },
 })
 export type RootState = ReturnType<typeof store.getState>;

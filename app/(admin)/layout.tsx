@@ -17,6 +17,7 @@ import NotificationSent from '../components/modals/notification_sent'
 import RoleCreated from '../components/modals/role_created'
 import Success from '../components/modals/success'
 import Viewgoal from '../components/modals/viewgoal'
+import Failure from '../components/modals/failure'
 
 const lato = Lato( 
   {
@@ -33,6 +34,7 @@ export default function RootLayout({ children, }: { children: React.ReactNode })
           <Notification />
           <SetNotification />
           <Success />
+          <Failure />
           <Action />
           <Newgoal/>
           <Editgoal/>

@@ -1,14 +1,18 @@
 import { useDispatch, useSelector } from 'react-redux';
+import { successView } from '@/app/state/success/successSlice';
 import { newGoal } from '@/app/state/goals/goalSlice';
 import { RootState } from '../../state/store'
 import { CloseCircle } from 'iconsax-react'
 import { useState } from 'react';
+import jwt from 'jsonwebtoken'
+import { useRouter } from 'next/navigation';
 
 
 
 export default function Newgoal(){
     const isVisible = useSelector( (state: RootState) => state.goal.new )
     const dispatch = useDispatch()
+    const router = useRouter()
     const [ formData, setFormdata ] = useState({})   
     
     function handleChange(event){
@@ -16,18 +20,25 @@ export default function Newgoal(){
     }
     
     async function handleSubmit(event) {
-        event.prevault()
+        event.preventDefault()
+        const token = localStorage.getItem('access_token')
+        const user = jwt.decode(token, 'oti')
 
         try {
-            const data = await fetch('/api/getGoals', {
+            const data = await fetch('/api/addGoals', {
                 method: 'POST',
                 headers: {
                     "Content-Type": "application/json"
                 },
-                body: JSON.stringify(formData)
+                body: JSON.stringify({...formData, user_id : user.name})
 
             })  
-            console.log(data)          
+
+            console.log(data)
+            dispatch( newGoal())
+            dispatch( successView())   
+            router.push('/goals')
+
         } catch (error) {
             console.error(error)
         }
@@ -49,7 +60,7 @@ export default function Newgoal(){
 
                 <div className="formgroup flex flex-col w-1/2">
                     <label htmlFor=""className='font-bold my-2 text-sm'>Due Date:</label>
-                    <input onChange={ handleChange } name='due_date' type="text" className='font-light text-sm text-gray-500 placeholder-gray-500 py-4 px-4 outline-0 border focus:border-gray-400 rounded-sm' placeholder='15/11/2023' />
+                    <input onChange={ handleChange } name='due_date' type="date" className='font-light text-sm text-gray-500 placeholder-gray-500 py-4 px-4 outline-0 border focus:border-gray-400 rounded-sm' placeholder='15/11/2023' />
                 </div>
 
                 <input type='submit' className='bg-pes rounded-md text-white w-full py-4 mt-6' value={'Set Goal'} />

@@ -48,7 +48,11 @@ const goalSlice = createSlice({
         unviewGoal: (state) => {
             state.view = !state.view
         },
-        editGoal: (state) => {
+        editGoal: (state, { payload }) => {
+            state.data = payload.payload
+            state.data.due_date = state.data.due_date.includes('T')? payload.payload.due_date.split('T')[0] : state.data.due_date
+        },
+        uneditGoal: (state) => {
             state.edit = !state.edit
         },
         deleteGoal: (state) => {
@@ -57,7 +61,7 @@ const goalSlice = createSlice({
                 status: 0,
                 description: '',
                 day_started: '',
-                due_date: '',
+                due_date: '01-01-2222',
                 id: 0,
                 user_id: ''
             },
@@ -71,5 +75,5 @@ const goalSlice = createSlice({
     }
 })
 
-export const { newGoal, viewGoal, unviewGoal, editGoal, deleteGoal, cancelDelete } = goalSlice.actions
+export const { newGoal, viewGoal, unviewGoal, editGoal, uneditGoal, deleteGoal, cancelDelete } = goalSlice.actions
 export default goalSlice.reducer

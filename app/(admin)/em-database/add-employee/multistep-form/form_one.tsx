@@ -13,7 +13,7 @@ export default function Formone({ formdata, setFormdata }){
 
                 <div className="formgroup flex flex-col my-2 w-full">
                     <label htmlFor=""className='my-2 text-sm'>Current Home Address:</label>
-                    <input name="address" onChange={ (event) => setFormdata({...formdata, [event?.target.name]: event.target.value }) } type="text" className='font-light text-sm text-gray-500 placeholder-gray-300 py-3 px-6 outline-0 border focus:border-gray-400 rounded-sm' placeholder='' />
+                    <input name="address" onChange={ (event) => setFormdata({...formdata, [event?.target.name]: event.target.value }) } type="text" className='font-light text-sm text-gray-500 placeholder-gray-300 py-3 px-6 outline-0 border focus:border-gray-400 rounded-sm' placeholder='Home address' />
                 </div>
                 <div className="formgroup flex flex-col my-2 w-full">
                     <label htmlFor=""className='my-2 text-sm'>Faculty/College:</label>
@@ -29,7 +29,7 @@ export default function Formone({ formdata, setFormdata }){
 
                 <div className="formgroup flex flex-col my-2 w-full">
                     <label htmlFor="" className='my-2 text-sm'>Functional G.S.M:</label>
-                    <input name="gsm" onChange={ (event) => setFormdata({...formdata, [event?.target.name]: event.target.value }) } type="text" className='font-light text-sm text-gray-500 placeholder-gray-300 py-3 px-6 outline-0 border focus:border-gray-400 rounded-sm' placeholder='' />
+                    <input name="gsm" onChange={ (event) => setFormdata({...formdata, [event?.target.name]: event.target.value }) } type="text" className='font-light text-sm text-gray-500 placeholder-gray-300 py-3 px-6 outline-0 border focus:border-gray-400 rounded-sm' placeholder='gsm' />
                 </div>
 
                 <div className="formgroup flex flex-col my-2 w-full">
@@ -42,29 +42,29 @@ export default function Formone({ formdata, setFormdata }){
          <div className="w-[95%] mx-auto flex justify-between">
             <div className="formgroup flex flex-col">
                <label htmlFor="" className='my-2 text-sm'>{`Date of birth:`}</label>
-               <input name="dob" onChange={ (event) => setFormdata({...formdata, [event?.target.name]: event.target.value }) } type="date" className='font-light text-sm text-gray-500 placeholder-gray-300 py-3 px-6 outline-0 border focus:border-gray-400 rounded-sm' placeholder="Enter the Employee's email address" />
+               <input name="dob" onChange={ (event) => setFormdata({...formdata, [event?.target.name]: event.target.value }) } type="date" className='font-light text-sm text-gray-500 placeholder-gray-300 py-3 px-6 outline-0 border focus:border-gray-400 rounded-sm' placeholder="Enter the Employee's dob" />
             </div>
 
             <div className="formgroup flex flex-col">
                <label htmlFor=""className='my-2 text-sm'>Date of first appointment:</label>
-               <input name="doa" onChange={ (event) => setFormdata({...formdata, [event?.target.name]: event.target.value }) } type="date" className='font-light text-sm text-gray-500 placeholder-gray-300 py-3 px-6 outline-0 border focus:border-gray-400 rounded-sm' placeholder='' />
+               <input name="doa" onChange={ (event) => setFormdata({...formdata, [event?.target.name]: event.target.value }) } type="date" className='font-light text-sm text-gray-500 placeholder-gray-300 py-3 px-6 outline-0 border focus:border-gray-400 rounded-sm' placeholder='Date of first appointment' />
             </div>
 
             <div className="formgroup flex flex-col">
                <label htmlFor=""className='my-2 text-sm'>Post/grade of first appointment:</label>
-               <input name="post" onChange={ (event) => setFormdata({...formdata, [event?.target.name]: event.target.value }) } type="text" className='font-light text-sm text-gray-500 placeholder-gray-300 py-3 px-6 outline-0 border focus:border-gray-400 rounded-sm' placeholder='Select a Department' />
+               <input name="post" onChange={ (event) => setFormdata({...formdata, [event?.target.name]: event.target.value }) } type="text" className='font-light text-sm text-gray-500 placeholder-gray-300 py-3 px-6 outline-0 border focus:border-gray-400 rounded-sm' placeholder='Post of first appointment' />
             </div>
 
             <div className="formgroup flex flex-col">
                <label htmlFor=""className='my-2 text-sm'>Date of confirmation:</label>
-               <input name='doc' onChange={ (event) => setFormdata({...formdata, [event?.target.name]: event.target.value }) } type="date" className='font-light text-sm text-gray-500 placeholder-gray-300 py-3 px-6 outline-0 border focus:border-gray-400 rounded-sm' placeholder='Select a Department' />
+               <input name='doc' onChange={ (event) => setFormdata({...formdata, [event?.target.name]: event.target.value }) } type="date" className='font-light text-sm text-gray-500 placeholder-gray-300 py-3 px-6 outline-0 border focus:border-gray-400 rounded-sm' placeholder='Date of appointment' />
             </div>
          </div>
 
          <div className="w-[80%] ms-8 me-auto mb-4 flex justify-between">
             <div className="formgroup flex flex-col">
-               <label htmlFor="" className='my-2 text-sm'>{`Present post:`}</label>
-               <input name="role" onChange={ (event) => setFormdata({...formdata, [event?.target.name]: event.target.value }) } type="text" className='font-light text-sm text-gray-500 placeholder-gray-300 py-3 px-6 outline-0 border focus:border-gray-400 rounded-sm' placeholder="Enter the Employee's email address" />
+               <label htmlFor="" className='my-2 text-sm'>Present post:</label>
+               <input name="role" onChange={ (event) => setFormdata({...formdata, [event?.target.name]: event.target.value }) } type="text" className='font-light text-sm text-gray-500 placeholder-gray-300 py-3 px-6 outline-0 border focus:border-gray-400 rounded-sm' placeholder="Present post" />
             </div>
 
             <div className="formgroup flex flex-col">
@@ -74,7 +74,7 @@ export default function Formone({ formdata, setFormdata }){
 
             <div className="formgroup flex flex-col">
                <label htmlFor=""className='my-2 text-sm'>Current level:</label>
-               <input name="level" onChange={ (event) => setFormdata({...formdata, [event?.target.name]: event.target.value }) } type="text" className='font-light text-sm text-gray-500 placeholder-gray-300 py-3 px-6 outline-0 border focus:border-gray-400 rounded-sm' placeholder='Select a Department' />
+               <input name="level" onChange={ (event) => setFormdata({...formdata, [event?.target.name]: event.target.value }) } type="text" className='font-light text-sm text-gray-500 placeholder-gray-300 py-3 px-6 outline-0 border focus:border-gray-400 rounded-sm' placeholder='Current level' />
             </div>
          </div>
 

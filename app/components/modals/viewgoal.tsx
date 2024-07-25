@@ -1,7 +1,7 @@
 'use client'
 
 import { useDispatch, useSelector } from 'react-redux';
-import { unviewGoal, editGoal, deleteGoal } from '@/app/state/goals/goalSlice';
+import { unviewGoal, editGoal, uneditGoal, deleteGoal } from '@/app/state/goals/goalSlice';
 import { RootState } from '@/app/state/store'
 import { CloseCircle } from 'iconsax-react'
 import { useEffect, useOptimistic, useRef, useState } from 'react';
@@ -18,7 +18,6 @@ type goal = {
     user_id:string
 }
 
-
 export default function Viewgoal(){
     const isVisible = useSelector( (state: RootState) => state.goal.view )
     const data: goal = useSelector( (state: RootState) => state.goal.data )
@@ -27,7 +26,7 @@ export default function Viewgoal(){
 
     function handleEdit(){
         dispatch( unviewGoal() )
-        dispatch( editGoal() )
+        dispatch( uneditGoal() )
     }
 
     async function handleDelete(){
@@ -37,7 +36,7 @@ export default function Viewgoal(){
     }
     useEffect(() => {
         goalData.current = data
-    }, [])
+    }, [data])
     
     return (
         <div className={`(viewGoal) ${ isVisible? 'visible': 'invisible' } rounded-sm shadow-lg p-12 z-30 flex flex-col w-4/12 bg-white absolute top-1/2 -translate-y-1/2`}>

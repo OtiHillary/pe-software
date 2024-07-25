@@ -1,12 +1,13 @@
 'use client'
 
 import { useDispatch, useSelector } from 'react-redux';
-import { editGoal, deleteGoal } from '@/app/state/goals/goalSlice';
+import { editGoal, uneditGoal, deleteGoal } from '@/app/state/goals/goalSlice';
 import { RootState } from '@/app/state/store'
 import { CloseCircle } from 'iconsax-react'
-import { useEffect, useOptimistic, useState } from 'react';
+import { useState } from 'react';
 import jwt from 'jsonwebtoken'
 import { successView } from '@/app/state/success/successSlice';
+import { useRouter } from 'next/navigation';
 
 type goal = {
     name: string
@@ -21,12 +22,17 @@ type goal = {
 export default function Editgoal(){
     const isVisible = useSelector( (state: RootState) => state.goal.edit )
     const data: goal = useSelector( (state: RootState) => state.goal.data )
-    const [ formData, setFormData ] = useState({})
     const dispatch = useDispatch()
+    const router = useRouter()
+    console.log('do this first')
 
     function handleChange(event) {
-        console.log(formData, event.target.value);
-        setFormData({ ...data, [event.target.name]: event.target.value })
+        dispatch( editGoal(
+            { 
+                payload: { ...data, [event.target.name]: event.target.value }, 
+                type: 'edit'
+            }
+        ))
     }
 
     async function handleSubmit() {
@@ -39,47 +45,44 @@ export default function Editgoal(){
                 headers: {
                     'Content-Type': 'application/json', 
                 },
-                body: JSON.stringify({ ...formData, user_id: user})
+                body: JSON.stringify({ ...data, user_id: user.name})
             });
         
             if (!response.ok) {
                 const errorData = await response.json();
                 throw new Error(`Error: ${errorData}`);
+                // dispatch( failureView())
+
             }
         
             const responseData = await response.json();
-            dispatch( editGoal())
+            dispatch( uneditGoal())
             dispatch( successView())
-
             console.log('Success:', responseData); 
+            router.push('/goals')
 
         } catch (error) {
             console.error('Error:', error); 
         }
     }
-
-    useEffect(() => {
-        console.log(data, ' and ', formData)
-        setFormData(data)
-    }, [])
     
     return (
         <div className={`notification ${ isVisible? 'visible': 'invisible' } rounded-sm shadow-lg p-12 z-30 flex flex-col w-4/12 bg-white absolute top-1/2 -translate-y-1/2`}>
-            <CloseCircle onClick={ () => { dispatch( editGoal()) }} className='ms-auto hover:text-red-500'/>
+            <CloseCircle onClick={ () => { dispatch( uneditGoal()) }} className='ms-auto hover:text-red-500'/>
             <div>
                 <div className="formgroup flex flex-col w-full">
                     <label htmlFor=""className='font-bold my-2 text-sm'>Goal:</label>
-                    <input type='text' name='name' className='font-light text-sm text-gray-500 py-4 px-4 border rounded-md placeholder:text-gray-700' placeholder={ formData.name } onChange={ handleChange }/>
+                    <input type='text' name='name' className='font-light text-sm text-gray-500 py-4 px-4 border rounded-md placeholder:text-gray-700' value={ data?.name } onChange={ handleChange }/>
                 </div>
 
                 <div className="formgroup flex flex-col w-full">
                     <label htmlFor=""className='font-bold my-2 text-sm'>Description:</label>
-                    <input type='text' name='description' className='font-light text-sm text-gray-500 py-4 px-4 border rounded-md placeholder:text-gray-700' placeholder={ formData.description } onChange={ handleChange }/>
+                    <input type='text' name='description' className='font-light text-sm text-gray-500 py-4 px-4 border rounded-md placeholder:text-gray-700' value={ data?.description } onChange={ handleChange }/>
                 </div>
 
                 <div className="formgroup flex flex-col w-1/2">
                     <label htmlFor=""className='font-bold my-2 text-sm'>Due Date:</label>
-                    <input type='date' name='status' className='font-light text-sm text-gray-500 py-4 px-4 border rounded-md placeholder:text-gray-700' value={ new Date(formData.due_date) } onChange={ handleChange }/>
+                    <input type='date' name='status' className='font-light text-sm text-gray-500 py-4 px-4 border rounded-md placeholder:text-gray-700' onChange={ handleChange }/>
                 </div>
 
                 <div className="actions flex">

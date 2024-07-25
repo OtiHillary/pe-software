@@ -46,17 +46,28 @@ function generateUniquePassword(length = 8) {
       password += chars.charAt(randomIndex);
    }
    return password;
- }
+}
  
- const randPassword = generateUniquePassword()
+const randPassword = generateUniquePassword()
  
+async function addAssigned(info: reqInfo){
+   const { role , org } = info
 
+   await prisma.$queryRaw`
+      UPDATE roles
+      SET assigned = assigned + 1
+      WHERE name = ${ role }
+      AND org = ${ org }
+   `
+   await prisma.$disconnect()
+}
 
 async function addUser(info: reqInfo) {
   const { 
    name, 
    email, 
-   gsm, 
+   gsm,
+   role,
    address, 
    faculty_college, 
    dob, 
@@ -85,18 +96,11 @@ async function addUser(info: reqInfo) {
   try{
       await prisma.$queryRaw`
          INSERT INTO pesuser (name, email, password, gsm, role, address, faculty_college, dob, doa, poa, doc, post, dopp, level, image, org)
-         VALUES (${name}, ${email}, ${ randPassword }, ${gsm}, ${post}, ${address}, ${faculty_college}, ${ new Date(dob) }, ${ new Date(doa) }, ${poa}, ${ new Date(doc) }, ${post}, ${ new Date(dopp) }, ${level}, NULL, ${org});
+         VALUES (${name}, ${email}, ${ randPassword }, ${gsm}, ${role}, ${address}, ${faculty_college}, ${ new Date(dob) }, ${ new Date(doa) }, ${poa}, ${ new Date(doc) }, ${post}, ${ new Date(dopp) }, ${level}, NULL, ${org});
       `
       await prisma.$queryRaw`
          INSERT INTO permission (manage_user, access_em, ae_all, ae_sub, ae_sel, define_performance, dp_all, dp_sub, dp_sel, access_hierachy, manage_review, mr_all, mr_sub, mr_sel, user_id, org)
          VALUES (${manage_user}, ${access_em}, ${ ae_all }, ${ae_sub}, ${ae_sel}, ${define_performance}, ${dp_all}, ${ dp_sub }, ${ dp_sel }, ${access_hierachy}, ${ manage_review }, ${mr_all}, ${mr_sub}, ${mr_sel}, ${name}, ${org});
-      `
-
-      await prisma.$queryRaw`
-         UPDATE roles
-         SET assigned = assigned + 1
-         WHERE name = ${ post };
-         AND org = '${ org }'
       `
 
       await prisma.$disconnect()
