@@ -20,7 +20,7 @@ export default function Sidebar(): JSX.Element{
 
    console.log(pathname.split('/'))
 
-   // roles are: Admin, employee, team-lead 
+   // roles are: Admin, dean, hod 
 
    const tabs = [
       { key: 1, name: 'Dashboard', icon: <Home3 />, href: '/dashboard', role_access: ['admin', 'employee-ac', 'employee-nac', 'team-lead', 'employee-w'] },
@@ -28,7 +28,7 @@ export default function Sidebar(): JSX.Element{
       { key: 5, name: 'Goals', icon: <Setting4 />, href: '/goals', role_access: ['admin', 'employee-ac', 'employee-nac', 'team-lead', 'employee-w'] }, 
       { key: 3, name: 'Data Entry', icon: <Home3 />, href: '/data-en', role_access: ['employee-ac', 'employee-nac', 'team-lead', 'employee-w'] }, 
       { key: 6, name: 'Assessment', icon: <Award />, href: '/assessment', role_access: ['admin'] }, 
-      { key: 7, name: 'Performance Review', icon: <Teacher />, href: '/performance', role_access: ['admin', 'employee-ac', 'employee-nac', 'team-lead', 'employee-w'] }, 
+      { key: 7, name: 'Performance Review', icon: <Teacher />, href: '/performance', role_access: ['employee-ac', 'employee-nac', 'team-lead', 'employee-w'] }, 
       { key: 2, name: 'Profile', icon: <ProfileCircle />, href: '/profile', role_access: ['employee-ac', 'employee-nac', 'team-lead', 'employee-w'] },
       { key: 8, name: 'Pricing', icon: <DollarCircle />, href: '/pricing', role_access: ['admin'] },
       { key: 9, name: 'Maintenance Model', icon: <DollarCircle />, href: '/maintenance', role_access: ['employee-ac', 'employee-nac', 'team-lead', 'employee-w'] }
@@ -47,7 +47,7 @@ export default function Sidebar(): JSX.Element{
                tabs.map((i) => {
                   const is_active = i.href == pathname || `/${pathname.split('/')[1]}` == i.href
                   return(
-                  <Link style={{ display: `${ i.role_access.includes(user?.role)? '': '' }` }} href={ i.href } key={ i.key } className={`${ is_active? 'bg-gray-200 text-pes' : 'bg-transparent text-gray-400'} hover:bg-gray-200 hover:text-pes p-3 ps-8 my-1 text-md flex`}>
+                  <Link style={{ display: `${ i.role_access.includes(user?.role)? '': 'none' }` }} href={ i.href } key={ i.key } className={`${ is_active? 'bg-gray-200 text-pes' : 'bg-transparent text-gray-400'} hover:bg-gray-200 hover:text-pes p-3 ps-8 my-1 text-md flex`}>
                      { i.icon }
                      <p className='mx-3'> { i.name }</p>
                   </Link>

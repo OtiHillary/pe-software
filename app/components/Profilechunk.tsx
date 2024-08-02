@@ -1,15 +1,36 @@
 'use client'
-import React, { Suspense, useEffect, useState } from 'react'
+import React, { useEffect, useState } from 'react'
+
+type user = {
+   id:number
+   name: string
+   email: string 
+   password: string
+   gsm: string
+   role: string
+   address: string
+   faculty_college: string
+   dob: string
+   doa: string
+   poa : string
+   doc : string
+   post : string
+   dopp: string
+   level: string
+   image : string
+   org : string
+ }
 
 export default function ProfileChunk(){
-   const access_token = localStorage.getItem('access_token') as string
-   console.log('access toknei s TokenExpiredError', access_token)
    const [ expanded, setExpanded ] = useState(false)
-   const [user, setUser] = useState(null)
+   const [user, setUser] = useState<user>(null)
    const ImageFallback = () => <div className='w-40 h-40 rounded-md animate-pulse bg-gray-200'></div>
    const TextFallback = () => <><div className='w-60 h-3 my-1 rounded-full animate-pulse bg-gray-200'></div><div className='w-40 h-3 my-1 rounded-full animate-pulse bg-gray-200'></div></>
 
    useEffect( () => {
+      const access_token = localStorage.getItem('access_token') as string
+      console.log('access toknei s TokenExpiredError', access_token)
+
       async function fetchUser(){
          const data = await fetch('/api/getUser', 
             {
@@ -24,7 +45,7 @@ export default function ProfileChunk(){
          setUser(await res)
       }
       fetchUser()
-   }, [access_token])
+   }, [])
 
 
    return(
@@ -133,7 +154,7 @@ export default function ProfileChunk(){
                      user?
                         <>
                            <p className='text-gray-400'>Date of Birth:</p>
-                           <p className='font-semibold text-lg'>{user.dob}</p>                           
+                           <p className='font-semibold text-lg'>{user.dob?.toString().split('T')[0]}</p>                           
                         </>
                      :
                      <TextFallback />
@@ -145,7 +166,7 @@ export default function ProfileChunk(){
                      user?
                         <>
                            <p className='text-gray-400'>date of first Appointment:</p>
-                           <p className='font-semibold text-lg'>{user.doa}</p>                           
+                           <p className='font-semibold text-lg'>{user.doa?.toString().split('T')[0]}</p>                           
                         </>
                      :
                      <TextFallback />
@@ -170,7 +191,7 @@ export default function ProfileChunk(){
                      user?
                         <>
                            <p className='text-gray-400'>Date of confirmation:</p>
-                           <p className='font-semibold text-lg'>{user.doc}</p>                        
+                           <p className='font-semibold text-lg'>{user.doc?.toString().split('T')[0]}</p>                        
                         </>
                      :
                      <TextFallback />
@@ -196,7 +217,7 @@ export default function ProfileChunk(){
                      user?
                         <>
                            <p className='text-gray-400'>Date appointed to present post:</p>
-                           <p className='font-semibold text-lg'>{user.dopp}</p>                        
+                           <p className='font-semibold text-lg'>{user.dopp?.toString().split('T')[0]}</p>                        
                         </>
                      :
                      <TextFallback />

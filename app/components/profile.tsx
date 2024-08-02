@@ -1,12 +1,8 @@
 'use client'
-
-import jwt from 'jsonwebtoken'
-import React, { Suspense, useEffect, useState } from 'react'
 import ProfileChunk from './Profilechunk'
 
 
 export default function Profile(){
-   const access_token = localStorage.getItem('access_token') as string
 
    return(
       <div className='flex flex-col m-8 p-8 bg-white'>
