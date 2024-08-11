@@ -65,24 +65,24 @@ interface SsrFObject {
  
  //Linear regression
  function linearRegression(data: [number, number][] ): RegressionObject {
-    const n = data.length;
-    let xSum = 0;
-    let ySum = 0;
-    let xySum = 0;
-    let xSquaredSum = 0;
+   const n = data.length;
+   let xSum = 0;
+   let ySum = 0;
+   let xySum = 0;
+   let xSquaredSum = 0;
  
-    for (let i = 0; i < n; i++) {
-        const [x, y]: [number, number] = data[i];
-        xSum += x;
-        ySum += y;
-        xySum += x * y;
-        xSquaredSum += x * x;
-    }
- 
-    const slope = (n * xySum - xSum * ySum) / (n * xSquaredSum - xSum * xSum);
-    const intercept = (ySum - slope * xSum) / n;
- 
-    return { slope, intercept };
+   for (let i = 0; i < n; i++) {
+      const [x, y]: [number, number] = data[i];
+      xSum += x;
+      ySum += y;
+      xySum += x * y;
+      xSquaredSum += x * x;
+   }
+
+   const slope = (n * xySum - xSum * ySum) / (n * xSquaredSum - xSum * xSum);
+   const intercept = (ySum - slope * xSum) / n;
+
+   return { slope, intercept };
  }
  
 
@@ -91,6 +91,6 @@ interface SsrFObject {
 //   .catch(error => console.error(error));
 
 module.exports = {
-    calculateSkewKurt,
-    calculateSsrF,
+   calculateSkewKurt,
+   calculateSsrF,
 }

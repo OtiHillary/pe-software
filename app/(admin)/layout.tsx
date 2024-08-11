@@ -18,6 +18,7 @@ import RoleCreated from '../components/modals/role_created'
 import Success from '../components/modals/success'
 import Viewgoal from '../components/modals/viewgoal'
 import Failure from '../components/modals/failure'
+import { useEffect } from 'react'
 
 const lato = Lato( 
   {
@@ -27,6 +28,10 @@ const lato = Lato(
   )
 
 export default function RootLayout({ children, }: { children: React.ReactNode }) {
+  useEffect(() => {
+    console.log('dont render twice')
+  }, [])
+  
   return (
     <Provider store={ store }>
         <div className={ lato.className + 'bg-gray-10 flex flex-row relative justify-center w-screen' }>

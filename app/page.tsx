@@ -13,7 +13,7 @@ export default function Home() {
     } else {
       router.push('/login')
     }
-  }, [router]) 
+  }, []) 
 
   return(
     <main className="w-full flex justify-center overflow-hidden relative bg-pes text-white">

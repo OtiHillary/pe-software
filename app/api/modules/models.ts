@@ -5,12 +5,6 @@ const hrs = {
 }
 
 // for calculating standard man hours
-
-/*
-   EVALUATION / PREDICTIVE MODELS
-*/
-// ---------------------------------------------------------------------------------
-
 //PERESONNEL REDUNDANCY INDEX
 function red_index(hours_used: number, hours_given: number) {
    return 1 - util_index( hours_used, hours_given );
