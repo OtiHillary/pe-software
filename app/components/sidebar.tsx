@@ -47,7 +47,7 @@ export default function Sidebar(): JSX.Element{
                tabs.map((i) => {
                   const is_active = i.href == pathname || `/${pathname.split('/')[1]}` == i.href
                   return(
-                  <Link style={{ display: `${ i.role_access.includes(user?.role)? '': 'none' }` }} href={ i.href } key={ i.key } className={`${ is_active? 'bg-gray-200 text-pes' : 'bg-transparent text-gray-400'} hover:bg-gray-200 hover:text-pes p-3 ps-8 my-1 text-md flex`}>
+                  <Link style={{ display: `${ i.role_access.includes(user?.role)? '': '' }` }} href={ i.href } key={ i.key } className={`${ is_active? 'bg-gray-200 text-pes' : 'bg-transparent text-gray-400'} hover:bg-gray-200 hover:text-pes p-3 ps-8 my-1 text-md flex`}>
                      { i.icon }
                      <p className='mx-3'> { i.name }</p>
                   </Link>

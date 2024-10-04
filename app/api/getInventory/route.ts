@@ -3,8 +3,8 @@ import prisma from '../prisma.dev'
 import jwt from 'jsonwebtoken'
 
 
-async function getUser( user: string | null ) {
-  const users = await prisma.$queryRawUnsafe('SELECT * FROM pesuser where org = $1', user?.toString())
+async function getInventory( user: string | null ) {
+  const users = await prisma.$queryRawUnsafe('SELECT * FROM facility where org = $1', user?.toString())
   await prisma.$disconnect()
   return users
 }
@@ -15,7 +15,9 @@ export async function POST(request: NextRequest) {
 
   if (token) {
     try {
-      let userInfo = await getUser(user?.name)
+      let userInfo = await getInventory(user.name)
+      console.log(userInfo);
+      
       return NextResponse.json(userInfo)
 
     } catch(err) {
@@ -23,5 +25,5 @@ export async function POST(request: NextRequest) {
       return NextResponse.json([])
     }    
   }
-  NextResponse.redirect(new URL('/not-found', request.url))
-}
+  return NextResponse.redirect(new URL('/not-found', request.url))
+} 

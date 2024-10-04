@@ -4,6 +4,7 @@ import goalReducer from './goals/goalSlice'
 import notificationReducer from './notification/notificationSlice'
 import setNotificationReducer from './setnotification/setNotificationSlice'
 import actionReducer from './action/actionSlice'
+import taskReducer from './task/taskSlice'
 import notificationSentReducer from './notificationsent/notificationSentSlice'
 import roleCreatedReducer from './rolecreated/roleCreatedSlice'
 import loadingReducer from './loading/loadingSlice'
@@ -17,6 +18,7 @@ export const store = configureStore({
         goal: goalReducer,
         notification: notificationReducer,
         action: actionReducer,
+        task: taskReducer,
         setNotification: setNotificationReducer,
         notificationSent: notificationSentReducer,
         roleCreated: roleCreatedReducer,

@@ -68,9 +68,9 @@ export async function POST(req: Request) {
       let data = await addUser(reqInfo)
       console.log(data);
       if (data == 'success') {
-      return NextResponse.json({ message: 'added employee successfully!', status: 200 })      
+        return NextResponse.json({ message: 'added employee successfully!', status: 200 })      
       } else {
-      return NextResponse.json({ message: 'There was a problem', status: 500})
+        return NextResponse.json({ message: 'There was a problem', status: 500})
       }
    } catch (err) {
       console.error(err)
