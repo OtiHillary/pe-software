@@ -4,9 +4,12 @@ import jwt, { JwtPayload } from "jsonwebtoken";
 
 export default function Home() {
     const [inventory, setInventory] = useState([])
+
     useEffect(()=>{
         const access_token = localStorage.getItem('access_token') as any
         const tokenData = jwt.decode(access_token, 'oti')
+        // console.log("token data is", tokenData);
+        
 
         async function fetchInventory() {
             const data = await fetch('/api/getInventory', {
@@ -18,10 +21,13 @@ export default function Home() {
 
             })
             const InventoryData = await data.json()
+            console.log(InventoryData);
             setInventory(InventoryData)          
         }
+        
         fetchInventory()
     }, [])
+
     return (
         <div className="p-4">
             <div className="flex items-center justify-between mb-4">

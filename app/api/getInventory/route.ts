@@ -4,18 +4,17 @@ import jwt from 'jsonwebtoken'
 
 
 async function getInventory( user: string | null ) {
-  const users = await prisma.$queryRawUnsafe('SELECT * FROM facility where org = $1', user?.toString())
+  const users = await prisma.$queryRawUnsafe('SELECT * FROM facilities where org = $1', user?.toString())
   await prisma.$disconnect()
   return users
 }
 
 export async function POST(request: NextRequest) {
-  const { token } = await request.json();
-  const user = jwt.decode( token, 'oti');
+  const { name } = await request.json();
 
-  if (token) {
+  if (name) {
     try {
-      let userInfo = await getInventory(user.name)
+      let userInfo = await getInventory(name)
       console.log(userInfo);
       
       return NextResponse.json(userInfo)
