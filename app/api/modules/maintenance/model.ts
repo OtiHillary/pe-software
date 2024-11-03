@@ -61,9 +61,10 @@ type Equipment = {
       name: "Temperature Indication Stickers",
       uses: ["Detect temperature anomalies", "Measure temperature gradients"],
     },
+    
     {
       name: "Electronic Thermometers",
-      uses: ["Check air conditioning systems", "Measure pipe temperatures"],
+      uses: [ "Check air conditioning systems", "Measure pipe temperatures" ],
     },
   ];
   
@@ -90,7 +91,7 @@ type Equipment = {
   }
   
   // Function to calculate availability
-  function calculateAvailability(L: number, dPM: number, dCo: number, H: (L: number) => number): number {
+  function calculateAvailability(L: number, dPM: number, dCo: number, H: number): number {
     const numFailures = H(L);
     const totalPMDowntime = numFailures * dPM;
     const totalCoDowntime = numFailures * dCo;

@@ -1,6 +1,7 @@
 'use client'
 import { useEffect, useState } from "react"
 import jwt, { JwtPayload } from "jsonwebtoken";
+import { ArrowLeft } from "iconsax-react";
 
 export default function Home() {
     const [inventory, setInventory] = useState([])
@@ -32,14 +33,16 @@ export default function Home() {
         <div className="p-4">
             <div className="flex items-center justify-between mb-4">
                 <div className="flex items-center">
-                    <i className="fas fa-arrow-left text-xl mr-2"></i>
+                    <a href="/maintenance">
+                        <ArrowLeft className="me-4"/>
+                    </a>
                     <h1 className="text-2xl font-semibold">Inventory Sheet</h1>
                 </div>
-                <input 
+                {/* <input 
                     type="text" 
                     placeholder="Search any tool or facility" 
                     className="border rounded-full px-4 py-2 w-1/3"
-                />
+                /> */}
             </div>
             <table className="min-w-full border-collapse border border-gray-200">
                 <thead>
