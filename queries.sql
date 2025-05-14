@@ -15,7 +15,7 @@ CREATE TABLE Performance (
    type TEXT NOT NULL,
    yield TEXT NOT NULL,
    user_id TEXT NOT NULL,
-   CONSTRAINT fk_users FOREIGN KEY (user_id) REFERENCES users (name)
+   CONSTRAINT fk_users FOREIGN KEY (user_id) REFERENCES pesuser (name)
 );
 
 CREATE TABLE goals (

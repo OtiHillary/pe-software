@@ -3,14 +3,14 @@ import prisma from '../prisma.dev'
 import jwt from 'jsonwebtoken'
 
 type Facility = {
-    description_of_facility: string,
-    identification_symbol: string,
-    location: string,
-    facility_register_id_no: string,
-    type: string,
-    priority_rating: number,
-    remarks: string,
-    org: string
+  description_of_facility: string,
+  identification_symbol: string,
+  location: string,
+  facility_register_id_no: string,
+  type: string,
+  priority_rating: number,
+  remarks: string,
+  org: string
 }
 
 async function getFacility( user: string | null ) {
