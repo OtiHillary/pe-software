@@ -1,6 +1,4 @@
 import { NextResponse } from 'next/server'
-// import { PrismaClient } from '@prisma/client'
-// const prisma = new PrismaClient()
 import prisma from '../prisma.dev'
 import jwt from 'jsonwebtoken'
 
@@ -46,8 +44,8 @@ export async function POST(req: Request) {
     
     if (data.length > 0) {
       const token = jwt.sign( { name: data[0].name, role: data[0].role }, 'oti');
-      
       return NextResponse.json({ message: 'Login successful!', token: token, status: 200 })      
+
     } else {
       return NextResponse.json({ message: 'Invalid credentials', status: 500})
     }
