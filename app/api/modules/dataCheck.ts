@@ -84,11 +84,7 @@ interface SsrFObject {
 
    return { slope, intercept };
  }
- 
 
-// getRandomUsers()
-//   .then(users => console.log(users))
-//   .catch(error => console.error(error));
 
 module.exports = {
    calculateSkewKurt,

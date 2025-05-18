@@ -31,7 +31,7 @@ type Equipment = {
     L: number; // PM cycle length
     dCo: number; // Average downtime due to corrective maintenance
     dPM: number; // Average downtime due to preventive maintenance
-    H:  number; // Function to calculate expected number of failures
+    H:  (param: number) => number; // Function to calculate expected number of failures
   };
   
   // Example data
@@ -73,7 +73,7 @@ type Equipment = {
     L: 1200,
     dCo: 1,
     dPM: 2,
-    H: 0.81,
+    H: (param) => 0.81,
   };
   
   // Function to perform maintenance
@@ -91,7 +91,7 @@ type Equipment = {
   }
   
   // Function to calculate availability
-  function calculateAvailability(L: number, dPM: number, dCo: number, H: number): number {
+  function calculateAvailability(L: number, dPM: number, dCo: number, H: (param: number) => number ): number {
     const numFailures = H(L);
     const totalPMDowntime = numFailures * dPM;
     const totalCoDowntime = numFailures * dCo;
