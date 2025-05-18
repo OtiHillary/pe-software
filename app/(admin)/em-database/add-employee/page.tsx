@@ -12,7 +12,7 @@ import { useRouter } from 'next/navigation';
 
 
 export default function MainForm (){
-    const [ formdata, setFormdata ] = useState()
+    const [ formdata, setFormdata ] = useState<Record<string, any>>({})
     const router = useRouter()
     const dispatch = useDispatch()
     const formElements = [
@@ -31,11 +31,12 @@ export default function MainForm (){
     ]
     const { steps, step, stepIndex, next, back } = useMultistepForm(formElements)
 
-    async function handleSubmit(event){
+    async function handleSubmit(event: { preventDefault: () => void; }){
         event.preventDefault()
         const token = localStorage.getItem('access_token');
-        const user = jwt.decode(token, 'oti')
-        const data = { ...formdata, org: user?.name}
+        const user = token ? jwt.decode(token) : null;
+        const orgName = typeof user === 'object' && user !== null && 'name' in user ? (user as any).name : undefined;
+        const data = { ...(formdata || {}), org: orgName }
         console.log('formdata is: ', formdata, 'data is:', data)
 
         try {

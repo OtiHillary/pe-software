@@ -43,11 +43,11 @@ const init = {
 }
 
 
-export default function Page({ params }){
+export default function Page({ params }: { params: { user: string } }){
     const access_token = localStorage.getItem('access_token') as string
     const [ expanded, setExpanded ] = useState(false)
     const [ databaseView, setDatabaseView ] = useState('profile')
-    const [user, setUser] = useState<user>(null)
+    const [user, setUser] = useState<user>(init)
     const ImageFallback = () => <div className='w-40 h-40 rounded-md animate-pulse bg-gray-200'></div>
     const TextFallback = () => <><div className='w-60 h-3 my-1 rounded-full animate-pulse bg-gray-200'></div><div className='w-40 h-3 my-1 rounded-full animate-pulse bg-gray-200'></div></>
  

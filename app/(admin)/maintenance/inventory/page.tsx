@@ -3,12 +3,22 @@ import { useEffect, useState } from "react"
 import jwt, { JwtPayload } from "jsonwebtoken";
 import { ArrowLeft } from "iconsax-react";
 
+type InventoryItem = {
+    identification_symbol: string;
+    description_of_facility: string;
+    location: string;
+    facility_register_id_no: string;
+    type: string;
+    priority_rating: string;
+    remarks: string;
+};
+
 export default function Home() {
-    const [inventory, setInventory] = useState([])
+    const [inventory, setInventory] = useState<InventoryItem[]>([])
 
     useEffect(()=>{
         const access_token = localStorage.getItem('access_token') as any
-        const tokenData = jwt.decode(access_token, 'oti')
+        const tokenData = jwt.decode(access_token)
         // console.log("token data is", tokenData);
         
 
@@ -47,30 +57,28 @@ export default function Home() {
             <table className="min-w-full border-collapse border border-gray-200">
                 <thead>
                     <tr className="bg-gray-100">
-                        <th className="border border-gray-200 px-4 py-2 text-left">Identification Symbol</th>
-                        <th className="border border-gray-200 px-4 py-2 text-left">Description of Facility</th>
-                        <th className="border border-gray-200 px-4 py-2 text-left">Location</th>
-                        <th className="border border-gray-200 px-4 py-2 text-left">Facility Register ID No</th>
-                        <th className="border border-gray-200 px-4 py-2 text-left">Type</th>
-                        <th className="border border-gray-200 px-4 py-2 text-left">Priority Rating</th>
-                        <th className="border border-gray-200 px-4 py-2 text-left">Remarks</th>
-                    </tr>
-                </thead>
-                <tbody>
                     { 
-                        inventory.map((index, key) => (
+                        inventory.map((item, key) => (
                             <tr key={key}>
-                                <td className="border border-gray-200 px-4 py-2">{ index.identification_symbol }</td>
-                                <td className="border border-gray-200 px-4 py-2">{ index.description_of_facility }</td>
-                                <td className="border border-gray-200 px-4 py-2">{ index.location }</td>
-                                <td className="border border-gray-200 px-4 py-2">{ index.facility_register_id_no }</td>
-                                <td className="border border-gray-200 px-4 py-2">{ index.type }</td>
-                                <td className="border border-gray-200 px-4 py-2">{ index.priority_rating }</td>
-                                <td className="border border-gray-200 px-4 py-2">{ index.remarks }</td>
+                                <td className="border border-gray-200 px-4 py-2">{ item.identification_symbol }</td>
+                                <td className="border border-gray-200 px-4 py-2">{ item.description_of_facility }</td>
+                                <td className="border border-gray-200 px-4 py-2">{ item.location }</td>
+                                <td className="border border-gray-200 px-4 py-2">{ item.facility_register_id_no }</td>
+                                <td className="border border-gray-200 px-4 py-2">{ item.type }</td>
+                                <td className="border border-gray-200 px-4 py-2">{ item.priority_rating }</td>
+                                <td className="border border-gray-200 px-4 py-2">{ item.remarks }</td>
                             </tr>
                         ))
                     }
-                </tbody>
+                        {/* <td className="border border-gray-200 px-4 py-2">{ index.identification_symbol }</td>
+                        <td className="border border-gray-200 px-4 py-2">{ index.description_of_facility }</td>
+                        <td className="border border-gray-200 px-4 py-2">{ index.location }</td>
+                        <td className="border border-gray-200 px-4 py-2">{ index.facility_register_id_no }</td>
+                        <td className="border border-gray-200 px-4 py-2">{ index.type }</td>
+                        <td className="border border-gray-200 px-4 py-2">{ index.priority_rating }</td>
+                        <td className="border border-gray-200 px-4 py-2">{ index.remarks }</td> */}
+                    </tr>
+                </thead>
             </table>
         </div>
     )

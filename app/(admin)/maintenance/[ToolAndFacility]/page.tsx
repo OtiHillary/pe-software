@@ -1,6 +1,12 @@
 import { ArrowLeft } from "iconsax-react";
 
-export default function Home({ params }) {
+interface HomeProps {
+    params: {
+        ToolAndFacility: string;
+    };
+}
+
+export default function Home({ params }: HomeProps) {
     return (
         <div className="min-h-screen w-full bg-gray-100 flex justify-center items-center">
             <div className="bg-white shadow-md rounded-lg w-[95%]">

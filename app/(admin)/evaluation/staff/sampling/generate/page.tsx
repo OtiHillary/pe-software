@@ -38,7 +38,7 @@ export default function Generate(){
         setVisible(prev => !prev)
     }
 
-    function handleChange(event){
+    function handleChange(event: { target: { name: any; value: any } }){
         setValues((prev) => {
             return { ...prev, [event.target.name] : Number(event.target.value) }
         })

@@ -1,6 +1,11 @@
 'use client'
 
-export default function Formtwo({ formdata, setFormdata }){
+type FormProps = {
+   formdata: Record<string, any>;
+   setFormdata: (data: Record<string, any>) => void;
+};
+
+export default function Formtwo({ formdata, setFormdata }: FormProps){
    return(
       <>
          <div className="w-full">

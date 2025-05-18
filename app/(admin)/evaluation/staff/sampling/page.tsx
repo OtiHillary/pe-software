@@ -52,6 +52,11 @@ export default function Home() {
         event.preventDefault()
         const input = formRef.current;
 
+        if (!input) {
+            console.error('Form reference is null');
+            return;
+        }
+
         // Capture the form as canvas
         const canvas = await html2canvas(input);
         const imgData = canvas.toDataURL('image/png');
@@ -81,7 +86,7 @@ export default function Home() {
         pdf.save('form.pdf');
     }
 
-    function handleFactored(event) {
+    function handleFactored(event: { target: { name: any; value: any; }; }) {
         setFactoredData((prev) => {
             return { 
                 ...prev, 
@@ -91,12 +96,32 @@ export default function Home() {
         console.log('the change isFinite', factored);
     }
 
-    function handleObserved(event) {
-        setObserved_time( prev => [ ...prev, [event.target.id] = event.target.value ] )
+    interface ObservedEvent extends React.ChangeEvent<HTMLInputElement> {
+        target: HTMLInputElement & { id: string; value: string };
     }
 
-    function handleEstimated(event) {
-        setEstimated_time( prev => [ ...prev, [event.target.id] = event.target.value ] )
+    function handleObserved(event: ObservedEvent) {
+        setObserved_time(prev => {
+            const idx = Number(event.target.id);
+            const value = Number(event.target.value);
+            const updated = [...prev];
+            updated[idx] = value;
+            return updated;
+        })
+    }
+
+    interface EstimatedEvent extends React.ChangeEvent<HTMLInputElement> {
+        target: HTMLInputElement & { id: string; value: string };
+    }
+
+    function handleEstimated(event: EstimatedEvent): void {
+        setEstimated_time(prev => {
+            const idx = Number(event.target.id);
+            const value = Number(event.target.value);
+            const updated = [...prev];
+            updated[idx] = value;
+            return updated;
+        });
     }
 
     function handleTaskAdd(event: { preventDefault: () => void }) {

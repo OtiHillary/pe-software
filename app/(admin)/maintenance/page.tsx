@@ -55,7 +55,7 @@ export default function Home(){
     useEffect(()=>{
         async function fetchTools(){
             const access_token = localStorage.getItem('access_token') as any
-            const tokenData = jwt.decode(access_token, 'oti')
+            const tokenData = jwt.decode(access_token)
             console.log(tokenData);
             
 

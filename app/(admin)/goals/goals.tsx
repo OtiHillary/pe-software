@@ -16,15 +16,22 @@ type storage_token = {
     role: string
 }
 
+type Goal = {
+    name: string;
+    status: number | string;
+    daysLeft: number;
+    // to add other properties late
+}
+
 export default function Goals(){
     const [grid, setGrid] = useState(false)
-    const [goals, setGoals] = useState([])
+    const [goals, setGoals] = useState<Goal[]>([])
     const dispatch = useDispatch()
 
 
     useEffect(() => {
-        const access_token = localStorage.getItem('access_token')
-        const tokenData = jwt.decode(access_token, 'oti')
+        const access_token = localStorage.getItem('access_token') as string
+        const tokenData = jwt.decode(access_token)
 
         async function fetchGoal() {
             const data = await fetch('/api/getGoals', {

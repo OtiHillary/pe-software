@@ -62,13 +62,15 @@ export default function Home({ params }: { params: { name: string} } ) {
         });
     }
 
-    async function evaluate(event) {
+    interface EvaluateEvent extends React.FormEvent<HTMLFormElement> {}
+
+    async function evaluate(event: EvaluateEvent): Promise<void> {
         event.preventDefault()
-        let temp = 0
-        let c_factor = 0
-        let c_estimate: number;
-        let basic_time: number;
-        let std_time: number;
+        let temp: number = 0
+        let c_factor: number = 0
+        let c_estimate: number
+        let basic_time: number
+        let std_time: number
 
         for (let i = 0; i < inputs.length; i++) {
             temp += ( inputs[i].observed - inputs[i].estimated )
@@ -79,7 +81,13 @@ export default function Home({ params }: { params: { name: string} } ) {
         basic_time = c_estimate * (otherInputs.rating / 100)
         std_time = basic_time + ( basic_time * ( otherInputs.allowance/100 ) )
 
-        const tempTasks = tasks.map( input => 
+        interface Task {
+            name: string
+            man_hours: number
+            [key: string]: any
+        }
+
+        const tempTasks: Task[] = tasks.map((input: Task) => 
             input.name === params.name ? { ...input, man_hours: std_time } : input
         );
 

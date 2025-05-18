@@ -1,7 +1,14 @@
 import { ArrowRight2 } from "iconsax-react"
 import { useState } from "react"
 
-export default function Data({ data }) {
+interface DataProps {
+    data: {
+        title: string;
+        section: string[];
+    };
+}
+
+export default function Data({ data }: DataProps) {
     const [ expanded, setExpanded ] = useState(false)
 
     return(
@@ -13,7 +20,7 @@ export default function Data({ data }) {
  
             <div style={{ display: expanded? '' : 'none' }} className="flex flex-col m-4">
                 {
-                    data.section.map(( i , key) => {
+                    data.section.map((i: string, key: number) => {
                         return(
                             <div className="flex justify-between" key={key}>
                                 <p className="my-auto">{ i }</p>

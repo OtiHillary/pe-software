@@ -15,9 +15,13 @@ export default function Dashboard() {
 
    useEffect(() => {
       const access_token = localStorage.getItem('access_token') as string
-      const temp_user = jwt.decode(access_token, 'oti');
+      const temp_user = jwt.decode(access_token);
 
-      setUser(temp_user)
+      if (temp_user && typeof temp_user === 'object' && 'name' in temp_user && 'role' in temp_user) {
+         setUser({ name: (temp_user as any).name, role: (temp_user as any).role });
+      } else {
+         setUser({ name: '', role: '' });
+      }
    }, [])
 
 

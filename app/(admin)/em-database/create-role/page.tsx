@@ -13,15 +13,18 @@ export default function CreateRole(){
    const dispatch = useDispatch()
    const router = useRouter()
 
-   function handleChange(event) {
+   function handleChange(event: { target: { name: any; value: any; }; }) {
       setFormData( { ...formData, [event.target.name] : event.target.value } )
    }
 
-   async function handleSubmit(event) {
+   async function handleSubmit(event: { preventDefault: () => void; }) {
       event.preventDefault()
-      const access_token = localStorage.getItem('access_token')
-      const user = jwt.decode(access_token, 'oti')
+      const access_token = localStorage.getItem('access_token') as string
+      const user = jwt.decode(access_token)
       console.log( 'data is: ', formData)
+
+      // Safely extract 'name' from user if possible
+      const orgName = typeof user === 'object' && user !== null && 'name' in user ? (user as { name: string }).name : '';
 
       try {
          const req = fetch( '/api/addRoles', {
@@ -29,10 +32,10 @@ export default function CreateRole(){
             headers: {
                "Content-Type" : "application/json"
             },
-            body: JSON.stringify({ ...formData, org: user.name })
+            body: JSON.stringify({ ...formData, org: orgName })
          })         
 
-         const res = (await req).json()
+         const res = await (await req).json()
          if (res.status == 200) console.log('success');
          dispatch( roleCreatedView() )
          router.push('/em-database')

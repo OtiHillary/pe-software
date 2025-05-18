@@ -5,15 +5,13 @@ import { RootState } from '@/app/state/store'
 import { taskAdd, taskChange } from "@/app/state/task/taskSlice";
 
 export default function Home() {
-    const dispatch = useDispatch()
-    const tasks = useSelector( (state: RootState) => state.task )
-    const init: factored_type = { 
+    const init = { 
         id: 0, 
         task: 1, 
         observed: 0, 
         estimated: 0, 
     }
-    const initOther: otherType = { 
+    const initOther = { 
         pearson: 0, 
         rating: 0, 
         allowance: 0, 
@@ -24,18 +22,18 @@ export default function Home() {
     const [ otherInputs, setOtherInputs ] = useState(initOther)
 
 
-    function handleTaskAdd(event: { preventDefault: () => void }) {
-        event.preventDefault()
-        setInputs([
-            ...inputs, 
-            { 
-                id: inputs.length + 1, 
-                task: inputs.length + 1, 
-                observed: 0, 
-                estimated: 0
-            }
-        ]);
-    }
+    // function handleTaskAdd(event: { preventDefault: () => void }) {
+    //     event.preventDefault()
+    //     setInputs([
+    //         ...inputs, 
+    //         { 
+    //             id: inputs.length + 1, 
+    //             task: inputs.length + 1, 
+    //             observed: 0, 
+    //             estimated: 0
+    //         }
+    //     ]);
+    // }
 
     function handleInputChange(num: number, event: ChangeEvent<HTMLInputElement>){
         const newInputs = inputs.map( input => 
@@ -50,7 +48,7 @@ export default function Home() {
         });
     }
 
-    async function evaluate(event) {
+    async function evaluate(event: { preventDefault: () => void; }) {
         event.preventDefault()
         let temp = 0
         let c_factor = 0
@@ -67,8 +65,10 @@ export default function Home() {
         basic_time = c_estimate * (otherInputs.rating / 100)
         std_time = basic_time + ( basic_time * ( otherInputs.allowance/100 ) )
 
-        const tempTasks = tasks.map( input => 
-            input.name === params.name ? { ...input, man_hours: std_time } : input
+        // Replace 'params.name' with the correct variable, e.g., a selected task name or an input value.
+        // For demonstration, let's assume you want to update all tasks with the new man_hours:
+        const tempTasks = tasks.map(input =>
+            ({ ...input, man_hours: std_time })
         );
 
         console.log('new tasks are', tempTasks, 'old tasks are', tasks)

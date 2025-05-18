@@ -15,7 +15,7 @@ export default function Quickstats() {
 
     useEffect(() => {
         const access_token = localStorage.getItem('access_token') as string
-        const temp_user = jwt.decode(access_token, 'oti');
+        const temp_user = jwt.decode(access_token);
 
         async function getStatData(){
             try {
@@ -24,7 +24,7 @@ export default function Quickstats() {
                     headers: {
                         "Content-Type": "application/json"
                     },
-                    body: JSON.stringify({ user: temp_user?.name })
+                    body: JSON.stringify({ user: typeof temp_user === 'object' && temp_user !== null && 'name' in temp_user ? (temp_user as any).name : undefined })
                 })
 
                 const res = await req.json()
