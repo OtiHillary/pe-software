@@ -12,12 +12,12 @@ import { useEffect, useState } from 'react';
 
 export default function Navbar(): JSX.Element{
    const dispatch = useDispatch()
-   const [user, setUser] = useState()
+   const [user, setUser] = useState<jwt.JwtPayload | string | null>(null)
 
    useEffect(() =>{
       const access_token = localStorage.getItem('access_token') as string
-      const user = jwt.decode(access_token, 'oti');
-      console.log(access_token)
+      const user = jwt.decode(access_token);
+      // console.log(access_token)
 
       setUser(user)
    }, [])
@@ -36,7 +36,9 @@ export default function Navbar(): JSX.Element{
             </div> */}
             <div className="image flex justify-between text-gray-600 hover:underline" onClick ={() => dispatch( actionView() )}>
                <Image src={ /* user.image = null? '/young oti.PNG' : user.image */ '/young oti.PNG' } alt='profile image' width={ 40 } height={ 0 } className='mx-2 rounded-full'/>
-               <p className='mx-2 my-auto cursor-pointer'>{ `${user?.name}` }</p>
+               <p className='mx-2 my-auto cursor-pointer'>
+                  { typeof user === 'object' && user !== null && 'name' in user ? user.name as string : '' }
+               </p>
             </div>
             </div>            
          </div>

@@ -23,7 +23,7 @@ type user = {
 
 export default function ProfileChunk(){
    const [ expanded, setExpanded ] = useState(false)
-   const [user, setUser] = useState<user>(null)
+   const [user, setUser] = useState<user | null>(null)
    const ImageFallback = () => <div className='w-40 h-40 rounded-md animate-pulse bg-gray-200'></div>
    const TextFallback = () => <><div className='w-60 h-3 my-1 rounded-full animate-pulse bg-gray-200'></div><div className='w-40 h-3 my-1 rounded-full animate-pulse bg-gray-200'></div></>
 

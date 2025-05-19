@@ -13,8 +13,8 @@ export default function Sidebar(): JSX.Element{
 
    useEffect(() => {
       const access_token = localStorage.getItem('access_token') as string
-      const newUser = jwt.decode(access_token, 'oti')
-      setUser(newUser);
+      const newUser = jwt.decode(access_token)
+      setUser(newUser as { name: string; role: string });
    }, [])
    
 

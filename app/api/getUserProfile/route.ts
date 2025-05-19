@@ -31,11 +31,14 @@ async function getUser( id: number | null, name: string | null ) {
 
 export async function POST(request: NextRequest) {
   const { user, token } = await request.json();
-  const jwtoken = jwt.decode( token, 'oti');
+  const jwtoken = jwt.decode( token);
 
   if (token) {
     try {
-      let userInfo = await getUser(user, jwtoken?.name)
+      let userInfo = await getUser(
+        user,
+        typeof jwtoken === 'object' && jwtoken !== null && 'name' in jwtoken ? (jwtoken as any).name : null
+      )
       console.log(userInfo)
       return NextResponse.json(userInfo)
   

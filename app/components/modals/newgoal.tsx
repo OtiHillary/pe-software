@@ -15,14 +15,21 @@ export default function Newgoal(){
     const router = useRouter()
     const [ formData, setFormdata ] = useState({})   
     
-    function handleChange(event){
+    function handleChange(event: { target: { name: any; value: any; }; }){
         setFormdata( { ...formData, [event.target.name]: event.target.value } )
     }
     
-    async function handleSubmit(event) {
+    async function handleSubmit(event: { preventDefault: () => void; }) {
         event.preventDefault()
         const token = localStorage.getItem('access_token')
-        const user = jwt.decode(token, 'oti')
+        if (!token) {
+            throw new Error('No access token found');
+        }
+        const user = jwt.decode(token)
+
+        if (!user || typeof user !== 'object' || !('name' in user)) {
+            throw new Error('Invalid user token');
+        }
 
         try {
             const data = await fetch('/api/addGoals', {
@@ -30,7 +37,7 @@ export default function Newgoal(){
                 headers: {
                     "Content-Type": "application/json"
                 },
-                body: JSON.stringify({...formData, user_id : user.name})
+                body: JSON.stringify({ ...formData, user_id: (user as { name: string }).name })
 
             })  
 

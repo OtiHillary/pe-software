@@ -3,8 +3,15 @@
 import React, { useEffect, useState } from 'react'
 import { Add, SearchNormal1 } from 'iconsax-react'
 
+type Role = {
+   id: string | number
+   name: string
+   assigned: number
+   // Add other properties if needed
+}
+
 export default function Roles(){
-   const [ roles, setRoles ] = useState([])
+   const [ roles, setRoles ] = useState<Role[]>([])
 
    useEffect(() => {
       async function getRoles() {

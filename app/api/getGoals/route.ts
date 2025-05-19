@@ -11,10 +11,6 @@ type Goals = {
   user_id: string
 }
 
-interface payload{
-  token: string
-}
-
 async function getData( user: string | null ) {
   console.log(user)
   const goals: Goals[] = await prisma.$queryRawUnsafe('SELECT * FROM goals WHERE user_id = $1', user?.toString())

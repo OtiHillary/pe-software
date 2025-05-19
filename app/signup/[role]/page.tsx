@@ -87,7 +87,11 @@ export default function Home({ params }: { params: roleParams }) {
       }
     } catch (error) {
       console.log(error)
-      setMessage({  visibility: 'visible', text: error.message , color: 'red' })
+      let errorMsg = 'An unexpected error occurred';
+      if (error instanceof Error) {
+        errorMsg = error.message;
+      }
+      setMessage({  visibility: 'visible', text: errorMsg , color: 'red' })
 
     }
   }

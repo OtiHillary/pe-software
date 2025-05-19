@@ -11,7 +11,7 @@ type userData = {
 }
 
 export default function Performance(){
-   const [performance, setPerformance] = useState({ goodPerformance: null, badPerformance: null })
+   const [performance, setPerformance] = useState<{ goodPerformance: userData[] | null, badPerformance: userData[] | null }>({ goodPerformance: null, badPerformance: null })
 
    async function getPerformance(){
       const access_token = localStorage.getItem('access_token');

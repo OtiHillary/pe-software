@@ -26,18 +26,28 @@ export default function Editgoal(){
     const router = useRouter()
     console.log('do this first')
 
-    function handleChange(event) {
-        dispatch( editGoal(
-            { 
-                payload: { ...data, [event.target.name]: event.target.value }, 
+    interface HandleChangeEvent extends React.ChangeEvent<HTMLInputElement> {}
+
+    interface EditGoalAction {
+        payload: goal;
+        type: string;
+    }
+
+    function handleChange(event: HandleChangeEvent) {
+        dispatch(
+            editGoal({
+                payload: { ...data, [event.target.name]: event.target.value },
                 type: 'edit'
-            }
-        ))
+            } as EditGoalAction)
+        );
     }
 
     async function handleSubmit() {
         const token = localStorage.getItem('access_token')
-        const user = jwt.decode(token, 'oti')
+        if (!token) {
+            throw new Error('No access token found');
+        }
+        const user = jwt.decode(token)
 
         try {
             const response = await fetch('/api/updateGoals', {
@@ -45,7 +55,7 @@ export default function Editgoal(){
                 headers: {
                     'Content-Type': 'application/json', 
                 },
-                body: JSON.stringify({ ...data, user_id: user.name})
+                body: JSON.stringify({ ...data, user_id: user && typeof user === 'object' && 'name' in user ? (user as any).name : ''})
             });
         
             if (!response.ok) {

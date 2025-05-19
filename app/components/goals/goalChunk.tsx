@@ -9,7 +9,7 @@ import { useEffect, useState } from "react"
 // }
 
 export default function Goals(){
-   const [goals, setGoals] = useState(null)
+   const [goals, setGoals] = useState<any[]>([])
 
    async function getGoals() {
       const access_token = localStorage.getItem('access_token');

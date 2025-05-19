@@ -11,16 +11,20 @@ async function getRoles( user: string | null ) {
 
 export async function POST(request: NextRequest) {
   const { token } = await request.json();
-  const user = jwt.decode( token, 'oti');
+  const user = jwt.decode(token);
 
   if (token) {
     try {
-      let userInfo = await getRoles(user.name)
-      return NextResponse.json(userInfo)
+      let userName: string | null = null;
+      if (typeof user === 'object' && user !== null && 'name' in user) {
+        userName = (user as { name?: string }).name ?? null;
+      }
+      let userInfo = await getRoles(userName);
+      return NextResponse.json(userInfo);
 
     } catch(err) {
       console.error(err)
-      return NextResponse.json([])
+      return NextResponse.json([]);
     }    
   }
   NextResponse.redirect(new URL('/not-found', request.url))
