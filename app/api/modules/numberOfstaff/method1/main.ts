@@ -26,4 +26,4 @@ function grand_total_man_hours(time:number[], rate: number[], relax_time: number
 
 
 
-module.exports = total_man_hours
+export default grand_total_man_hours
