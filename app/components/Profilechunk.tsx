@@ -51,11 +51,11 @@ export default function ProfileChunk(){
    return(
       <div className="details my-2">
          <div className='(initial) flex justify-between'>
-            <div className='flex justify-between py-2'>
-               <div className='w-40 h-40 me-8'>
+            <div className='flex justify-between max-sm:gap-4 max-sm:flex-col py-2'>
+               <div className='w-40 h-40 me-8 max-sm:w-full'>
                   {
                      user?
-                        <img src={ `/${user.image}` } alt="profile-img" className='w-40 h-40'/>                   
+                        <img src={ `/${user.image}` } alt="profile-img" className='w-full h-full'/>                   
                      :
                         <ImageFallback />
                   }

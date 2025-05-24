@@ -11,23 +11,26 @@ type roleParams = {
 
 let slider_index = 0
 
-const first = <>
+const first = (
+  <>
     <h1 className='text-3xl text-semibold my-2 w-10/12'>
       {`Your Company's journey`} <br/> {`towards`} <span className='text-yellow-400'>Enhanced <br/> Performance</span> {`starts today`}
     </h1>
     <p className='text-sm'>
       {`PES is your company's tool for optimizing team performance. Discover a suite of tools tailored to enhance collaboration and achieve organizational goals`}
     </p>
-  </>
+  </>)
 
-const second = <>
-  <h1 className='text-3xl text-semibold my-2 w-10/12'>
-    Customize You Metrics
-  </h1>
-  <p className='text-sm'>
-    {`Craft performance metrics that align with your company's objectives. Our intuitive interface allows you to define goals that resonate with your team's roles and aspirations.`}
-  </p>
-</>
+const second = (
+  <>
+    <h1 className='text-3xl text-semibold my-2 w-10/12'>
+      Customize You Metrics
+    </h1>
+    <p className='text-sm'>
+      {`Craft performance metrics that align with your company's objectives. Our intuitive interface allows you to define goals that resonate with your team's roles and aspirations.`}
+    </p>
+  </>
+)
 
 const third = <>
 

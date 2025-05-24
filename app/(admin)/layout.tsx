@@ -17,7 +17,8 @@ import RoleCreated from '../components/modals/role_created'
 import Success from '../components/modals/success'
 import Viewgoal from '../components/modals/viewgoal'
 import Failure from '../components/modals/failure'
-import { useEffect } from 'react'
+import { useEffect, useState } from 'react'
+import { DocumentSketch } from 'iconsax-react'
 
 const lato = Lato( 
   {
@@ -27,13 +28,26 @@ const lato = Lato(
   )
 
 export default function RootLayout({ children, }: { children: React.ReactNode }) {
+
+  const [is_mobile, setMobile] = useState(false);
+  const [is_sidebar_active, setSideBarActive] = useState(false);
+
+  const handleSideBar = () => {
+    setSideBarActive(!is_sidebar_active);
+  }
+  const handleMobile = () => {~
+    console.log(is_mobile)
+    setMobile(!is_mobile)
+  }
+
   useEffect(() => {
     console.log('dont render twice')
   }, [])
   
   return (
     <Provider store={ store }>
-        <div className={ lato.className + 'bg-gray-10 flex flex-row relative justify-center w-screen' }>
+        <div className={ lato.className + 'bg-gray-10 flex flex-row relative justify-center w-screen' }
+        onChange={handleMobile}>
           <Dimmer />
           <Notification />
           <SetNotification />
@@ -47,9 +61,9 @@ export default function RootLayout({ children, }: { children: React.ReactNode })
           <NotificationSent/>
           <RoleCreated />
 
-          <Sidebar />
-          <div className="flex flex-col w-4/5">
-            <Navbar />
+          <Sidebar is_sidebar_active={is_sidebar_active} handleSideBar={handleSideBar} />
+          <div className="flex flex-col w-4/5 max-lg:w-full">
+            <Navbar is_sidebar_active={is_sidebar_active} handleSideBar={handleSideBar} />
             {children}          
           </div>
         </div>

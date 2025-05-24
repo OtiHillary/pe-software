@@ -2,12 +2,67 @@
 
 import { usePathname } from 'next/navigation';
 import Image from 'next/image'
-import { Home3, Setting4, DollarCircle, ProfileCircle, People, Award, Teacher } from 'iconsax-react';
+import { 
+   Home3,
+   Setting4,
+   DollarCircle,
+   ProfileCircle,
+   People,
+   Award,
+   Teacher,
+   HambergerMenu,
+   CloseCircle,
+   CloseSquare
+} from 'iconsax-react';
 import jwt from 'jsonwebtoken'
 import Link from 'next/link';
 import { useEffect, useState } from 'react';
 
-export default function Sidebar(): JSX.Element{
+// function MobileSidebar({tabs, user, pathname}: {tabs: any, user: any, pathname: any}): JSX.Element {
+//    const [isMenu, setMenu] = useState(false)
+//    return (
+//       <div className="lg:hidden">
+//          <div className={`${isMenu ? 'w-screen' : 'w-auto'} bg-[#ffffff20] h-full shadow-sm shadow-gray-50 me-auto fixed left-2 z-20`}>
+//             <div className={`bg-white h-screen fixed w-1/3 py-3 flex flex-col justify-start ${isMenu ? '': 'hidden'}`}>
+//                <div className = 'my-4 text-pes text-2xl font-extrabold flex justify-center w-2/4 ms-12 me-auto'>
+//                   <Image src={'/Vector.svg'} alt='PES' width={55} height={55} />
+//                   <p className = 'ms-2 my-auto'>PES</p>
+//                </div>
+
+//                <div className='tabs my-16 flex flex-col justify-between'>
+//                {
+//                   tabs.map((i) => {
+//                      const is_active = i.href == pathname || `/${pathname.split('/')[1]}` == i.href
+//                      return(
+//                      <Link onClick={() => setMenu(false)} 
+//                            href={ i.href } key={ i.key } 
+//                            style={{ display: `${ i.role_access.includes(user?.role)? '': '' }` }} 
+//                            className={`${ is_active? 'bg-gray-200 text-pes' : 'bg-transparent text-gray-400'} 
+//                                        hover:bg-gray-200 hover:text-pes p-3 ps-8 my-1 text-md flex`}
+//                         >
+//                         { i.icon }
+//                         <p className='mx-3'> { i.name }</p>
+//                      </Link>
+//                      )
+//                   })
+//                }
+//                </div>            
+//             </div>
+//          </div>
+//          <div className={`hover:bg-gray-200 fixed rounded-lg top-[20px] z-20 ${isMenu ? 'right-8' : 'left-8'}`} >
+//             <button className={`p-[2px] ${isMenu ? 'hidden' : 'block'}`} onClick={() => setMenu(!isMenu)}>
+//                <HambergerMenu size={40} color={"black"} />
+//             </button>
+//             <button className={`p-[2px] ${isMenu ? 'block' : 'hidden'}`} onClick={() => setMenu(!isMenu)} >
+//                <CloseSquare size={40} color={"black"}/>
+//             </button>
+//          </div>
+//       </div>
+//    )
+// }
+
+export default function Sidebar({is_sidebar_active, handleSideBar}: 
+   {is_sidebar_active: boolean, handleSideBar:any}): JSX.Element{
    const pathname = usePathname()
    const [user, setUser] = useState({ name: '', role: '' })
 
@@ -15,6 +70,7 @@ export default function Sidebar(): JSX.Element{
       const access_token = localStorage.getItem('access_token') as string
       const newUser = jwt.decode(access_token)
       setUser(newUser as { name: string; role: string });
+
    }, [])
    
 
@@ -34,29 +90,68 @@ export default function Sidebar(): JSX.Element{
       { key: 9, name: 'Maintenance Model', icon: <DollarCircle />, href: '/maintenance', role_access: ['employee-ac', 'employee-nac', 'team-lead', 'employee-w', 'admin'] }
    ]
    
-   return(
-      <div className=" w-1/5 h-full shadow-sm shadow-gray-50 me-auto relative">
-         <div className="bg-white h-screen fixed w-1/5 py-3 flex flex-col justify-start">
-            <div className = 'my-4 text-pes text-2xl font-extrabold flex justify-center w-2/4 ms-12 me-auto'>
-               <Image src={'/Vector.svg'} alt='PES' width={55} height={55} />
-               <p className = 'ms-2 my-auto'>PES</p>
+   return (
+         <>
+            <div className="w-1/5 h-full shadow-sm shadow-gray-50 me-auto max-lg:hidden lg:block z-20">
+               <div className="bg-white h-screen fixed w-1/5 py-3 flex flex-col justify-start">
+                  <div className = 'my-4 text-pes text-2xl font-extrabold flex justify-center w-2/4 ms-12 me-auto'>
+                     <Image src={'/Vector.svg'} alt='PES' width={55} height={55} />
+                     <p className = 'ms-2 my-auto'>PES</p>
+                  </div>
+
+                  <div className='tabs my-16 flex flex-col justify-between'>
+                  {
+                     tabs.map((i) => {
+                        const is_active = i.href == pathname || `/${pathname.split('/')[1]}` == i.href
+                        return(
+                        <Link style={{ display: `${ i.role_access.includes(user?.role)? '': '' }` }}
+                              href={ i.href } key={ i.key } 
+                              className={`${ is_active? 'bg-gray-200 text-pes' : 'bg-transparent text-gray-400'} 
+                                          hover:bg-gray-200 hover:text-pes p-3 ps-8 my-1 text-md flex`}
+                        >
+                           { i.icon }
+                           <p className='mx-3'> { i.name }</p>
+                        </Link>
+                        )
+                     })
+                  }
+                  </div>            
+               </div>
             </div>
+            <div className="lg:hidden">
+               <div className={`${is_sidebar_active ? 'w-screen' : 'w-auto'} bg-[#ffffff20] h-full shadow-sm shadow-gray-50 me-auto fixed left-2 z-20`}>
+                  <div className={`bg-white h-screen fixed w-1/3 max-sm:w-2/3 py-3 flex flex-col justify-start ${is_sidebar_active ? '': 'hidden'}`}>
+                     <div className = 'my-4 text-pes text-2xl font-extrabold flex justify-center w-2/4 ms-12 me-auto'>
+                        <Image src={'/Vector.svg'} alt='PES' width={55} height={55} />
+                        <p className = 'ms-2 my-auto'>PES</p>
+                     </div>
 
-            <div className='tabs my-16 flex flex-col justify-between'>
-            {
-               tabs.map((i) => {
-                  const is_active = i.href == pathname || `/${pathname.split('/')[1]}` == i.href
-                  return(
-                  <Link style={{ display: `${ i.role_access.includes(user?.role)? '': '' }` }} href={ i.href } key={ i.key } className={`${ is_active? 'bg-gray-200 text-pes' : 'bg-transparent text-gray-400'} hover:bg-gray-200 hover:text-pes p-3 ps-8 my-1 text-md flex`}>
-                     { i.icon }
-                     <p className='mx-3'> { i.name }</p>
-                  </Link>
-                  )
-               })
-            }
-            </div>            
-         </div>
-      </div>
-   )
-
+                     <div className='tabs my-10 max-lg:my-0 flex flex-col justify-between'>
+                     {
+                        tabs.map((i) => {
+                           const is_active = i.href == pathname || `/${pathname.split('/')[1]}` == i.href
+                           return(
+                           <Link onClick={() => handleSideBar()} 
+                                 href={ i.href } key={ i.key } 
+                                 style={{ display: `${ i.role_access.includes(user?.role)? '': '' }` }} 
+                                 className={`${ is_active? 'bg-gray-200 text-pes' : 'bg-transparent text-gray-400'} 
+                                             hover:bg-gray-200 hover:text-pes p-3 ps-8 my-1 text-md flex`}
+                              >
+                              { i.icon }
+                              <p className='mx-3'> { i.name }</p>
+                           </Link>
+                           )
+                        })
+                     }
+                     </div>            
+                  </div>
+               </div>
+               <div className={`hover:bg-gray-200 bg-white fixed rounded-lg top-[20px] z-20 right-6 ${is_sidebar_active ? '' : 'hidden'}`} >
+                  <button className={`p-[2px]`} onClick={() => handleSideBar()} >
+                     <CloseSquare size={40} color={"black"}/>
+                  </button>
+               </div>
+            </div>
+         </>
+      )
 }
