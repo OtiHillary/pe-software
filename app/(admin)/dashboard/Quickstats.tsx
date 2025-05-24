@@ -39,8 +39,8 @@ export default function Quickstats() {
      }, [])
 
     return(
-        <div className="(Stats)-- flex flex-wrap justify-between m-6">
-            <div className="stat_1 shadow-custom shadow-gray-100 flex justify-between text-white rounded-md h-40 p-8 w-3_4 min-w-[220px] bg-pes">
+        <div className="(Stats)-- flex flex-wrap gap-2 justify-between m-6">
+            <div className="stat_1 shadow-custom shadow-gray-100 flex justify-between text-white rounded-md h-40 p-8 w-3_4 min-w-[220px] max-sm:w-full bg-pes">
                 <div className='flex flex-col justify-center'>
                     <p className='m-1 text-sm'>Number of Employees:</p>
                     <p className='m-1 text-4xl font-bold' >
@@ -60,7 +60,7 @@ export default function Quickstats() {
                 <People size={ 64 } className='text-gray-400 font-bold mb-auto' />
             </div>
 
-            <div className="stat_2 shadow-custom shadow-gray-100 flex justify-between rounded-md h-40 p-8 w-3_4 min-w-[220px] bg-white">
+            <div className="stat_2 shadow-custom shadow-gray-100 flex justify-between rounded-md h-40 p-8 w-3_4 min-w-[220px] max-sm:w-full bg-white">
                 <div className='flex flex-col justify-center'>
                     <p className='m-1 text-sm'>Completed Appraisals:</p>
                     <p className='m-1 text-4xl font-bold text-black' >
@@ -80,7 +80,7 @@ export default function Quickstats() {
                 <Award size={ 64 } className='text-gray-100 font-bold mb-auto' />
             </div>
 
-            <div className="stat_3 shadow-custom shadow-gray-100 flex justify-between rounded-md h-40 p-8 w-3_4 min-w-[220px] bg-white">
+            <div className="stat_3 shadow-custom shadow-gray-100 flex justify-between rounded-md h-40 p-8 w-3_4 min-w-[220px] bg-white  max-sm:w-full">
                 <div className='flex flex-col justify-center'>
                     <p className='m-1 text-sm'>Pending Assesments:</p>
                     <p className='m-1 text-4xl font-bold text-black' >

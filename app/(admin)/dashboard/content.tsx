@@ -37,8 +37,8 @@ export default function Dashboard() {
 
          }
 
-         <div className="(Goals and Insights)-- flex justify-between mx-6 mb-6">
-            <div className="(left_panel)-- w-4_5 flex flex-col">
+         <div className="(Goals and Insights)-- flex justify-between max-md:flex-col max-md:gap-2 mx-6 mb-6">
+            <div className="(left_panel)-- w-4_5 max-md:w-full flex flex-col">
                <div className="w-full shadow-md shadow-gray-100 p-4 bg-white">
                   <div className='flex justify-between w-full p-4'>
                      <p className='text-3xl text-black my-auto'>Goals</p>
@@ -68,7 +68,7 @@ export default function Dashboard() {
                </div>
             </div>
 
-            <div className="(right_panel)-- w-1/2">
+            <div className="(right_panel)-- w-1/2 max-md:w-full">
                <div className="w-full shadow-md shadow-gray-100 p-4 bg-white">
                   <div className='flex justify-start w-full'>
                   <p className='text-3xl text-black my-auto p-4'>Performance Insights</p>

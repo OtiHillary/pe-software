@@ -67,13 +67,13 @@ export default function Employee(){
    return(
       <div className='flex justify-center w-full h-full'>
          <div className='m-4 bg-white w-full h-full'>
-            <div className='flex justify-between h-[5rem] w-full'>
+            <div className='flex justify-between h-[5rem] max-md:py-2 max-md:h-fit w-full flex-row max-md:flex-col max-md:gap-2'>
                <div className='flex justify-between my-auto mx-4'>
-                  <label htmlFor="em-search" className='relative h-fit'>
+                  <label htmlFor="em-search" className='relative h-fit max-md:w-full bg-white'>
                      <SearchNormal1 className='text-gray-300 absolute top-1/2 left-6 -translate-y-1/2' size={20}/>
-                     <input type="text" placeholder='Search for Employee' className='placeholder:text-xs placeholder:text-gray-300  focus:ring-gray-400 focus:border-gray-400 bg-[#fafafa] border-gray-50 h-[2.5rem] ps-16 ' />
+                     <input type="text" placeholder='Search for Employee' className='placeholder:text-xs placeholder:text-gray-300 max-md:w-full focus:ring-gray-400 focus:border-gray-400 bg-[#fafafa] border-gray-50 h-[2.5rem] ps-16 ' />
                   </label>
-                  <div className='relative mx-4'>
+                  <div className='relative mx-0'>
                      {/* <select id="countries" className="bg-[#fafafa] border border-gray-50 text-gray-300 text-xs focus:ring-gray-400 focus:border-gray-400 block w-full h-[2.5rem] px-2">
                         <option value="US" checked>sort by</option>
                         <option value="US">Role</option>
@@ -82,7 +82,7 @@ export default function Employee(){
                   </div>
                </div>
 
-               <div className='flex justify-between my-auto mx-3 text-xs'>
+               <div className='flex justify-between my-auto mx-0 text-xs'>
                   <a href='/em-database/add-employee' className='flex justify-center bg-pes text-white px-10 py-2 m-4 border h-fit border-pes my-auto text-center'>
                      <span className='my-auto'>Add an Employee</span>
                      <Add size={20} className='my-auto ms-2'/>
