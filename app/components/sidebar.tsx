@@ -10,8 +10,7 @@ import {
    People,
    Award,
    Teacher,
-   HambergerMenu,
-   CloseCircle,
+   Setting3,
    CloseSquare
 } from 'iconsax-react';
 import jwt from 'jsonwebtoken'
@@ -87,7 +86,7 @@ export default function Sidebar({is_sidebar_active, handleSideBar}:
       { key: 7, name: 'Performance Review', icon: <Teacher />, href: '/performance', role_access: ['employee-ac', 'employee-nac', 'team-lead', 'employee-w'] }, 
       { key: 2, name: 'Profile', icon: <ProfileCircle />, href: '/profile', role_access: ['employee-ac', 'employee-nac', 'team-lead', 'employee-w'] },
       { key: 8, name: 'Pricing', icon: <DollarCircle />, href: '/pricing', role_access: ['admin'] },
-      { key: 9, name: 'Maintenance Model', icon: <DollarCircle />, href: '/maintenance', role_access: ['employee-ac', 'employee-nac', 'team-lead', 'employee-w', 'admin'] }
+      { key: 9, name: 'Maintenance Model', icon: <Setting3 />, href: '/maintenance', role_access: ['employee-ac', 'employee-nac', 'team-lead', 'employee-w', 'admin'] }
    ]
    
    return (

@@ -1,14 +1,23 @@
 import { ArrowRight2 } from "iconsax-react"
 import { useState } from "react"
 
+interface DataEntry {
+    name: string;
+    form: string;
+}
+
 interface DataProps {
     data: {
         title: string;
-        section: string[];
+        section: DataEntry[];
     };
 }
 
-export default function Data({ data }: DataProps) {
+interface DataComponentProps extends DataProps {
+    setCurrentForm: (form: string) => void;
+}
+
+export default function Data({ data, setCurrentForm }: DataComponentProps) {
     const [ expanded, setExpanded ] = useState(false)
 
     return(
@@ -20,11 +29,11 @@ export default function Data({ data }: DataProps) {
  
             <div style={{ display: expanded? '' : 'none' }} className="flex flex-col m-4">
                 {
-                    data.section.map((i: string, key: number) => {
+                    data.section.map((i: DataEntry, key: number) => {
                         return(
                             <div className="flex justify-between" key={key}>
-                                <p className="my-auto">{ i }</p>
-                                <button className="text-pes border border-pes rounded-md px-6 py-2 my-1">
+                                <p className="my-auto">{ i.name }</p>
+                                <button onClick={ () => setCurrentForm(i.form) } className="text-pes border border-pes rounded-md px-6 py-2 my-1">
                                     Start data entry
                                 </button>
                             </div>

@@ -119,11 +119,6 @@ export default function Home() {
 
     return(
         <form className="flex flex-col m-4" onSubmit={() => {}}>
-            <div className="flex">
-                <a className="me-3 hover:underline hover:text-pes" href="staff/factored">Factored Estimating</a>
-                <a className="me-3 hover:underline hover:text-pes" href="staff/sampling">Work Sampling</a>
-            </div>
-
             <div className="p-2">
                 <h1 className="font-bold text-3xl my-6">Plain estimating data entry</h1>
 
