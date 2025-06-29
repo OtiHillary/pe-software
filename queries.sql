@@ -1,14 +1,3 @@
-CREATE TABLE "user"(
-   id SERIAL PRIMARY KEY,
-   fullname VARCHAR(50),
-   email VARCHAR(255) NOT NULL,
-   password VARCHAR(25) NOT NULL,
-   type VARCHAR(25),
-   created_on  date,
-   last_log    date
-);
-
-
 CREATE TABLE Performance (
    id SERIAL PRIMARY KEY,
    dept TEXT NOT NULL,
