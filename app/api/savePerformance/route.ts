@@ -2,7 +2,6 @@ import { NextRequest, NextResponse } from 'next/server'
 import prisma from '../prisma.dev'
 
 export async function POST(req: NextRequest) {
-
   const body = await req.json();
   const { pesuser_name, payload } = body;
   const value = body[payload];
@@ -30,7 +29,6 @@ export async function POST(req: NextRequest) {
     ) as any[];
 
     if (existing.length === 0) {
-      // Insert new row with only the given field
       await prisma.$executeRawUnsafe(
         `INSERT INTO "userperformance" (pesuser_name, "${payload}") VALUES ($1, $2)`,
         pesuser_name,

@@ -4,6 +4,7 @@ import { useDispatch } from 'react-redux';
 import { setNotificationView } from '@/app/state/setnotification/setNotificationSlice';
 import { Warning2, ArrowRight } from 'iconsax-react'
 import Dept from '../../components/assessment/Dept'
+import { useEffect, useState } from 'react';
 
 const assData = [
    {
@@ -61,13 +62,33 @@ const assData = [
       info: 'Assessment Complete',
    }
 ]
-
+   type Stats = {
+      pesuser_nameCount?: number;
+      organizationCount?: number;
+      [key: string]: any;
+   };
 
 const data = true;
 const isLoading = true;
 
 export default function Assesment(){
    const dispatch = useDispatch()
+
+   const [stats, setStats] = useState<Stats | null>(null)
+
+   useEffect(() => {
+      fetch('/api/getStats')
+         .then(response => response.json())
+         .then(data => {
+            setStats(data)
+         })
+         .catch(error => {
+            // handle error if needed
+            console.error('Error fetching stats:', error);
+         });
+   }, [])
+
+
    return(
       <main className="m-6 h-full">
          <div className="assessment bg-white flex justify-between p-4 border-b border-gray-100">
@@ -86,7 +107,7 @@ export default function Assesment(){
                      <p className='text-gray-500 w-11/12 ms-3'>
                         {
                            `
-                              We have received data entries from 120 employees across 15 departments, 
+                              We have received data entries from ${ stats?.pesuser_nameCount || 0} employees across ${stats?.organizationCount || 0} departments, 
                               and they are now ready for assessment. 
                               You can proceed to assess their performance departmentally or assess all employees at once.                           
                            `

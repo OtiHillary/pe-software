@@ -1119,18 +1119,22 @@ const Page = () => {
         return;
       }
       try {
-        fetch('/api/savePeformance', {
+        fetch('/api/savePerformance', {
           method: 'POST',
           headers: {
-        'Content-Type': 'application/json',
+            'Content-Type': 'application/json',
           },
           body: JSON.stringify({
-          pesuser_name: userOption,
-          payload: 'competence',
-          competence: form12Criteria.reduce((sum, c) => sum + ( (c.rating/10) * c.percentage || 0), 0),
+            pesuser_name: userOption,
+            payload: 'competence',
+            competence: form12Criteria.reduce((sum, c) => sum + ((c.rating / 10) * c.percentage || 0), 0),
           }),
-        });
-        alert('Community Performance Assessment saved successfully!');
+        })
+          .then(response => {
+            if (response.ok) {
+              alert('Community Performance Assessment saved successfully!');
+            }
+          });
       } catch (error) {
         alert('An error occurred while saving the assessment.');
         console.error(error);
@@ -1243,6 +1247,13 @@ const Page = () => {
                 <Save className="w-5 h-5 mr-2" />
                 Submit Evaluation
               </button>
+
+              <button
+              onClick={() => setCurrentForm('dashboard')}
+              className="bg-gray-600 text-white px-6 py-2 rounded hover:bg-gray-700"
+            >
+              Back to Dashboard
+            </button>
           </div>
         </div>
       </div>
@@ -1260,7 +1271,7 @@ const Page = () => {
         return;
       }
       try {
-        fetch('/api/savePeformance', {
+        fetch('/api/savePerformance', {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
@@ -1270,8 +1281,12 @@ const Page = () => {
             payload: 'integrity',
             integrity: form13Criteria.reduce((sum, c) => sum + ( (c.rating/10) * c.percentage || 0), 0),
           }),
-        });
-        alert('Community Performance Assessment saved successfully!');
+        })
+          .then(response => {
+            if (response.ok) {
+              alert('Community Performance Assessment saved successfully!');
+            }
+          });
       } catch (error) {
         alert('An error occurred while saving the assessment.');
         console.error(error);
@@ -1380,6 +1395,13 @@ const Page = () => {
                 <Save className="w-5 h-5 mr-2" />
                 Submit Evaluation
               </button>
+
+              <button
+              onClick={() => setCurrentForm('dashboard')}
+              className="bg-gray-600 text-white px-6 py-2 rounded hover:bg-gray-700"
+            >
+              Back to Dashboard
+            </button>
           </div>
         </div>
       </div>
@@ -1397,7 +1419,7 @@ const Page = () => {
         return;
       }
       try {
-        fetch('/api/savePeformance', {
+        fetch('/api/savePerformance', {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
@@ -1407,8 +1429,11 @@ const Page = () => {
             payload: 'compatibility',
             compatibility: form14Criteria.reduce((sum, c) => sum + ( (c.rating/10) * c.percentage || 0), 0),
           }),
+        }).then(response => {
+          if (response.ok) {
+            alert('Community Performance Assessment saved successfully!');
+          }
         });
-        alert('Community Performance Assessment saved successfully!');
       } catch (error) {
         alert('An error occurred while saving the assessment.');
         console.error(error);
@@ -1516,6 +1541,13 @@ const Page = () => {
                 <Save className="w-5 h-5 mr-2" />
                 Submit Evaluation
               </button>
+
+              <button
+              onClick={() => setCurrentForm('dashboard')}
+              className="bg-gray-600 text-white px-6 py-2 rounded hover:bg-gray-700"
+            >
+              Back to Dashboard
+              </button>
           </div>
         </div>
       </div>
@@ -1533,7 +1565,7 @@ const Page = () => {
         return;
       }
       try {
-        fetch('/api/savePeformance', {
+        fetch('/api/savePerformance', {
           method: 'POST',
           headers: {
         'Content-Type': 'application/json',
@@ -1543,8 +1575,11 @@ const Page = () => {
             payload: 'use_of_resources',
             use_of_resources: form15Criteria.reduce((sum, c) => sum + ( (c.rating/10) * c.percentage || 0), 0),
           }),
-        });
-        alert('Community Performance Assessment saved successfully!');
+        }).then(response => {
+            if (response.ok) {
+              alert('Community Performance Assessment saved successfully!');
+            }
+          });
       } catch (error) {
         alert('An error occurred while saving the assessment.');
         console.error(error);
@@ -1651,6 +1686,13 @@ const Page = () => {
               >
                 <Save className="w-5 h-5 mr-2" />
                 Submit Evaluation
+              </button>
+
+              <button
+                onClick={() => setCurrentForm('dashboard')}
+                className="bg-gray-600 text-white px-6 py-2 rounded hover:bg-gray-700"
+              >
+                Back to Dashboard
               </button>
           </div>
         </div>
