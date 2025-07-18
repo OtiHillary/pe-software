@@ -7,6 +7,17 @@ CREATE TABLE Performance (
    CONSTRAINT fk_users FOREIGN KEY (user_id) REFERENCES pesuser (name)
 );
 
+CREATE TABLE assessment (
+   id SERIAL PRIMARY KEY,
+   appraisal TEXT NOT NULL,
+   performance TEXT NOT NULL,
+   status INT,
+   day_started DATE,
+   due_date DATE,
+   user_id TEXT NOT NULL,
+   CONSTRAINT fk_users FOREIGN KEY (user_id) REFERENCES pesuser (name)
+)
+
 CREATE TABLE goals (
    id SERIAL PRIMARY KEY,
    name TEXT NOT NULL,

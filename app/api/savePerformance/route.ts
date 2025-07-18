@@ -3,7 +3,7 @@ import prisma from '../prisma.dev'
 
 export async function POST(req: NextRequest) {
   const body = await req.json();
-  const { pesuser_name, payload } = body;
+  const { pesuser_name, dept, payload } = body;
   const value = body[payload];
 
   const allowedFields = [
@@ -24,22 +24,25 @@ export async function POST(req: NextRequest) {
   try {
     // Check if user userperformance already exists
     const existing = await prisma.$queryRawUnsafe(
-      `SELECT * FROM "userperformance" WHERE pesuser_name = $1`,
-      pesuser_name
+      `SELECT * FROM "userperformance" WHERE pesuser_name = $1 AND dept = $2`,
+      pesuser_name,
+      dept
     ) as any[];
 
     if (existing.length === 0) {
       await prisma.$executeRawUnsafe(
-        `INSERT INTO "userperformance" (pesuser_name, "${payload}") VALUES ($1, $2)`,
+        `INSERT INTO "userperformance" (pesuser_name, dept, "${payload}") VALUES ($1, $2, $3)`,
         pesuser_name,
+        dept,
         value
       );
       return NextResponse.json({ message: 'userperformance created' }, { status: 201 });
     } else {
       // Update the field
       await prisma.$executeRawUnsafe(
-        `UPDATE "userperformance" SET "${payload}" = $1 WHERE pesuser_name = $2`,
+        `UPDATE "userperformance" SET "${payload}" = $1 WHERE pesuser_name = $2 `,
         value,
+        dept,
         pesuser_name
       );
       return NextResponse.json({ message: 'userperformance updated' }, { status: 200 });

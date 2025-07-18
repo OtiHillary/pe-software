@@ -174,14 +174,14 @@ export default function Home({ params }: { params: roleParams }) {
 
         <div className="flex flex-row justify-start mb-8">
           <div className='flex'>
-            <input type="checkbox" name="agree" id="agree"/>
+            <input onChange={()=>{}} type="checkbox" name="agree" id="agree"/>
             <label htmlFor='agree' className='mx-4 text-sm'>I accept all <span className='font-bold'>terms and conditions</span></label>
           </div>
         </div>
 
         <input type='submit' value={'Sign up'} className="btn active:bg-pes hover:bg-[#141444] bg-pes text-white px-4 py-3 flex justify-center rounded-lg mb-2" />
 
-        <p className='text-center'>{`Don't have an Account?`} <Link className='text-pes' href={'/signup/user'}>Sign In</Link> </p>
+        <p className='text-center'>{`Have an Account?`} <Link className='text-pes' href={'/login'}>Sign In</Link> </p>
       </form>
     </main>     
   )

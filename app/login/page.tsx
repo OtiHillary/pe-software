@@ -106,7 +106,7 @@ export default function Home() {
 
           <input type='submit' role='button' className="btn bg-pes text-white px-4 py-3 flex justify-center rounded-lg mb-2" value='Sign In'/>
 
-          <p className='text-center'>{`Don't have an Account?`} <Link className='text-pes' href={'/'}>Sign Up</Link> </p>
+          <p className='text-center'>{`Don't have an Account?`} <Link className='text-pes' href={'/signup/admin'}>Sign Up</Link> </p>
         </Form>
       </Formik>
 

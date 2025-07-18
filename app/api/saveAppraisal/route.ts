@@ -4,7 +4,7 @@ import prisma from '../prisma.dev'
 export async function POST(req: NextRequest) {
 
   const body = await req.json();
-  const { pesuser_name, payload } = body;
+  const { pesuser_name, dept, payload } = body;
   const value = body[payload];
 
   const allowedFields = [
@@ -26,29 +26,33 @@ export async function POST(req: NextRequest) {
   try {
     // Check if user appraisal already exists
     const existing = await prisma.$queryRawUnsafe(
-      `SELECT * FROM "appraisal" WHERE pesuser_name = $1`,
-      pesuser_name
+      `SELECT * FROM "appraisal" WHERE pesuser_name = $1 AND dept = $2`,
+      pesuser_name,
+      dept
     ) as any[];
 
     if (existing.length === 0) {
       // Insert new row with only the given field
       await prisma.$executeRawUnsafe(
-        `INSERT INTO "appraisal" (pesuser_name, "${payload}") VALUES ($1, $2)`,
+        `INSERT INTO "appraisal" (pesuser_name, dept, "${payload}") VALUES ($1, $2, $3)`,
         pesuser_name,
+        dept,
         value
       );
       return NextResponse.json({ message: 'appraisal created' }, { status: 201 });
     } else {
       // Update the field
       await prisma.$executeRawUnsafe(
-        `UPDATE "appraisal" SET "${payload}" = $1 WHERE pesuser_name = $2`,
+        `UPDATE "appraisal" SET "${payload}" = $1 WHERE pesuser_name = $2 AND dept = $3`,
         value,
+        dept,
         pesuser_name
       );
+
       return NextResponse.json({ message: 'appraisal updated' }, { status: 200 });
     }
   } catch (error) {
-    console.error('Prisma query error:', error);
+     console.error('Prisma query error:', error);
     return NextResponse.json({ message: 'Internal Server Error' }, { status: 500 });
   }
 }

@@ -22,10 +22,10 @@ export default function Dept ({ data, key }){
                <div key={key} className={`flex justify-between p-6`} >
                   <div className="flex flex-col my-auto">
                      <p className='font-semibold text-md'>{data.dept} department</p>
-                     <p className='text-gray-300 text-sm'>{data.entries} data entries recorded</p>
-                  </div>
+                     <p className='text-gray-300 text-sm'>{Number(data.total_unique_users) } data entries recorded</p>
+                  </div>)
 
-                  <p className={`${data.completed? 'text-green-500': 'text-red-500'} my-auto`}>{data.info}</p>
+                  {/* <p className={`${data.completed? 'text-green-500': 'text-red-500'} my-auto`}>{data.info}</p>
 
                   {
                      data.completed?
@@ -41,11 +41,11 @@ export default function Dept ({ data, key }){
                         <a role='button' className='text-pes border border-pes rounded-md py-3 px-8 hover:text-white hover:bg-pes transition-all' onClick={ () => setExpand(!expand) }>
                            Request Data Review
                         </a>
-                  }
+                  } */}
 
 
                </div> 
-               {
+               {/* {
                   expand?
                   <div className=''>
                      <hr className='flex w-[95%] mx-auto'/>
@@ -80,7 +80,7 @@ export default function Dept ({ data, key }){
                   </div>
                   :
                   <></>
-               }           
+               }            */}
             </div>
 
             :

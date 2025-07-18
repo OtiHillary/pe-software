@@ -62,6 +62,7 @@ const assData = [
       info: 'Assessment Complete',
    }
 ]
+
    type Stats = {
       pesuser_nameCount?: number;
       organizationCount?: number;
@@ -73,7 +74,7 @@ const isLoading = true;
 
 export default function Assesment(){
    const dispatch = useDispatch()
-
+   const [assessmentData, setAssessmentData] = useState<any[]>([])
    const [stats, setStats] = useState<Stats | null>(null)
 
    useEffect(() => {
@@ -88,6 +89,14 @@ export default function Assesment(){
          });
    }, [])
 
+   useEffect(() => { 
+      fetch('/api/getDataEntry')
+      .then(response => response.json())
+      .then(data => {
+         setAssessmentData(data)
+      })
+      .catch(error => console.log('noooo'))
+   }, [])
 
    return(
       <main className="m-6 h-full">
@@ -125,7 +134,7 @@ export default function Assesment(){
 
                </div>
                {
-                  assData.map((i, key) => {
+                  assessmentData?.map((i, key) => {
                      return(
                         <Dept key={key} data={i} />                 
                      )
