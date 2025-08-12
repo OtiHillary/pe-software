@@ -1,3 +1,6 @@
+-- Add a column 'dept' to the 'index' table
+ALTER TABLE "index" ADD COLUMN dept VARCHAR(255);
+
 CREATE TABLE Performance (
    id SERIAL PRIMARY KEY,
    dept TEXT NOT NULL,
@@ -75,6 +78,8 @@ CREATE TABLE roles (
    org VARCHAR(255)
 );
 
+
+
 CREATE TABLE permission (
    id SERIAL PRIMARY KEY,
    manage_user TEXT,
@@ -96,7 +101,31 @@ CREATE TABLE permission (
    FOREIGN KEY (user_id) REFERENCES pesuser (name)
 );
 
--- permission entire
+CREATE TABLE tools_or_facilities (
+    id SERIAL PRIMARY KEY,
+    description TEXT NOT NULL,
+    identification_symbol VARCHAR(100),
+    location TEXT,
+    facility_register_id_number VARCHAR(100),
+    type VARCHAR(100),
+    priority_rating VARCHAR(50),
+    remarks TEXT,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+
+
+CREATE TABLE "index" (
+   id SERIAL PRIMARY KEY,
+   user_id VARCHAR(255) NOT NULL,
+   redundancy NUMERIC,
+   productivity NUMERIC,
+   utility NUMERIC,
+   CONSTRAINT fk_pesuser FOREIGN KEY (user_id) REFERENCES pesuser (name)
+);
+
+
+
 INSERT INTO permission ( manage_user, access_em, ae_all, ae_sub, ae_sel, define_performance, dp_all, dp_sub, dp_sel, access_hierachy, manage_review, mr_all, mr_sub, mr_sel, user_id )
 VALUES (  )
 

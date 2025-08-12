@@ -6,62 +6,6 @@ import { Warning2, ArrowRight } from 'iconsax-react'
 import Dept from '../../components/assessment/Dept'
 import { useEffect, useState } from 'react';
 
-const assData = [
-   {
-      dept: 'ABC',
-      entries: 15,
-      completed: false,
-      info: '2 Outliers Found',
-      assess:[
-         {
-            name: "otonye edwin",
-            role: "team lead",
-            team: "The Fantastic Four"
-         },
-         {
-            name: "alabo edwin",
-            role: "lead frontend",
-            team: "The Suicide Squad"
-         }
-      ],
-   },
-   {
-      dept: 'DEF',
-      entries: 14,
-      completed:true,
-      info: 'Assessment Complete',
-   },
-   {
-      dept: 'GHI',
-      entries: 8,
-      completed:true,
-      info: 'Assessment Complete',
-   },
-   {
-      dept: 'JKL:',
-      entries: 30,
-      completed: false,
-      info: '3 outliers found',
-      assess:[
-         {
-            name: "royce edwin",
-            role: "team lead",
-            team: "Team avengers",
-         },
-         {
-            name: "damien edwin",
-            role: "lead frontend",
-            team: "Guardians of the galaxy",
-         }
-      ],
-   },
-   {
-      dept: 'MNO',
-      entries: 12,
-      completed:true,
-      info: 'Assessment Complete',
-   }
-]
 
    type Stats = {
       pesuser_nameCount?: number;
@@ -69,13 +13,15 @@ const assData = [
       [key: string]: any;
    };
 
-const data = true;
 const isLoading = true;
 
 export default function Assesment(){
    const dispatch = useDispatch()
+   const [data, setData] = useState(false)
+   const [loading, setLoading] = useState(isLoading)
    const [assessmentData, setAssessmentData] = useState<any[]>([])
    const [stats, setStats] = useState<Stats | null>(null)
+
 
    useEffect(() => {
       fetch('/api/getStats')
@@ -94,6 +40,9 @@ export default function Assesment(){
       .then(response => response.json())
       .then(data => {
          setAssessmentData(data)
+         setData(true)
+         setLoading(false)
+         console.log('data', data)
       })
       .catch(error => console.log('noooo'))
    }, [])
@@ -141,17 +90,34 @@ export default function Assesment(){
                   })
                }
             </>
-            : 
-            <div className="flex flex-col w-3/5 m-auto">
-               <p className="mx-auto text-center text-sm text-gray-500 font-light">
-                  No data available for assessment at the moment. 
-                  You can kickstart the assessment process by notifying your employees to input their data. 
-                  Set a deadline to ensure everyone contributes to the assessment.
-               </p>  
-               <a role="button" className="bg-pes py-3 my-4 px-20 rounded-md text-white new mx-auto" onClick={ () => dispatch( setNotificationView() ) }>
-                  Send Notifications
-               </a>              
-            </div>
+            :
+            <>
+               {
+                  loading?
+                     <div className="flex flex-col w-3/5 m-auto">
+                        <div className='flex justify-center w-[180px] py-10 my-2 mx-auto'>
+                           <img src={`/loading.svg`} className='animate-spin' width={40}/>                              
+                        </div>
+
+                        <p className="mx-auto text-center text-sm text-gray-500 font-light">
+                           Loading assessment data, please wait...
+                        </p>  
+                     </div>  
+                  :
+                     <div className="flex flex-col w-3/5 m-auto">
+                        <p className="mx-auto text-center text-sm text-gray-500 font-light">
+                           No data available for assessment at the moment. 
+                           You can kickstart the assessment process by notifying your employees to input their data. 
+                           Set a deadline to ensure everyone contributes to the assessment.
+                        </p>  
+                        <a role="button" className="bg-pes py-3 my-4 px-20 rounded-md text-white new mx-auto" onClick={ () => dispatch( setNotificationView() ) }>
+                           Send Notifications
+                        </a>              
+                     </div>               
+               }            
+            </>
+
+
          }
          </div>
       </main>

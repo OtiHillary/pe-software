@@ -22,11 +22,31 @@ const Home = () => {
       professors: 0.2
     }
   });
+  
+  const [mus, setMus] = useState({
+    mu0: 6, //base (Rate at which students consult lecturer per hour)
+    mu1: 15.75, // supervisory
+    mu2: 12.75, // level 1
+    mu3: 3.75, // level 2
+    mu4: 0, // top management
+  })
+
+  const [lambda, setLambda] = useState({
+    lambda0: 5, //base (Rate at which students consult lecturer per hour)
+    lambda1: 2.25, // supervisory
+    lambda2: 3.0, // level 1
+    lambda3: 2.75, // level 2
+    lambda4: 0.75, // top management
+  })
 
   // State for calculated results
   const [results, setResults] = useState({
     optimalK: 0,
     totalStaffNeeded: 0,
+    supervisoryStaff: 0,
+    managementStaffLevel1: 0,
+    managementStaffLevel2: 0,
+    topManagementStaff: 0,
     staffDistribution: {
       lecturers: 0,
       seniorLecturers: 0,
@@ -50,25 +70,11 @@ const Home = () => {
     t2: number;
     t3: number;
     t4: number;
-    lambda: number;
-    mu: number;
     S0: number;
     studentPopulation: number;
     staffMix: StaffMix;
   }
 
-  interface StaffDistribution {
-    lecturers: number;
-    seniorLecturers: number;
-    professors: number;
-  }
-
-  interface Results {
-    optimalK: number;
-    totalStaffNeeded: number;
-    staffDistribution: StaffDistribution;
-    efficiencyValue: number;
-  }
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
@@ -91,43 +97,47 @@ const Home = () => {
     }
   };
 
-  const factorial = (n: number): number => {
-    if (n === 0 || n === 1) return 1;
-    return n * factorial(n - 1);
-  };
 
-  const combination = (n: number, k: number) => {
+  function factorial(n: number): number {
+    if (n < 0) return NaN;
+    return n <= 1 ? 1 : n * factorial(n - 1);
+  }
+
+  function combination(n: number, k: number) {
+    if (k < 0 || n < 0 || k > n) return NaN;
     return factorial(n) / (factorial(k) * factorial(n - k));
-  };
+  }
 
   const calculateP0 = (k: number, rho: number) => {
-    let sum = 0;
-    for (let n = 0; n <= k - 1; n++) {
-      sum += Math.pow(k * rho, n) / factorial(n);
+    let sum = 1;
+    for (let n = 2; n <= k; n++) {
+      sum +=  combination(n, k) * factorial(n) * Math.pow(rho, n);
     }
-    sum += Math.pow(k * rho, k) / (factorial(k) * (1 - rho));
+
     return 1 / sum;
   };
 
-  const calculateW = (k: number, lambda: number, mu: number, P0: number) => {
-    const rho = lambda / (k * mu);
-    const numerator = P0 * Math.pow(lambda/mu, k) * lambda * mu;
-    const denominator = factorial(k - 1) * Math.pow(k * mu - lambda, 2);
-    return numerator / denominator;
+  const calculateW = (k: number, rho: number, mu: number, P0: number) => {
+    let sum = 0
+
+    for (let n = 2; n <= k; n++) {
+      sum +=  (n - 1) * combination(n, k) * factorial(n) * Math.pow(rho, n) * P0;
+    }
+
+    return (1 / mu) + (sum / (mu * (1 - P0)));
   };
 
-  const calculateH = (K: number) => {
-    const { D, G, Y, alpha, t1, t2, t3, t4, lambda, mu, S0 } = params;
+  const calculateH = (K: number, mu: number, lambda: number): { H_ordinary: number, H_robust: number } => {
+    const { D, G, Y, alpha, t1, t2, t3, t4, S0 } = params;
 
     // Calculate basic parameters
-    const F = D - Y * alpha; // Non-formal classroom lecture hours
+    const F = D - (Y * alpha); // Non-formal classroom lecture hours
     const B = t1 * F; // Hours scheduled for student consultation
-    const C = t3 * F; // Hours scheduled for assessment
     
-    const rho = lambda / (K * mu);
+    const rho = lambda / mu;
     
     // Check if rho < 1 (system stability condition)
-    if (rho >= 1) return 0;
+    if (rho >= 1) return { H_ordinary: 0, H_robust: 0 };
     
     // Calculate P0
     const P0 = calculateP0(K, rho);
@@ -137,29 +147,33 @@ const Home = () => {
     
     // Calculate numerator components
     const term1 = K * (B - W);
-    const term2 = B * (1 - P0) + t4 * K;
-    const term3 = (1 - S0) * (G - D);
+    const term2 = (B * (1 - P0));
+    const term3 = t4 * K;
+    const term4 = ((1 - S0) * G) - D;
     
     // Calculate denominator components
-    const denom1 = K * (1 - D * Y * alpha * t1);
+    const denom1 = (K + 1) * (D - Y * alpha) * t1;
     const denom2 = (1 - t1 - t2) * (D - Y * alpha);
+    const denom3 = G - D;
     
     // Calculate H
-    const H = (term1 + term2 + term3) / (denom1 + denom2);
+    const H_robust = (term1 + term2 + term3 + term4) / (denom1 + denom2 + denom3);
     
-    return H;
+    const H_ordinary = (term1 + term2 + term3) / (denom1 + denom2);
+    
+    return { H_ordinary, H_robust };
   };
 
-  const findOptimalK = () => {
+  const findOptimalK_ordinary = (mu: number, lambda: number) => {
     let maxH = 0;
     let optimalK = 0;
     
     // Try different values of K from 1 to 50 (can adjust range as needed)
-    for (let K = 1; K <= 50; K++) {
-      const H = calculateH(K);
+    for (let K = 1; K <= 10000; K++) {
+      const { H_ordinary} = calculateH(K, mu, lambda);
       
-      if (H > maxH) {
-        maxH = H;
+      if (H_ordinary > maxH) {
+        maxH = H_ordinary;
         optimalK = K;
       }
     }
@@ -167,7 +181,24 @@ const Home = () => {
     return { optimalK, maxH };
   };
 
-  const calculateStaffNeeds = (optimalK: number) => {
+  const findOptimalK_robust = (mu: number, lambda: number) => {
+    let maxH = 0;
+    let optimalK = 0;
+    
+    // Try different values of K from 1 to 50 (can adjust range as needed)
+    for (let K = 1; K <= 50; K++) {
+      const { H_robust} = calculateH(K, mu, lambda);
+      
+      if (H_robust > maxH) {
+        maxH = H_robust;
+        optimalK = K;
+      }
+    }
+    
+    return { optimalK, maxH };
+  };
+
+  const calculateStaffNeeds = (optimalK: number, optimalK1: number, optimalK2: number, optimalK3: number, optimalK4: number) => {
     const { studentPopulation, staffMix } = params;
     
     const totalStaffNeeded = Math.ceil(studentPopulation / optimalK);
@@ -178,19 +209,51 @@ const Home = () => {
       seniorLecturers: Math.round(totalStaffNeeded * staffMix.seniorLecturers),
       professors: Math.round(totalStaffNeeded * staffMix.professors)
     };
-    
-    return { totalStaffNeeded, staffDistribution };
+    const supervisoryStaff = Math.ceil(totalStaffNeeded / optimalK1); // Assuming 10% supervisory staff
+    const managementStaffLevel1 = Math.ceil(supervisoryStaff / optimalK2); // Assuming 5% level 1 management staff
+    const managementStaffLevel2 = Math.ceil(managementStaffLevel1 / optimalK3); // Assuming 3% level 2 management staff
+    const topManagementStaff = Math.ceil(managementStaffLevel2 / optimalK4); // Assuming 2% top management staff
+
+    return { totalStaffNeeded, supervisoryStaff, managementStaffLevel1, managementStaffLevel2, topManagementStaff, staffDistribution };
   };
 
+  // Define key types for mus and lambda objects
+  type MuKeys = 'mu0' | 'mu1' | 'mu2' | 'mu3' | 'mu4';
+  type LambdaKeys = 'lambda0' | 'lambda1' | 'lambda2' | 'lambda3' | 'lambda4';
+  
   const handleCalculate = () => {
-    const { optimalK, maxH } = findOptimalK();
-    const { totalStaffNeeded, staffDistribution } = calculateStaffNeeds(optimalK);
+    const Ks = []
     
+    for (let i = 0; i < 5; i++) {
+      Ks.push(findOptimalK_robust(
+        mus[`mu${i}` as MuKeys],
+        lambda[`lambda${i}` as LambdaKeys]
+      ));
+
+      console.log(findOptimalK_robust(
+        mus[`mu${i}` as MuKeys],
+        lambda[`lambda${i}` as LambdaKeys]
+      ));
+
+    }
+    // You may want to extract the optimalK and maxH from Ks[0] or aggregate as needed
+    const { optimalK, maxH } = Ks[0] || { optimalK: 0, maxH: 0 };
+    const optimalK1 = Ks[1]?.optimalK ?? 0;
+    const optimalK2 = Ks[2]?.optimalK ?? 0;
+    const optimalK3 = Ks[3]?.optimalK ?? 0;
+    const optimalK4 = Ks[4]?.optimalK ?? 0;
+
+    const { totalStaffNeeded, supervisoryStaff, managementStaffLevel1, managementStaffLevel2, topManagementStaff, staffDistribution } = calculateStaffNeeds(optimalK, optimalK1, optimalK2, optimalK3, optimalK4);
+
     setResults({
       optimalK,
       totalStaffNeeded,
+      supervisoryStaff,
+      managementStaffLevel1,
+      managementStaffLevel2,
+      topManagementStaff,
       staffDistribution,
-      efficiencyValue: maxH
+      efficiencyValue: maxH,
     });
   };
 
@@ -403,11 +466,32 @@ const Home = () => {
             </div>
             
             <div>
-              <h3 className="font-medium text-gray-700">Total Academic Staff Needed</h3>
+              <h3 className="font-medium text-gray-700">Number of Academic Staff</h3>
               <div className="text-xl font-bold">{results.totalStaffNeeded}</div>
               <div className="text-sm text-gray-500">Based on student population of {params.studentPopulation}</div>
             </div>
+
+            {/* //NEED TO DO */}
+            <div>
+              <h3 className="font-medium text-gray-700">Number of Supervisory Staff (N1*)</h3>
+              <div className="text-xl font-bold">{results.supervisoryStaff}</div>
+            </div>
+
+            <div>
+              <h3 className="font-medium text-gray-700">Number of Management Staff level 1(registry)</h3>
+              <div className="text-xl font-bold">{results.managementStaffLevel1}</div>
+            </div>
             
+            <div>
+              <h3 className="font-medium text-gray-700">Number of Management Staff level 2(registry)</h3>
+              <div className="text-xl font-bold">{results.managementStaffLevel2}</div>
+            </div>
+
+            <div>
+              <h3 className="font-medium text-gray-700">Top Management Staff level (registry)</h3>
+              <div className="text-xl font-bold">{results.topManagementStaff}</div>
+            </div>
+
             <div>
               <h3 className="font-medium text-gray-700">Staff Distribution</h3>
               <div className="grid grid-cols-3 gap-2 mt-2">

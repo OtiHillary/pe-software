@@ -510,7 +510,7 @@ const Page = () => {
               <select name="" id="user" className='m-2 p-2 rounded-md border' onChange={(e) => { setUserOption(e.target.value) }} value={userOption ?? ''}>
                 <option value="">No user selected</option>
 
-                {users.map(user => (
+                {users?.map(user => (
                   <option key={user.id} value={user.name}>
                     {user.name}
                   </option>
@@ -638,7 +638,7 @@ const Page = () => {
               <select name="" id="user" className='m-2 p-2 rounded-md border' onChange={(e) => { setUserOption(e.target.value) }} value={userOption ?? ''}>
                 <option value="">No user selected</option>
 
-                {users.map(user => (
+                {users?.map(user => (
                   <option key={user.id} value={user.name}>
                     {user.name}
                   </option>
@@ -677,14 +677,7 @@ const Page = () => {
                     </td>
                   </tr>
                 ))}
-                <tr className="bg-purple-50 font-bold">
-                  <td className="border border-gray-300 p-3 text-center">10</td>
-                  <td className="border border-gray-300 p-3">Aggregate (Total) Score</td>
-                  <td className="border border-gray-300 p-3 text-center">100</td>
-                  <td className="border border-gray-300 p-3 text-center text-purple-600">
-                    {calculateTotal().toFixed(1)}
-                  </td>
-                </tr>
+
               </tbody>
             </table>
           </div>
@@ -785,7 +778,7 @@ const Page = () => {
               <select name="" id="user" className='m-2 p-2 rounded-md border' onChange={(e) => { setUserOption(e.target.value) }} value={userOption ?? ''}>
                 <option value="">No user selected</option>
 
-                {users.map(user => (
+                {users?.map(user => (
                   <option key={user.id} value={user.name}>
                     {user.name}
                   </option>
@@ -821,13 +814,7 @@ const Page = () => {
                     </td>
                   </tr>
                 ))}
-                <tr className="bg-pink-50 font-bold">
-                  <td className="border border-gray-300 p-3">Total</td>
-                  <td className="border border-gray-300 p-3 text-center">100</td>
-                  <td className="border border-gray-300 p-3 text-center text-pink-600">
-                    {calculateResearchTotal().toFixed(1)}
-                  </td>
-                </tr>
+
               </tbody>
             </table>
           </div>
@@ -991,7 +978,7 @@ const Page = () => {
               <select name="" id="user" className='m-2 p-2 rounded-md border' onChange={(e) => { setUserOption(e.target.value) }} value={userOption ?? ''}>
                 <option value="">No user selected</option>
 
-                {users.map(user => (
+                {users?.map(user => (
                   <option key={user.id} value={user.name}>
                     {user.name}
                   </option>
@@ -1069,19 +1056,6 @@ const Page = () => {
                     className="w-full px-3 py-2 text-center border rounded"
                   />
                 </div>
-              </div>
-            </div>
-          </div>
-
-          {/* Total Section */}
-          <div className="bg-indigo-50 p-4 rounded-lg">
-            <div className="flex justify-between items-center">
-              <span className="text-lg font-bold">Grand Total</span>
-              <div className="flex items-center space-x-4">
-                <span className="text-sm font-semibold">Max: 100</span>
-                <span className="text-2xl font-bold text-indigo-600">
-                  {calculateGrandTotal().toFixed(1)}
-                </span>
               </div>
             </div>
           </div>
@@ -1173,7 +1147,7 @@ const Page = () => {
               <select name="" id="user" className='m-2 p-2 rounded-md border' onChange={(e) => { setUserOption(e.target.value) }} value={userOption ?? ''}>
                 <option value="">No user selected</option>
 
-                {users.map(user => (
+                {users?.map(user => (
                   <option key={user.id} value={user.name}>
                     {user.name}
                   </option>
@@ -1232,14 +1206,8 @@ const Page = () => {
               </tbody>
             </table>
           </div>
+
           <div>
-            <h2 className="text-xl font-semibold mt-6 mb-4">Overall Performance</h2>
-            <div className="flex justify-between items-center">
-              <span className="text-lg font-bold">Total Score:</span>
-              <span className="text-2xl font-bold text-blue-600">
-                 { form12Criteria.reduce((sum, c) => sum + ( (c.rating/10) * c.percentage || 0), 0) }
-              </span>
-            </div>
               <button
                 onClick={saveForm12}
                 className="px-6 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition-colors flex items-center"
@@ -1325,7 +1293,7 @@ const Page = () => {
               <select name="" id="user" className='m-2 p-2 rounded-md border' onChange={(e) => { setUserOption(e.target.value) }} value={userOption ?? ''}>
                 <option value="">No user selected</option>
 
-                {users.map(user => (
+                {users?.map(user => (
                   <option key={user.id} value={user.name}>
                     {user.name}
                   </option>
@@ -1380,13 +1348,6 @@ const Page = () => {
             </table>
           </div>
           <div>
-            <h2 className="text-xl font-semibold mt-6 mb-4">Overall Performance</h2>
-            <div className="flex justify-between items-center">
-              <span className="text-lg font-bold">Total Score:</span>
-              <span className="text-2xl font-bold text-blue-600">
-                 { form13Criteria.reduce((sum, c) => sum + ( (c.rating/10) * c.percentage || 0), 0) }
-              </span>
-            </div>
 
               <button
                 onClick={saveForm13}
@@ -1472,7 +1433,7 @@ const Page = () => {
               <select name="" id="user" className='m-2 p-2 rounded-md border' onChange={(e) => { setUserOption(e.target.value) }} value={userOption ?? ''}>
                 <option value="">No user selected</option>
 
-                {users.map(user => (
+                {users?.map(user => (
                   <option key={user.id} value={user.name}>
                     {user.name}
                   </option>
@@ -1526,14 +1487,8 @@ const Page = () => {
               </tbody>
             </table>
           </div>
+
           <div>
-            <h2 className="text-xl font-semibold mt-6 mb-4">Overall Performance</h2>
-            <div className="flex justify-between items-center">
-              <span className="text-lg font-bold">Total Score:</span>
-              <span className="text-2xl font-bold text-blue-600">
-                 { form14Criteria.reduce((sum, c) => sum + ( (c.rating/10) * c.percentage || 0), 0) }
-              </span>
-            </div>
               <button
                 onClick={saveForm14}
                 className="px-6 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition-colors flex items-center"
@@ -1618,7 +1573,7 @@ const Page = () => {
               <select name="" id="user" className='m-2 p-2 rounded-md border' onChange={(e) => { setUserOption(e.target.value) }} value={userOption ?? ''}>
                 <option value="">No user selected</option>
 
-                {users.map(user => (
+                {users?.map(user => (
                   <option key={user.id} value={user.name}>
                     {user.name}
                   </option>
@@ -1672,14 +1627,8 @@ const Page = () => {
               </tbody>
             </table>
           </div>
+
           <div>
-            <h2 className="text-xl font-semibold mt-6 mb-4">Overall Performance</h2>
-            <div className="flex justify-between items-center">
-              <span className="text-lg font-bold">Total Score:</span>
-              <span className="text-2xl font-bold text-blue-600">
-                 { form15Criteria.reduce((sum, c) => sum + ( (c.rating/10) * c.percentage || 0), 0) }
-              </span>
-            </div>
               <button
                 onClick={saveForm15}
                 className="px-6 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition-colors flex items-center"
