@@ -19,7 +19,7 @@ export default function Page({ params }: { params: { dept: string } }) {
             setData(data);
       })
       .catch(error => console.log('error:', error))
-   }, [])
+   }, [dept])
 
     return (
         <>
