@@ -258,7 +258,7 @@ const Home = () => {
   };
 
   return (
-    <div className="max-w-4xl mx-auto p-6 bg-white rounded-lg shadow-md">
+    <div className="w-full mx-auto p-8 bg-white rounded-lg shadow-md">
       <h1 className="text-2xl font-bold mb-6 text-center">Student-Teacher Ratio Calculator</h1>
       
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -472,6 +472,7 @@ const Home = () => {
             </div>
 
             {/* //NEED TO DO */}
+            <h2 className="text-xl font-semibold mt-8">Required Institutions Staff</h2>
             <div>
               <h3 className="font-medium text-gray-700">Number of Supervisory Staff (N1*)</h3>
               <div className="text-xl font-bold">{results.supervisoryStaff}</div>
