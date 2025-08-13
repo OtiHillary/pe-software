@@ -26,7 +26,7 @@ export default function Page({ params }: { params: { dept: string } }) {
         {
             data?.map((item: { dept: string; pesuser_name: string }, index: number) => {
                 return (
-                    <div  className={`flex justify-between p-6 my-2 mx-4 border rounded-md bg-white`} >
+                    <div key={index} className={`flex justify-between p-6 my-2 mx-4 border rounded-md bg-white`} >
                         <div className="flex flex-col my-auto">
                             <p className='font-semibold text-md'>{item.pesuser_name}</p>
                             <p className='text-gray-300 text-sm'> {item.dept}</p>
