@@ -19,21 +19,6 @@ async function getUser(info: reqInfo) {
    return user
 }
 
-// async function getPerformance( user: string | null ) {
-//    const performance = await prisma.performance.findMany({
-//       where: {
-//          users: user
-//       }
-//    })
-//   return performance
-// }
-
-// async function getGoals( user: string | null ) {
-//    const performance = await prisma.goals.findMany({
-//       name: user
-//    })
-//   return performance
-// }
 
 export {
    getUser,
