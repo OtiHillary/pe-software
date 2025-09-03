@@ -1,5 +1,12 @@
 "use client";
 import { useState } from "react";
+import { jwtDecode } from "jwt-decode";
+
+type JWTPayload = {
+  name?: string;
+  role?: string;
+  org?: number;
+};
 
 type StressItem = {
   label: string;

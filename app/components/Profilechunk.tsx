@@ -54,10 +54,11 @@ export default function ProfileChunk(){
             <div className='flex justify-between max-sm:gap-4 max-sm:flex-col py-2'>
                <div className='w-40 h-40 me-8 max-sm:w-full'>
                   {
-                     user?
+                     user?.image == "" ?
                         <img src={ `/${user.image}` } alt="profile-img" className='w-full h-full'/>                   
                      :
-                        <ImageFallback />
+                        <img src='young oti.PNG' alt='profile' />                        
+
                   }
                </div>
 

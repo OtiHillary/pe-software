@@ -8,6 +8,7 @@ import Goalchunk from '@/app/components/goals/goalChunk';
 import Performance from '@/app/components/performance/performanceChunk'
 import ProfileChunk from '@/app/components/Profilechunk';
 import Quickstats from './Quickstats';
+import Datachunk from '@/app/components/data/Datachunk';
 
 export default function Dashboard() {
    const [performanceView, setPerformanceView] = useState('employee')
@@ -68,25 +69,39 @@ export default function Dashboard() {
                </div>
             </div>
 
-            <div className="(right_panel)-- w-1/2 max-md:w-full">
-               <div className="w-full shadow-md shadow-gray-100 p-4 bg-white">
-                  <div className='flex justify-start w-full'>
-                  <p className='text-3xl text-black my-auto p-4'>Performance Insights</p>
-                  </div>
 
-                  <div className='flex flex-col justify-center relative mx-4 my-2'>
-                  <div className="flex justify-start w-3/12">
-                     <p className={`me-4  py-4 ${ (performanceView == 'employee') ? 'text-pes' : '' }`} onClick={ () => { setPerformanceView('employee') } }>Employees</p>
-                     <p className={`me-4  py-4 ${ (performanceView == 'team') ? 'text-pes' : '' }`} onClick={ () => { setPerformanceView('team') } }>Teams</p>
-                  </div>
+            {
+               user?.role == 'admin'?
+                  <div className="(right_panel)-- w-1/2 max-md:w-full">
+                     <div className="w-full shadow-md shadow-gray-100 p-4 bg-white">
+                        <div className='flex justify-start w-full'>
+                        <p className='text-3xl text-black my-auto p-4'>Performance Insights</p>
+                        </div>
 
-                  <div className={`line w-20 bg-pes h-1 absolute bottom-0 ${ (performanceView == 'employee') ? 'left-0' : 'left-20' } transition-all rounded-full`}></div>
-                  <div className="line w-full bg-slate-100 h-1"></div>
-                  </div>
+                        <div className='flex flex-col justify-center relative mx-4 my-2'>
+                        <div className="flex justify-start w-3/12">
+                           <p className={`me-4  py-4 ${ (performanceView == 'employee') ? 'text-pes' : '' }`} onClick={ () => { setPerformanceView('employee') } }>Employees</p>
+                           <p className={`me-4  py-4 ${ (performanceView == 'team') ? 'text-pes' : '' }`} onClick={ () => { setPerformanceView('team') } }>Teams</p>
+                        </div>
 
-                  <Performance />
-               </div>
-            </div>
+                        <div className={`line w-20 bg-pes h-1 absolute bottom-0 ${ (performanceView == 'employee') ? 'left-0' : 'left-20' } transition-all rounded-full`}></div>
+                        <div className="line w-full bg-slate-100 h-1"></div>
+                        </div>
+
+                        <Performance />
+                     </div>
+                  </div>
+               :
+                  <div className="(right_panel-alt)-- w-1/2 max-md:w-full">
+                     <div className="w-full shadow-md shadow-gray-100 p-4 bg-white">
+                        <div className='flex justify-start w-full'>
+                        <p className='text-3xl text-black my-auto p-4'>Data entry</p>
+                        </div>
+
+                        <Datachunk />
+                     </div>
+                  </div>
+            }
          </div>
       </main> 
    )

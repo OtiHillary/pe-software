@@ -1,6 +1,13 @@
 // /app/appraisal/research-quality/page.tsx
 'use client'
 import { useEffect, useState } from 'react'
+import { jwtDecode } from "jwt-decode";
+
+type JWTPayload = {
+  name?: string;
+  role?: string;
+  org?: number;
+};
 
 type UserData = { id: string; name: string }
 
@@ -18,22 +25,8 @@ const researchCriteria = [
 ];
 
 export default function ResearchQualityAssessment() {
-  const [users, setUsers] = useState<UserData[]>([])
-  const [userOption, setUserOption] = useState<string | null>(null)
   const [scores, setScores] = useState<Record<string, number>>({})
 
-  useEffect(() => {
-    const userToken = localStorage.getItem('access_token') || '{}'
-    async function fetchUsers() {
-      const res = await fetch('/api/getUsers', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ token: userToken }),
-      })
-      if (res.ok) setUsers(await res.json())
-    }
-    fetchUsers()
-  }, [])
 
   const handleUpdate = (id: string, val: number) => {
     const crit = researchCriteria.find(c => c.id === id)
@@ -47,13 +40,16 @@ export default function ResearchQualityAssessment() {
     researchCriteria.reduce((t, c) => t + (scores[c.id] || 0), 0)
 
   const save = async () => {
-    if (!userOption) return alert('Please select a user')
+    const token = localStorage.getItem("access_token")
+    const user: JWTPayload = jwtDecode(token || "");
+    console.log(user?.name)
+ 
     try {
       await fetch('/api/saveAppraisal', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          pesuser_name: userOption,
+          pesuser_name: user.name,
           payload: 'research_quality_evaluation',
           research_quality_evaluation: calculateTotal(),
         }),
@@ -68,20 +64,6 @@ export default function ResearchQualityAssessment() {
     <div className="w-full p-12 space-y-6">
       <h1 className="text-2xl font-bold">Research Quality Assessment</h1>
       <p className="text-gray-600">Assessment by External/Peer Reviewers</p>
-
-      <div>
-        <label className="block mb-2">Select User:</label>
-        <select
-          className="p-2 border rounded"
-          value={userOption ?? ''}
-          onChange={e => setUserOption(e.target.value)}
-        >
-          <option value="">-- No user selected --</option>
-          {users.map(u => (
-            <option key={u.id} value={u.name}>{u.name}</option>
-          ))}
-        </select>
-      </div>
 
       <table className="w-full border-collapse border border-gray-300">
         <thead>

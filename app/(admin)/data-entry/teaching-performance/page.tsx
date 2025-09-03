@@ -1,6 +1,13 @@
 // /app/appraisal/teaching-performance/page.tsx
 'use client'
 import { useEffect, useState } from 'react'
+import { jwtDecode } from "jwt-decode";
+
+type JWTPayload = {
+  name?: string;
+  role?: string;
+  org?: number;
+};
 
 type UserData = { id: string; name: string }
 
@@ -18,22 +25,7 @@ const teachingCriteria = [
 
 
 export default function TeachingPerformanceAssessment() {
-  const [users, setUsers] = useState<UserData[]>([])
-  const [userOption, setUserOption] = useState<string | null>(null)
   const [scores, setScores] = useState<Record<string, number>>({})
-
-  useEffect(() => {
-    const userToken = localStorage.getItem('access_token') || '{}'
-    async function fetchUsers() {
-      const res = await fetch('/api/getUsers', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ token: userToken }),
-      })
-      if (res.ok) setUsers(await res.json())
-    }
-    fetchUsers()
-  }, [])
 
   const handleUpdate = (id: string, val: number) => {
     const crit = teachingCriteria.find(c => c.id === id)
@@ -47,41 +39,48 @@ export default function TeachingPerformanceAssessment() {
     teachingCriteria.reduce((t, c) => t + (scores[c.id] || 0), 0)
 
   const save = async () => {
-    if (!userOption) return alert('Please select a user')
+    const token = localStorage.getItem("access_token")
+    const user: JWTPayload = jwtDecode(token || "");
+    console.log(user?.name)
+
     try {
-      await fetch('/api/saveAppraisal', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+      const res = await fetch("/api/saveAppraisal", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          pesuser_name: userOption,
-          payload: 'teaching_quality_evaluation',
+          pesuser_name: user.name,
+          payload: "teaching_quality_evaluation",
           teaching_quality_evaluation: calculateTotal(),
         }),
-      })
-      alert('Teaching Performance Assessment saved ✅')
-    } catch {
-      alert('Error saving assessment ❌')
+      });
+
+      if (!res.ok) {
+        // Try to get error details from API
+        let errorMsg = "Error saving assessment ❌";
+        try {
+          const errorData = await res.json();
+          if (errorData?.message) errorMsg = errorData.message;
+        } catch {
+          /* ignore JSON parse error */
+        }
+        throw new Error(errorMsg);
+      }
+
+      const data = await res.json();
+      console.log("Save success:", data);
+
+      alert("Teaching Performance Assessment saved ✅");
+    } catch (err) {
+      console.error("Save failed:", err);
+      alert(err instanceof Error ? err.message : "Unexpected error ❌");
     }
   }
+
 
   return (
     <div className="w-full p-12 space-y-6">
       <h1 className="text-2xl font-bold">Teaching Performance Assessment</h1>
       <p className="text-gray-600">Assess teaching across multiple criteria</p>
-
-      <div>
-        <label className="block mb-2">Select User:</label>
-        <select
-          className="p-2 border rounded"
-          value={userOption ?? ''}
-          onChange={e => setUserOption(e.target.value)}
-        >
-          <option value="">-- No user selected --</option>
-          {users.map(u => (
-            <option key={u.id} value={u.name}>{u.name}</option>
-          ))}
-        </select>
-      </div>
 
       <table className="w-full border-collapse border border-gray-300">
         <thead>
@@ -110,6 +109,7 @@ export default function TeachingPerformanceAssessment() {
           ))}
         </tbody>
       </table>
+
 
       <div className="font-semibold">Total Score: {calculateTotal()}</div>
 

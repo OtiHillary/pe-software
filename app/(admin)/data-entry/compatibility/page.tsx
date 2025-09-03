@@ -1,6 +1,13 @@
 'use client';
 import { useEffect, useState } from 'react';
 import { Save } from 'lucide-react';
+import { jwtDecode } from "jwt-decode";
+
+type JWTPayload = {
+  name?: string;
+  role?: string;
+  org?: number;
+};
 
 interface UserData {
   id: string;
@@ -37,10 +44,10 @@ export default function Form14() {
     };
 
     const saveForm14 = () => {
-        if (!userOption) {
-        alert('Please select a user to save the assessment.');
-        return;
-        }
+        const token = localStorage.getItem("access_token")
+        const user: JWTPayload = jwtDecode(token || "");
+        console.log(user?.name)
+        
         try {
         fetch('/api/savePerformance', {
             method: 'POST',
@@ -48,7 +55,7 @@ export default function Form14() {
             'Content-Type': 'application/json',
             },
             body: JSON.stringify({
-            pesuser_name: userOption,
+            pesuser_name: user.name,
             payload: 'compatibility',
             compatibility: form14Criteria.reduce((sum, c) => sum + ( (c.rating/10) * c.percentage || 0), 0),
             }),
@@ -63,46 +70,11 @@ export default function Form14() {
         }
     };
 
-    useEffect(() => {
-        const userToken = localStorage.getItem('access_token') || '{}';
-        async function fetchUsers() {
-        const response = await fetch('/api/getUsers', {
-            method: 'POST',
-            headers: {
-            'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({ token: userToken }),
-        });
-
-        if (response.ok) {
-            const data = await response.json();
-            setUsers(data);
-        }
-        }
-
-        fetchUsers();
-    }, []);
-
     return (
         <div className="min-h-screen bg-gray-50 py-8 px-4">
         <div className="max-w-6xl mx-auto">
             <h1 className="text-2xl font-bold mb-6">Compatibility</h1>
             <p className="mb-4">This form is used to evaluate employee performance across various criteria.</p>
-
-            <div className='p-1 mb-2'>
-            <label htmlFor="user" className='flex'>
-                <p className='my-auto'>Select User:</p>
-                <select name="" id="user" className='m-2 p-2 rounded-md border' onChange={(e) => { setUserOption(e.target.value) }} value={userOption ?? ''}>
-                <option value="">No user selected</option>
-
-                {users?.map(user => (
-                    <option key={user.id} value={user.name}>
-                    {user.name}
-                    </option>
-                ))}
-                </select>
-            </label>           
-            </div>
 
             <div className="overflow-x-auto">
             <table className="w-full">

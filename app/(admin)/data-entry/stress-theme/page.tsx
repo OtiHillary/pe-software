@@ -1,5 +1,12 @@
 "use client";
 import { useState } from "react";
+import { jwtDecode } from "jwt-decode";
+
+type JWTPayload = {
+  name?: string;
+  role?: string;
+  org?: number;
+};
 
 const categories = [
   "Organization (-)",
@@ -26,11 +33,27 @@ const themes = [
   "Precipitate Change"
 ];
 
+// mapping your category labels -> DB column names
+const categoryMap: Record<string, string> = {
+  "Organization (-)": "organizational",
+  "Student (-)": "student",
+  "Administrative (-)": "administrative",
+  "Teacher (-)": "teacher",
+  "Parent (-)": "parents",
+  "Occupational (-)": "occupational",
+  "Personal (-)": "personal",
+  "Academic Program (-)": "academic_program",
+  "Negative Public Attitude (-)": "negative_public_attitude",
+  "Miscellaneous (-)": "misc"
+};
+
 export default function Form6() {
-  const [values, setValues] = useState<Record<string, Record<string, number>>>({});
+  const [values, setValues] = useState<Record<string, Record<string, number>>>(
+    {}
+  );
 
   const handleChange = (cat: string, theme: string, val: number) => {
-    setValues(prev => ({
+    setValues((prev) => ({
       ...prev,
       [cat]: {
         ...prev[cat],
@@ -52,25 +75,30 @@ export default function Form6() {
   // percentages (per theme)
   const grandTotal = getGrandTotal();
   const getColPercent = (theme: string) =>
-    grandTotal > 0 ? ((getColTotal(theme) / grandTotal) * 100).toFixed(2) : "0.00";
+    grandTotal > 0
+      ? ((getColTotal(theme) / grandTotal) * 100).toFixed(2)
+      : "0.00";
 
   const saveForm6 = async () => {
     try {
+      // decode user from token
+      const token = localStorage.getItem("token");
+      const decoded = token ? (jwtDecode(token) as JWTPayload) : {};
+
+      // map row totals into scores object for backend
+      const scores: Record<string, number> = {};
+      categories.forEach((cat) => {
+        const dbField = categoryMap[cat];
+        scores[dbField] = getRowTotal(cat);
+      });
+
       const payload = {
-        type: "stress_themes_category",
-        data: values,
-        totals: {
-          rowTotals: categories.map(c => ({ category: c, total: getRowTotal(c) })),
-          colTotals: themes.map(t => ({
-            theme: t,
-            total: getColTotal(t),
-            percent: getColPercent(t)
-          })),
-          grandTotal
-        }
+        user_name: decoded.name || "anonymous",
+        dept: decoded.role || "unknown",
+        scores
       };
 
-      await fetch("/api/saveStress", {
+      await fetch("/api/saveStressScore", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(payload)
@@ -85,9 +113,12 @@ export default function Form6() {
 
   return (
     <div className="w-full p-12">
-      <h2 className="text-2xl font-bold mb-4">Form 6: Stress Themes Category Values</h2>
+      <h2 className="text-2xl font-bold mb-4">
+        Form 6: Stress Themes Category Values
+      </h2>
       <p className="text-gray-600 mb-6">
-        Enter values for each stress theme per category. Use <strong>0</strong> where not applicable.
+        Enter values for each stress theme per category. Use{" "}
+        <strong>0</strong> where not applicable.
       </p>
 
       <div className="overflow-x-auto">
@@ -95,24 +126,26 @@ export default function Form6() {
           <thead>
             <tr className="bg-purple-200">
               <th className="border p-2">Stress Category</th>
-              {themes.map(t => (
-                <th key={t} className="border p-2">{t}</th>
+              {themes.map((t) => (
+                <th key={t} className="border p-2">
+                  {t}
+                </th>
               ))}
               <th className="border p-2">Row Total</th>
             </tr>
           </thead>
           <tbody>
-            {categories.map(cat => (
+            {categories.map((cat) => (
               <tr key={cat}>
                 <td className="border p-2 font-medium">{cat}</td>
-                {themes.map(theme => (
+                {themes.map((theme) => (
                   <td key={theme} className="border p-2">
                     <input
                       type="number"
                       min={0}
                       className="w-20 border rounded p-1 text-center"
                       value={values[cat]?.[theme] ?? ""}
-                      onChange={e =>
+                      onChange={(e) =>
                         handleChange(cat, theme, parseFloat(e.target.value) || 0)
                       }
                     />
@@ -127,7 +160,7 @@ export default function Form6() {
             {/* Totals row */}
             <tr className="bg-purple-100 font-bold">
               <td className="border p-2">Column Totals (∑)</td>
-              {themes.map(theme => (
+              {themes.map((theme) => (
                 <td key={theme} className="border p-2 text-center">
                   {getColTotal(theme)}
                 </td>
@@ -138,7 +171,7 @@ export default function Form6() {
             {/* Percentages row */}
             <tr className="bg-yellow-100 font-bold">
               <td className="border p-2">% of Total</td>
-              {themes.map(theme => (
+              {themes.map((theme) => (
                 <td key={theme} className="border p-2 text-center">
                   {getColPercent(theme)}%
                 </td>

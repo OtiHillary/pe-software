@@ -9,7 +9,7 @@ export default function Dept ({ data, key }){
 
          <a 
             className='text-pes border border-pes rounded-md py-3 px-8 hover:text-white hover:bg-pes transition-all' 
-            href={`/assessment/${data.dept}`}
+            href={`/evaluation?dept=${data.dept}`}
          >
             Assess Employees
          </a>
