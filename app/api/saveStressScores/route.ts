@@ -3,74 +3,51 @@ import prisma from '../prisma.dev'
 
 export async function POST(req: NextRequest) {
   try {
-    const body = await req.json();
-    const { user_name, dept, scores } = body;
+    const body = await req.json()
+    const { pesuser_name, org, competence, integrity, compatibility, use_of_resources } = body
 
-    if (!user_name || !dept || !scores) {
-      return NextResponse.json(
-        { message: 'Missing required fields' },
-        { status: 400 }
-      );
+    // Required fields
+    if (!pesuser_name || !org) {
+      return NextResponse.json({ message: 'Missing required fields' }, { status: 400 })
     }
 
-    // Define all score columns
-    const cols = [
-      'user_name',
-      'dept',
-      'organizational',
-      'student',
-      'administrative',
-      'teacher',
-      'parents',
-      'occupational',
-      'personal',
-      'academic_program',
-      'negative_public_attitude',
-      'misc'
-    ];
+    // Fetch dept from pesuser
+    const userResult = await prisma.$queryRawUnsafe<{ dept: string }[]>(
+      `SELECT dept FROM "pesuser" WHERE name = $1 AND org = $2 LIMIT 1`,
+      pesuser_name,
+      org
+    )
 
-    // Build placeholders dynamically
-    const placeholders = cols.map((_, i) => `$${i + 1}`);
+    if (userResult.length === 0 || !userResult[0].dept) {
+      return NextResponse.json({ message: 'User not found or department missing' }, { status: 404 })
+    }
 
-    // Build values array
-    const values = [
-      user_name,
+    const dept = userResult[0].dept
+
+    // Insert or update into userperformance
+    await prisma.$executeRawUnsafe(
+      `
+      INSERT INTO "userperformance" (pesuser_name, org, dept, competence, integrity, compatibility, use_of_resources)
+      VALUES ($1, $2, $3, $4, $5, $6, $7)
+      ON CONFLICT (pesuser_name, org, dept)
+      DO UPDATE SET
+        competence = EXCLUDED.competence,
+        integrity = EXCLUDED.integrity,
+        compatibility = EXCLUDED.compatibility,
+        use_of_resources = EXCLUDED.use_of_resources
+      `,
+      pesuser_name,
+      org,
       dept,
-      scores.organizational,
-      scores.student,
-      scores.administrative,
-      scores.teacher,
-      scores.parents,
-      scores.occupational,
-      scores.personal,
-      scores.academic_program,
-      scores.negative_public_attitude,
-      scores.misc
-    ];
+      competence ?? null,
+      integrity ?? null,
+      compatibility ?? null,
+      use_of_resources ?? null
+    )
 
-    const updates = cols
-      .filter(c => c !== 'user_name' && c !== 'dept') // don't update keys
-      .map(c => `"${c}" = EXCLUDED."${c}"`);
-
-    const sql = `
-      INSERT INTO "stress_scores" (${cols.join(', ')})
-      VALUES (${placeholders.join(', ')})
-      ON CONFLICT (user_name, dept)
-      DO UPDATE SET ${updates.join(', ')}
-    `;
-
-    await prisma.$executeRawUnsafe(sql, ...values);
-
-    return NextResponse.json(
-      { message: 'Stress scores saved/updated' },
-      { status: 200 }
-    );
+    return NextResponse.json({ message: 'userperformance saved/updated' }, { status: 200 })
   } catch (error) {
-    console.error('Error saving stress scores:', error);
-    return NextResponse.json(
-      { message: 'Internal Server Error' },
-      { status: 500 }
-    );
+    console.error('Prisma query error:', error)
+    return NextResponse.json({ message: 'Internal Server Error' }, { status: 500 })
   }
 }
- 

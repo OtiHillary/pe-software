@@ -5,12 +5,12 @@ import { jwtDecode } from "jwt-decode";
 type JWTPayload = {
   name?: string;
   role?: string;
-  org?: number;
+  org?: string;
 };
 
 type StressItem = {
   label: string;
-  weight: number; // extracted from formula
+  weight: number;
 };
 
 type StressCategory = {
@@ -118,15 +118,14 @@ const stressData: StressCategory[] = [
 
 export default function StressForm5() {
   const [values, setValues] = useState<Record<string, number>>({});
+  const [currentStep, setCurrentStep] = useState(0);
 
   const handleChange = (key: string, val: number) => {
     setValues((prev) => ({ ...prev, [key]: val }));
   };
 
-  // Compute weighted totals
+  // compute totals
   const categoryTotals: Record<string, number> = {};
-  let grandTotal = 0;
-
   stressData.forEach((group) => {
     let subtotal = 0;
     group.items.forEach((item) => {
@@ -134,111 +133,128 @@ export default function StressForm5() {
       subtotal += (val * item.weight) / 10;
     });
     categoryTotals[group.category] = subtotal;
-    grandTotal += subtotal;
   });
 
-  const percentages: Record<string, number> = {};
-  Object.keys(categoryTotals).forEach((cat) => {
-    percentages[cat] = grandTotal > 0 ? (categoryTotals[cat] / grandTotal) * 100 : 0;
-  });
-
-    // Group rollups
-  let stressFactor =
-    (categoryTotals["Organizational"] || 0) +
-    (categoryTotals["Student"] || 0) +
-    (categoryTotals["Administrative"] || 0) +
-    (categoryTotals["Negative Public Attitude"] || 0);
-
-  let pressureFactor =
-    (categoryTotals["Teacher"] || 0) +
-    (categoryTotals["Parents"] || 0) +
-    (categoryTotals["Occupational"] || 0) +
-    (categoryTotals["Academic Program"] || 0);
-
-  let conflict = categoryTotals["Personal"] || 0;
-
-  // Split Miscellaneous (3:2:1)
-  const miscVal = categoryTotals["Miscellaneous"] || 0;
-  stressFactor += (miscVal * 3) / 6;
-  pressureFactor += (miscVal * 2) / 6;
-  conflict += (miscVal * 1) / 6;
-
-  const handleSubmit = async () => {
-    await fetch("/api/saveStressCategory", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        categoryTotals,
-        percentages,
-        groupedTotals: { stressFactor, pressureFactor, conflict },
-        grandTotal,
-      }),
-    });
-    alert("Stress category totals submitted successfully!");
+  const scores = {
+    organizational: categoryTotals["Organizational"] || 0,
+    student: categoryTotals["Student"] || 0,
+    administrative: categoryTotals["Administrative"] || 0,
+    teacher: categoryTotals["Teacher"] || 0,
+    parents: categoryTotals["Parents"] || 0,
+    occupational: categoryTotals["Occupational"] || 0,
+    personal: categoryTotals["Personal"] || 0,
+    academic_program: categoryTotals["Academic Program"] || 0,
+    negative_public_attitude: categoryTotals["Negative Public Attitude"] || 0,
+    misc: categoryTotals["Miscellaneous"] || 0,
   };
 
+  const handleSubmit = async () => {
+    try {
+      const token = localStorage.getItem("access_token");
+      const user: JWTPayload = jwtDecode(token || "");
+
+      await fetch("/api/saveStressScores", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          user_name: user.name,
+          org: user.org,
+          scores,
+        }),
+      });
+
+      alert("Stress scores submitted successfully ✅");
+    } catch (err) {
+      console.error(err);
+      alert("Error submitting stress scores ❌");
+    }
+  };
+
+  const currentCategory = stressData[currentStep];
 
   return (
     <div className="w-full p-12">
-      <h1 className="text-2xl font-bold mb-6">Form 5: Setting the Stress Category/Staff</h1>
+      <h1 className="text-2xl font-bold mb-6">
+        Form 5: Setting the Stress Category/Staff
+      </h1>
 
-      {stressData.map((group, idx) => (
-        <div key={idx} className="mb-8">
-          <h2 className="text-xl font-semibold mb-2">{group.category}</h2>
-          <table className="min-w-full border border-gray-300">
-            <thead className="bg-gray-100">
-              <tr>
-                <th className="border px-2 py-1">Item</th>
-                {Array.from({ length: 10 }, (_, i) => (
-                  <th key={i} className="border px-2 py-1 text-center">{i + 1}</th>
-                ))}
-                <th className="border px-2 py-1">Weight</th>
-              </tr>
-            </thead>
-            <tbody>
-              {group.items.map((item, j) => (
-                <tr key={j}>
-                  <td className="border px-2 py-1">{item.label}</td>
-                  {Array.from({ length: 10 }, (_, i) => (
-                    <td key={i} className="border px-2 py-1 text-center">
-                      <input
-                        type="radio"
-                        name={`${group.category}-${item.label}`}
-                        value={i + 1}
-                        onChange={(e) =>
-                          handleChange(`${group.category}-${item.label}`, parseInt(e.target.value))
-                        }
-                      />
-                    </td>
-                  ))}
-                  <td className="border px-2 py-1 text-center">{item.weight}</td>
-                </tr>
-              ))}
-              <tr className="bg-gray-200 font-semibold">
-                <td className="border px-2 py-1 text-right" colSpan={11}>
-                  Subtotal
-                </td>
-                <td className="border px-2 py-1 text-center">
-                  {categoryTotals[group.category].toFixed(2)} ({percentages[group.category].toFixed(1)}%)
-                </td>
-              </tr>
-            </tbody>
-          </table>
-        </div>
-      ))}
-
-      <div className="mt-6 p-4 bg-gray-100 rounded">
-        <h2 className="text-lg font-semibold">
-          Grand Total: {grandTotal.toFixed(2)}
+      <div className="mb-8">
+        <h2 className="text-xl font-semibold mb-2">
+          Step {currentStep + 1} of {stressData.length}: {currentCategory.category}
         </h2>
+        <table className="min-w-full border border-gray-300">
+          <thead className="bg-gray-100">
+            <tr>
+              <th className="border px-2 py-1">Item</th>
+              {Array.from({ length: 10 }, (_, i) => (
+                <th key={i} className="border px-2 py-1 text-center">
+                  {i + 1}
+                </th>
+              ))}
+              <th className="border px-2 py-1">Weight</th>
+            </tr>
+          </thead>
+          <tbody>
+            {currentCategory.items.map((item, j) => (
+              <tr key={j}>
+                <td className="border px-2 py-1">{item.label}</td>
+                {Array.from({ length: 10 }, (_, i) => (
+                  <td key={i} className="border px-2 py-1 text-center">
+                    <input
+                      type="radio"
+                      name={`${currentCategory.category}-${item.label}`}
+                      value={i + 1}
+                      checked={values[`${currentCategory.category}-${item.label}`] === i + 1}
+                      onChange={(e) =>
+                        handleChange(
+                          `${currentCategory.category}-${item.label}`,
+                          parseInt(e.target.value)
+                        )
+                      }
+                    />
+                  </td>
+                ))}
+                <td className="border px-2 py-1 text-center">{item.weight}</td>
+              </tr>
+            ))}
+            <tr className="bg-gray-200 font-semibold">
+              <td className="border px-2 py-1 text-right" colSpan={11}>
+                Subtotal
+              </td>
+              <td className="border px-2 py-1 text-center">
+                {categoryTotals[currentCategory.category]?.toFixed(2) || "0.00"}
+              </td>
+            </tr>
+          </tbody>
+        </table>
       </div>
 
-      <button
-        onClick={handleSubmit}
-        className="mt-4 bg-pes text-white px-4 py-2 rounded"
-      >
-        Submit Totals
-      </button>
+      <div className="flex justify-between">
+        {currentStep > 0 && (
+          <button
+            onClick={() => setCurrentStep((prev) => prev - 1)}
+            className="bg-gray-500 text-white px-4 py-2 rounded"
+          >
+            Back
+          </button>
+        )}
+
+        {currentStep < stressData.length - 1 ? (
+          <button
+            onClick={() => setCurrentStep((prev) => prev + 1)}
+            className="ml-auto bg-blue-600 text-white px-4 py-2 rounded"
+          >
+            Next
+          </button>
+        ) : (
+          <button
+            onClick={handleSubmit}
+            className="ml-auto bg-pes text-white px-4 py-2 rounded"
+          >
+            Submit Totals
+          </button>
+        )}
+      </div>
     </div>
   );
 }

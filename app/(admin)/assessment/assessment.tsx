@@ -3,7 +3,7 @@
 import { useDispatch } from 'react-redux';
 import { setNotificationView } from '@/app/state/setnotification/setNotificationSlice';
 import { Warning2, ArrowRight } from 'iconsax-react'
-import Dept from '../../components/assessment/Dept'
+import Dept from '@/app/components/assessment/Dept';
 import { useEffect, useState } from 'react';
 
 

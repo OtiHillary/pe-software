@@ -1,45 +1,65 @@
 "use client";
-import { EntrySection, EntryItem } from "../../components/EntrySection";
-import { useAppraisalSession } from "../../lib/useAppraisalSession";
+import { useState } from "react";
+import { EntrySection } from "../../components/EntrySection";
 
-const appraisal: EntryItem[] = [
-  { label: "Teaching Quality Evaluation",         templateUrl: "/templates/teaching_quality.xlsx",    formId: "teaching-performance"  },
-  { label: "Research Paper Quality Evaluation",   templateUrl: "/templates/research_quality.xlsx",    formId: "research-quality" },
-  { label: "Administrative Quality",              templateUrl: "/templates/admin_quality.xlsx",       formId: "administrative-quality" },
-  { label: "Community Quality",                   templateUrl: "/templates/community_quality.xlsx",   formId: "community-quality" },
-  { label: "Other Relevant Information",          templateUrl: "/templates/other_info.xlsx",          formId: "form13" },
-];
 
-const performance: EntryItem[] = [
-  { label: "Competence",      templateUrl: "/templates/competence.xlsx",   formId: "competence" },
-  { label: "Integrity",       templateUrl: "/templates/integrity.xlsx",    formId: "integrity"  },
-  { label: "Compatibility",   templateUrl: "/templates/compatibility.xlsx",formId: "compatibility"     },
-  { label: "Use of Resources",templateUrl: "/templates/resources.xlsx",    formId: "use-of-resources"  },
-];
-
-const stress: EntryItem[] = [
-  { label: "Staff Stress Category form",   templateUrl: "/templates/stress_category.xlsx",   formId: "stress-category"   },
-  { label: "Stress Theme form",            templateUrl: "/templates/stress_theme.xlsx",      formId: "stress-theme"      },
-  { label: "Stress Feeling/Frequency form",templateUrl: "/templates/stress_frequency.xlsx",  formId: "stress-feeling"  },
+const stress = [
+  { label: "Staff Stress Category form",   templateUrl: "/templates/stress_category.xlsx",   formId: "/stress/stress-category"   },
+  { label: "Stress Theme form",            templateUrl: "/templates/stress_theme.xlsx",      formId: "/stress/stress-theme"      },
+  { label: "Stress Feeling/Frequency form",templateUrl: "/templates/stress_frequency.xlsx",  formId: "/stress/stress-feeling"  },
 ];
 
 export default function DataEntryPage() {
-  const sessionId = useAppraisalSession();
+  const [open, setOpen] = useState(false);
+
+  const go = (formId: string) => {
+    const session = localStorage.getItem("appraisal_session_id") ?? "";
+    const qs = session ? `?session=${encodeURIComponent(session)}` : "";
+    window.location.href = `/data-entry/${formId}${qs}`;
+  };
 
   return (
     <div className="w-full p-12">
-      <div className="flex justify-between items-center mb-6">
-        <h1 className="text-2xl font-bold">Data Entry</h1>
-        <p className="text-sm text-gray-500">Deadline for Data entry: dd/mm/yyyy</p>
-      </div>
 
-      <div className="mb-4 text-xs text-gray-500">
-        Session: <span className="font-mono">{sessionId ?? "…"}</span>
-      </div>
+      <EntrySection to={'/data-entry/appraisal'} title={'Appraisal'} />
+      <EntrySection to={'/data-entry/performance'} title={'Performance'} />
 
-      <EntrySection title="Appraisal" items={appraisal} />
-      <EntrySection title="Performance" items={performance} />
-      <EntrySection title="Stress Factor" items={stress} />
+      {/* <EntrySection title="Stress Factor" /> */}
+      <div className="bg-white rounded-md shadow mb-4">
+        <button
+          onClick={() => setOpen(!open)}
+          className="w-full flex justify-between items-center p-4"
+        >
+          <span className="text-lg font-semibold">Stress</span>
+          <span className="text-sm">{open ? "v" : ">"}</span>
+        </button>
+
+        {open && (
+          <div className="px-4 pb-3">
+            {stress.map((it, i) => (
+              <div key={`${it.formId}-${i}`} className="flex justify-between items-center py-2 border-t">
+                <span className="text-sm">{it.label}</span>
+                <div className="flex gap-4">
+                  <a
+                    href={it.templateUrl || "#"}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="underline text-blue-600"
+                  >
+                    Download Template
+                  </a>
+                  <button
+                    className="bg-pes text-white px-4 py-1 rounded"
+                    onClick={() => go(it.formId)}
+                  >
+                    Start Data Entry
+                  </button>
+                </div>
+              </div>
+            ))}
+          </div>
+        )}
+      </div>
     </div>
   );
 }
