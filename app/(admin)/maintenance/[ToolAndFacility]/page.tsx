@@ -81,12 +81,6 @@ export default function MaintenanceDetail({ params }: HomeProps) {
             </a>
             <h1 className="text-xl font-semibold">{facilityName}</h1>
           </div>
-          <button
-            onClick={calculateModel}
-            className="flex items-center bg-pes text-white px-4 py-2 rounded"
-          >
-            Conduct P.M Model
-          </button>
         </div>
 
         {/* Forms */}
@@ -120,6 +114,13 @@ export default function MaintenanceDetail({ params }: HomeProps) {
             </div>
           ))}
         </div>
+
+          <button
+            onClick={calculateModel}
+            className="flex items-center bg-pes text-white px-4 py-2  m-4 rounded"
+          >
+            Conduct P.M Model
+          </button>
 
         {/* Results */}
         {Object.keys(results).length > 0 && (

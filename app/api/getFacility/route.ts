@@ -20,14 +20,15 @@ async function getFacility( user: string | null ) {
 }
 
 export async function POST(request: NextRequest) {
-  const { name } = await request.json();
+  const { org } = await request.json();
+  console.log('Fetched facility info:', org);
 
-  if (name) {
+  if (org) {
     try {
-        let userInfo = await getFacility(name)
-        console.log(userInfo);
-        
-        const classes = new Set();
+        let userInfo = await getFacility(org)
+        console.log('Fetched facility info:', userInfo);
+
+        const classes = new Set<string>();
         userInfo.forEach(item => classes.add(item.description_of_facility));
         const stringArray = Array.from(classes);
 

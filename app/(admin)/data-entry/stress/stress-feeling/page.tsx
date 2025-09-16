@@ -10,11 +10,11 @@ type JWTPayload = {
 };
 
 const feelings = [
-  "Anger Towards Others (-)",
-  "Depressive States (-)",
-  "Anxiety Anticipatory (-)",
-  "Physical Feelings (-)",
-  "Self-Blame (-)",
+  "Anger Towards Others",
+  "Depressive States",
+  "Anxiety Anticipatory",
+  "Physical Feelings",
+  "Self-Blame",
 ];
 
 export default function Form7() {
@@ -23,41 +23,76 @@ export default function Form7() {
   const [loading, setLoading] = useState(true);
 
   // Fetch stress scores from backend
-useEffect(() => {
-  const fetchScores = async () => {
-    try {
-      const res = await fetch("/api/getStressScores");
-      const info = await res.json();
-      console.log(info.data)
-      
-      // backend now gives the object directly
-      const numericScores: Record<string, number> = Object.fromEntries(
-        Object.entries(info.data).map(([key, val]) => [key, Number(val) || 0])
-      );
+  useEffect(() => {
+    const fetchScores = async () => {
+      try {
+        const token = localStorage.getItem("access_token");
+        if (!token) {
+          console.warn("No access token found");
+          setMaxScores({});
+          setLoading(false);
+          return;
+        }
 
-      setMaxScores(numericScores);  
-      setLoading(false);
-    } catch (err) {
-      console.error("Error fetching scores:", err);
-      setLoading(false);
-    }
-  };
+        // decode JWT
+        const decoded = jwtDecode<JWTPayload>(token);
+        const user_name = decoded.name;
+        const org = decoded.org;
 
-  fetchScores();
-}, []);
+        if (!user_name || !org) {
+          console.warn("Decoded token missing user_name or org");
+          setMaxScores({});
+          setLoading(false);
+          return;
+        }
+
+        const res = await fetch(
+          `/api/getStressScores?user_name=${encodeURIComponent(user_name)}&org=${encodeURIComponent(org)}`,
+          {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          }
+        );
+
+        const info = await res.json();
+
+        if (!info.data) {
+          console.warn("No stress scores found");
+          console.log(info);
+          setMaxScores({});
+          setLoading(false);
+          return;
+        }
+
+        const numericScores: Record<string, number> = Object.fromEntries(
+          Object.entries(info.data).map(([key, val]) => [key, Number(val) || 0])
+        );
+
+        setMaxScores(numericScores);
+        setLoading(false);
+      } catch (err) {
+        console.error("Error fetching scores:", err);
+        setLoading(false);
+      }
+    };
+
+    fetchScores();
+  }, []);
 
 const categories = [
-  { key: "organizational", label: "Organization (-)" },
-  { key: "student", label: "Student (-)" },
-  { key: "administrative", label: "Administrative (-)" },
-  { key: "teacher", label: "Teacher (-)" },
-  { key: "parents", label: "Parent (-)" },
-  { key: "occupational", label: "Occupational (-)" },
-  { key: "personal", label: "Personal (-)" },
-  { key: "academic_program", label: "Academic Program (-)" },
-  { key: "negative_public_attitude", label: "Negative Public Attitude (-)" },
-  { key: "misc", label: "Miscellaneous (-)" },
+  { key: "organizational", label: "Organization" },
+  { key: "student", label: "Student" },
+  { key: "administrative", label: "Administrative" },
+  { key: "teacher", label: "Teacher" },
+  { key: "parents", label: "Parent" },
+  { key: "occupational", label: "Occupational" },
+  { key: "personal", label: "Personal" },
+  { key: "academic_program", label: "Academic Program" },
+  { key: "negative_public_attitude", label: "Negative Public Attitude" },
+  { key: "misc", label: "Miscellaneous" },
 ];
+
 
 
   const handleChange = (cat: string, feel: string, val: number) => {
@@ -123,77 +158,65 @@ const saveForm7 = async () => {
   if (loading) return <p className="p-12">Loading stress scores...</p>;
 
   return (
-    <div className="w-full p-12">
-      <h2 className="text-2xl font-bold mb-4">Form 7: Stress Feelings / Frequencies</h2>
-      <p className="text-gray-600 mb-6">
-        Select frequency values per category × feeling. Max values are limited by your stress
-        scores.
-      </p>
-
-      <div className="overflow-x-auto">
-        <table className="w-full border border-gray-300 text-sm">
-          <thead>
-            <tr className="bg-purple-200">
-              <th className="border p-2">Stress Category / Freq</th>
-              {feelings.map((feel) => (
-                <th key={feel} className="border p-2">
-                  {feel}
-                </th>
-              ))}
-              <th className="border p-2">Row Total</th>
-            </tr>
-          </thead>
-          <tbody>
-            {categories.map((cat) => (
-              <tr key={cat.key}>
-                <td>{cat.label}</td>
-                {feelings.map((feel) => {
-                  const max = maxScores[cat.key] ?? 0;
-                  return (
-                    <td key={feel}>
-                      <select
-                        value={values[cat.key]?.[feel] ?? ""}
-                        onChange={(e) =>
-                          handleChange(cat.key, feel, parseInt(e.target.value) || 0)
-                        }
-                      >
-                        <option value="">--</option>
-                        {Array.from({ length: max + 1 }, (_, i) => (
-                          <option key={i} value={i}>{i}</option>
-                        ))}
-                      </select>
-                    </td>
-                  );
-                })}
-              </tr>
+    <div className="overflow-x-auto">
+      <table className="w-full border border-gray-300 text-sm">
+        <thead>
+          <tr className="bg-purple-200">
+            <th className="border px-3 py-2 text-left">Stress Category / Freq</th>
+            {feelings.map((feel) => (
+              <th key={feel} className="border px-3 py-2 text-center">
+                {feel}
+              </th>
             ))}
+            <th className="border px-3 py-2 text-center">Row Total</th>
+          </tr>
+        </thead>
+        <tbody>
+          {categories.map((cat, idx) => (
+            <tr key={cat.key} className={idx % 2 === 0 ? "bg-white" : "bg-gray-50"}>
+              <td className="border p-2 font-medium">
+                {cat.label} ({maxScores[cat.key] ?? 0})
+              </td>
 
-
-            <tr className="bg-purple-100 font-bold">
-              <td className="border p-2">Column Totals (∑)</td>
-              {feelings.map((feel) => (
-                <td key={feel} className="border p-2 text-center">
-                  {getColTotal(feel)}
-                </td>
-              ))}
-              <td className="border p-2 text-center">{getGrandTotal()}</td>
+              {feelings.map((feel) => {
+                const max = maxScores[cat.key] ?? 0;
+                return (
+                  <td key={feel} className="border px-3 py-2 text-center">
+                    <select
+                      value={values[cat.key]?.[feel] ?? ""}
+                      onChange={(e) =>
+                        handleChange(cat.key, feel, parseInt(e.target.value) || 0)
+                      }
+                      className="w-16 border rounded text-center"
+                    >
+                      <option value="">--</option>
+                      {Array.from({ length: max + 1 }, (_, i) => (
+                        <option key={i} value={i}>
+                          {i}
+                        </option>
+                      ))}
+                    </select>
+                  </td>
+                );
+              })}
+              <td className="border px-3 py-2 text-center font-semibold">
+                {getRowTotal(cat.key)}
+              </td>
             </tr>
-          </tbody>
-        </table>
-      </div>
+          ))}
 
-      <div className="mt-4 text-gray-700">
-        <p>
-          <strong>Ratio (∑xi / ∑all elements):</strong> {ratio.toFixed(4)}
-        </p>
-      </div>
 
-      <button
-        onClick={saveForm7}
-        className="mt-6 px-6 py-2 rounded text-white bg-pes"
-      >
-        Save Form 7
-      </button>
+          <tr className="bg-purple-100 font-bold">
+            <td className="border px-3 py-2">Column Totals (∑)</td>
+            {feelings.map((feel) => (
+              <td key={feel} className="border px-3 py-2 text-center">
+                {getColTotal(feel)}
+              </td>
+            ))}
+            <td className="border px-3 py-2 text-center">{getGrandTotal()}</td>
+          </tr>
+        </tbody>
+      </table>
     </div>
   );
 }

@@ -1,5 +1,5 @@
 "use client";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { jwtDecode } from "jwt-decode";
 
 type JWTPayload = {
@@ -9,16 +9,16 @@ type JWTPayload = {
 };
 
 const categories = [
-  "Organization (-)",
-  "Student (-)",
-  "Administrative (-)",
-  "Teacher (-)",
-  "Parent (-)",
-  "Occupational (-)",
-  "Personal (-)",
-  "Academic Program (-)",
-  "Negative Public Attitude (-)",
-  "Miscellaneous (-)"
+  "Organization",
+  "Student",
+  "Administrative",
+  "Teacher",
+  "Parent",
+  "Occupational",
+  "Personal",
+  "Academic Program",
+  "Negative Public Attitude",
+  "Miscellaneous",
 ];
 
 const themes = [
@@ -30,35 +30,94 @@ const themes = [
   "Under-load Quantitative",
   "General Performance",
   "Threat to Self",
-  "Precipitate Change"
+  "Precipitate Change",
 ];
 
-// mapping your category labels -> DB column names
+// map frontend category → DB column
 const categoryMap: Record<string, string> = {
-  "Organization (-)": "organizational",
-  "Student (-)": "student",
-  "Administrative (-)": "administrative",
-  "Teacher (-)": "teacher",
-  "Parent (-)": "parents",
-  "Occupational (-)": "occupational",
-  "Personal (-)": "personal",
-  "Academic Program (-)": "academic_program",
-  "Negative Public Attitude (-)": "negative_public_attitude",
-  "Miscellaneous (-)": "misc"
+  Organization: "organizational",
+  Student: "student",
+  Administrative: "administrative",
+  Teacher: "teacher",
+  Parent: "parents",
+  Occupational: "occupational",
+  Personal: "personal",
+  "Academic Program": "academic_program",
+  "Negative Public Attitude": "negative_public_attitude",
+  Miscellaneous: "misc",
 };
 
 export default function Form6() {
   const [values, setValues] = useState<Record<string, Record<string, number>>>(
     {}
   );
+  const [maxScores, setMaxScores] = useState<Record<string, number>>({});
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const fetchScores = async () => {
+      try {
+        const token = localStorage.getItem("access_token");
+        if (!token) {
+          console.warn("No access token found");
+          setMaxScores({});
+          setLoading(false);
+          return;
+        }
+
+        // decode JWT
+        const decoded = jwtDecode<JWTPayload>(token);
+        const user_name = decoded.name;
+        const org = decoded.org;
+
+        if (!user_name || !org) {
+          console.warn("Decoded token missing user_name or org");
+          setMaxScores({});
+          setLoading(false);
+          return;
+        }
+
+        const res = await fetch(
+          `/api/getStressScores?user_name=${encodeURIComponent(user_name)}&org=${encodeURIComponent(org)}`,
+          {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          }
+        );
+
+        const info = await res.json();
+
+        if (!info.data) {
+          console.warn("No stress scores found");
+          console.log(info);
+          setMaxScores({});
+          setLoading(false);
+          return;
+        }
+
+        const numericScores: Record<string, number> = Object.fromEntries(
+          Object.entries(info.data).map(([key, val]) => [key, Number(val) || 0])
+        );
+
+        setMaxScores(numericScores);
+        setLoading(false);
+      } catch (err) {
+        console.error("Error fetching scores:", err);
+        setLoading(false);
+      }
+    };
+
+    fetchScores();
+  }, []);
 
   const handleChange = (cat: string, theme: string, val: number) => {
     setValues((prev) => ({
       ...prev,
       [cat]: {
         ...prev[cat],
-        [theme]: val
-      }
+        [theme]: val,
+      },
     }));
   };
 
@@ -72,7 +131,6 @@ export default function Form6() {
   const getGrandTotal = () =>
     categories.reduce((sum, c) => sum + getRowTotal(c), 0);
 
-  // percentages (per theme)
   const grandTotal = getGrandTotal();
   const getColPercent = (theme: string) =>
     grandTotal > 0
@@ -81,11 +139,9 @@ export default function Form6() {
 
   const saveForm6 = async () => {
     try {
-      // decode user from token
       const token = localStorage.getItem("token");
       const decoded = token ? (jwtDecode(token) as JWTPayload) : {};
 
-      // map row totals into scores object for backend
       const scores: Record<string, number> = {};
       categories.forEach((cat) => {
         const dbField = categoryMap[cat];
@@ -95,13 +151,13 @@ export default function Form6() {
       const payload = {
         user_name: decoded.name || "anonymous",
         dept: decoded.role || "unknown",
-        scores
+        scores,
       };
 
       await fetch("/api/saveStressScore", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(payload)
+        body: JSON.stringify(payload),
       });
 
       alert("Form 6 saved successfully!");
@@ -111,14 +167,15 @@ export default function Form6() {
     }
   };
 
+  if (loading) return <p className="p-12">Loading stress scores...</p>;
+
   return (
     <div className="w-full p-12">
       <h2 className="text-2xl font-bold mb-4">
         Form 6: Stress Themes Category Values
       </h2>
       <p className="text-gray-600 mb-6">
-        Enter values for each stress theme per category. Use{" "}
-        <strong>0</strong> where not applicable.
+        Select values for each stress theme per category. Max values are based on your stress scores.
       </p>
 
       <div className="overflow-x-auto">
@@ -135,29 +192,38 @@ export default function Form6() {
             </tr>
           </thead>
           <tbody>
-            {categories.map((cat) => (
-              <tr key={cat}>
-                <td className="border p-2 font-medium">{cat}</td>
-                {themes.map((theme) => (
-                  <td key={theme} className="border p-2">
-                    <input
-                      type="number"
-                      min={0}
-                      className="w-20 border rounded p-1 text-center"
-                      value={values[cat]?.[theme] ?? ""}
-                      onChange={(e) =>
-                        handleChange(cat, theme, parseFloat(e.target.value) || 0)
-                      }
-                    />
+            {categories.map((cat) => {
+              const max = maxScores[categoryMap[cat]] ?? 0;
+              return (
+                <tr key={cat}>
+                  <td className="border p-2 font-medium">
+                    {cat} ({max})
                   </td>
-                ))}
-                <td className="border p-2 text-center font-semibold bg-gray-100">
-                  {getRowTotal(cat)}
-                </td>
-              </tr>
-            ))}
+                  {themes.map((theme) => (
+                    <td key={theme} className="border p-2">
+                      <select
+                        className="w-20 border rounded p-1 text-center"
+                        value={values[cat]?.[theme] ?? ""}
+                        onChange={(e) =>
+                          handleChange(cat, theme, parseInt(e.target.value) || 0)
+                        }
+                      >
+                        <option value="">--</option>
+                        {Array.from({ length: max + 1 }, (_, i) => (
+                          <option key={i} value={i}>
+                            {i}
+                          </option>
+                        ))}
+                      </select>
+                    </td>
+                  ))}
+                  <td className="border p-2 text-center font-semibold bg-gray-100">
+                    {getRowTotal(cat)}
+                  </td>
+                </tr>
+              );
+            })}
 
-            {/* Totals row */}
             <tr className="bg-purple-100 font-bold">
               <td className="border p-2">Column Totals (∑)</td>
               {themes.map((theme) => (
@@ -168,16 +234,6 @@ export default function Form6() {
               <td className="border p-2 text-center">{grandTotal}</td>
             </tr>
 
-            {/* Percentages row */}
-            <tr className="bg-yellow-100 font-bold">
-              <td className="border p-2">% of Total</td>
-              {themes.map((theme) => (
-                <td key={theme} className="border p-2 text-center">
-                  {getColPercent(theme)}%
-                </td>
-              ))}
-              <td className="border p-2 text-center">100%</td>
-            </tr>
           </tbody>
         </table>
       </div>
