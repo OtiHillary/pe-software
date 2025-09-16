@@ -153,7 +153,7 @@ export default function PerformanceStep() {
 
   return (
     <div className="w-full mx-auto p-8 space-y-6">
-      <h1 className="text-2xl font-bold text-center">Performance Step Form</h1>
+      <h1 className="text-2xl font-bold text-center">Performance data entry</h1>
 
       {/* Step content */}
       <div>{steps[step].form}</div>
