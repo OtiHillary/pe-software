@@ -3,7 +3,7 @@ import prisma from '../prisma.dev'
 
 async function getStats( user: string | null ) {
   const users = await prisma.$queryRawUnsafe<any[]>('SELECT * FROM pesuser WHERE org = $1', user?.toString())
-  const appraisals: any[] = await prisma.$queryRawUnsafe('SELECT * FROM appraisals WHERE org = $1', user?.toString())
+  const appraisals: any[] = await prisma.$queryRawUnsafe('SELECT * FROM appraisal WHERE org = $1', user?.toString())
 //   const assessments = await prisma.$queryRawUnsafe('SELECT * FROM assesments WHERE org = $1', user?.toString())
   
   

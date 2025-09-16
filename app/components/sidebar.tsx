@@ -16,6 +16,8 @@ import {
 import jwt from 'jsonwebtoken'
 import Link from 'next/link';
 import { useEffect, useState } from 'react';
+import { useAuth } from './useAuth';
+import RoleCreated from './modals/role_created';
 
 // function MobileSidebar({tabs, user, pathname}: {tabs: any, user: any, pathname: any}): JSX.Element {
 //    const [isMenu, setMenu] = useState(false)
@@ -64,30 +66,33 @@ export default function Sidebar({is_sidebar_active, handleSideBar}:
    {is_sidebar_active: boolean, handleSideBar:any}): JSX.Element{
    const pathname = usePathname()
    const [user, setUser] = useState({ name: '', role: '' })
+   const { role } = useAuth();
 
    useEffect(() => {
+      console.log('role is:', role)
       const access_token = localStorage.getItem('access_token') as string
       const newUser = jwt.decode(access_token)
       setUser(newUser as { name: string; role: string });
-
    }, [])
    
 
    console.log(pathname.split('/'))
 
    // roles are: Admin, dean, hod 
-
    const tabs = [
-      { key: 1, name: 'Dashboard', icon: <Home3 />, href: '/dashboard', role_access: ['admin', 'employee-ac', 'employee-nac', 'team-lead', 'employee-w'] },
+      { key: 1, name: 'Dashboard', icon: <Home3 />, href: '/dashboard', role_access: ['admin', 'employee-ac', 'employee-nac', 'team-lead', 'employee-w', 'external'] },
       { key: 4, name: 'Employee Database', icon: <People />, href: '/em-database', role_access: ['admin', 'team-lead'] }, 
       { key: 5, name: 'Goals', icon: <Setting4 />, href: '/goals', role_access: ['admin', 'employee-ac', 'employee-nac', 'team-lead', 'employee-w'] }, 
       { key: 3, name: 'Data Entry', icon: <Home3 />, href: '/data-entry', role_access: ['employee-ac', 'employee-nac', 'team-lead', 'employee-w'] }, 
-      { key: 6, name: 'Assessment', icon: <Award />, href: '/assessment', role_access: ['admin'] }, 
-      { key: 7, name: 'Performance Review', icon: <Teacher />, href: '/performance', role_access: ['employee-ac', 'employee-nac', 'team-lead', 'employee-w'] }, 
+      { key: 6, name: 'Assessment', icon: <Award />, href: '/assessment', role_access: ['admin', 'external'] }, 
+      { key: 7, name: 'Performance Review', icon: <Teacher />, href: '/performance', role_access: ['employee-ac', 'employee-nac', 'team-lead', 'employee-w', 'external'] }, 
       { key: 2, name: 'Profile', icon: <ProfileCircle />, href: '/profile', role_access: ['employee-ac', 'employee-nac', 'team-lead', 'employee-w'] },
       { key: 8, name: 'Pricing', icon: <DollarCircle />, href: '/pricing', role_access: ['admin'] },
       { key: 9, name: 'Maintenance Model', icon: <Setting3 />, href: '/maintenance', role_access: ['employee-ac', 'employee-nac', 'team-lead', 'employee-w', 'admin'] }
    ]
+
+   const allowedTabs = tabs.filter(tab => tab.role_access.includes(user.role));
+   console.log(allowedTabs)
    
    return (
          <>
@@ -99,38 +104,22 @@ export default function Sidebar({is_sidebar_active, handleSideBar}:
                   </div>
 
                   <div className='tabs my-16 flex flex-col justify-between'>
-                  {
-                     tabs.map((i) => {
-                        const is_active = i.href == pathname || `/${pathname.split('/')[1]}` == i.href
-                        return(
-                        <Link style={{ display: `${ i.role_access.includes(user?.role)? '': '' }` }}
-                              href={ i.href } key={ i.key } 
-                              className={`${ is_active? 'bg-gray-200 text-pes' : 'bg-transparent text-gray-400'} 
-                                          hover:bg-gray-200 hover:text-pes p-3 ps-8 my-1 text-md flex`}
-                        >
-                           { i.icon }
-                           <p className='mx-3'> { i.name }</p>
-                        </Link>
-                        )
-                     })
-                  }
                    {
-                        // tabs
-                        //    .filter(i => i.role_access.includes(user?.role?.toLowerCase())) // filter based on role
-                        //    .map(i => {
-                        //       const is_active = i.href == pathname || `/${pathname.split('/')[1]}` == i.href
-                        //       return (
-                        //       <Link
-                        //          href={ i.href }
-                        //          key={ i.key }
-                        //          className={`${ is_active ? 'bg-gray-200 text-pes' : 'bg-transparent text-gray-400'} 
-                        //                      hover:bg-gray-200 hover:text-pes p-3 ps-8 my-1 text-md flex`}
-                        //       >
-                        //          { i.icon }
-                        //          <p className="mx-3">{ i.name }</p>
-                        //       </Link>
-                        //       )
-                        // })
+                     allowedTabs
+                        .map(i => {
+                           const is_active = i.href == pathname || `/${pathname.split('/')[1]}` == i.href
+                           return (
+                           <Link
+                              href={ i.href }
+                              key={ i.key }
+                              className={`${ is_active ? 'bg-gray-200 text-pes' : 'bg-transparent text-gray-400'} 
+                                          hover:bg-gray-200 hover:text-pes p-3 ps-8 my-1 text-md flex`}
+                           >
+                              { i.icon }
+                              <p className="mx-3">{ i.name }</p>
+                           </Link>
+                           )
+                     })
                      }
                   </div>            
                </div>

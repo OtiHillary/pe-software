@@ -12,12 +12,13 @@ async function getUser( user: string | null ) {
 export async function POST(request: NextRequest) {
   const { token } = await request.json();
   const decoded = jwt.decode(token);
+  console.log('Decoded JWT:', decoded);
 
   if (token) {
     try {
       let userName: string | null = null;
-      if (decoded && typeof decoded === 'object' && 'name' in decoded) {
-        userName = (decoded as { name?: string }).name ?? null;
+      if (decoded && typeof decoded === 'object' && 'org' in decoded) {
+        userName = (decoded as { org?: string }).org ?? null;
       }
       let userInfo = await getUser(userName);
       return NextResponse.json(userInfo)

@@ -1,3 +1,18 @@
+--               List of relations
+--  Schema |      Name       | Type  |  Owner   
+-- --------+-----------------+-------+----------
+--  public | appraisal       | table | postgres
+--  public | facilities      | table | postgres
+--  public | goals           | table | postgres
+--  public | index           | table | postgres
+--  public | permission      | table | postgres
+--  public | pesuser         | table | postgres
+--  public | roles           | table | postgres
+--  public | stress          | table | postgres
+--  public | stress_scores   | table | postgres
+--  public | userperformance | table | postgres
+
+-- assessment
 CREATE TABLE assessment (
    id SERIAL PRIMARY KEY,
    appraisal TEXT NOT NULL,
@@ -9,7 +24,7 @@ CREATE TABLE assessment (
    user_id TEXT NOT NULL,
    CONSTRAINT fk_users FOREIGN KEY (user_id) REFERENCES pesuser (name)
 )
-
+-- goals
 CREATE TABLE goals (
    id SERIAL PRIMARY KEY,
    name TEXT NOT NULL,
@@ -21,25 +36,7 @@ CREATE TABLE goals (
    CONSTRAINT fk_users FOREIGN KEY (user_id) REFERENCES pesuser (name)
 );
 
-const goals = [
-    { name: 'Sales Growth' , desc: 'Growth of sales by X% by 2025, using daily metrics', status: 70, date_started: '', due_date: '', user_id: 'newDev inc' },
-    { name: 'Developement' , status: 'Not started', description: 'Growth of sales by X% by 2025, using daily metrics',daysLeft: 12 },
-    { name: 'Developement' , status: 'Not started', description: 'Growth of sales by X% by 2025, using daily metrics',daysLeft: 12 },
-    { name: 'Databases' , status: 'Not started', description: 'Growth of sales by X% by 2025, using daily metrics',daysLeft: 12 },
-    { name: 'Customer Satisfaction' , status: 12, description: 'Growth of sales by X% by 2025, using daily metrics',daysLeft: 11 },
-    { name: 'Customer Satisfction' , status: 15, description: 'Growth of sales by X% by 2025, using daily metrics',daysLeft: 20 },
-]
-
-INSERT INTO goals (name, description, status, day_started, due_date, user_id)
-VALUES ( 'Sales Growth', 'Growth of sales by X% by 2025, using daily metrics', 70, '1990-01-01', '1990-01-01', 'DevSquad inc' );
-
-INSERT INTO goals (name, description, status, day_started, due_date, user_id)
-VALUES ( 'Development', 'Growth of sales by X% by 2025, using daily metrics', 50, '1990-01-01', '1990-01-01', 'DevSquad inc' );
-
-INSERT INTO goals (name, description, status, day_started, due_date, user_id)
-VALUES ( 'Customer Satisfaction', 'Growth of sales by X% by 2025, using daily metrics', 50, '1990-01-01', '1990-01-01', 'DevSquad inc' );
-
-
+-- pesuser
 CREATE TABLE pesuser (
    id SERIAL,
    name VARCHAR(255) PRIMARY KEY NOT NULL,
@@ -60,6 +57,7 @@ CREATE TABLE pesuser (
    org VARCHAR(255)
 );
 
+-- roles
 CREATE TABLE roles (
    id SERIAL,
    name VARCHAR(255) PRIMARY KEY NOT NULL,
@@ -67,6 +65,7 @@ CREATE TABLE roles (
    org VARCHAR(255)
 );
 
+-- permission
 CREATE TABLE permission (
    id SERIAL PRIMARY KEY,
    manage_user TEXT,
@@ -88,7 +87,8 @@ CREATE TABLE permission (
    FOREIGN KEY (user_id) REFERENCES pesuser (name)
 );
 
-CREATE TABLE tools_or_facilities (
+-- facilities
+CREATE TABLE facilities (
     id SERIAL PRIMARY KEY,
     description TEXT NOT NULL,
     identification_symbol VARCHAR(100),
@@ -100,6 +100,7 @@ CREATE TABLE tools_or_facilities (
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
+-- index
 CREATE TABLE "index" (
    id SERIAL PRIMARY KEY,
    user_id VARCHAR(255) NOT NULL,
@@ -108,4 +109,55 @@ CREATE TABLE "index" (
    productivity NUMERIC,
    utility NUMERIC,
    CONSTRAINT fk_pesuser FOREIGN KEY (user_id) REFERENCES pesuser (name)
+);
+
+-- appraisal
+CREATE TABLE appraisal (
+    id SERIAL PRIMARY KEY,
+    pesuser_name VARCHAR(255) NOT NULL,        -- FK to pesuser(name) originally
+    org VARCHAR(255),
+    teaching_quality_evaluation NUMERIC(5,2),  -- allows decimals like 40.3
+    research_quality_evaluation NUMERIC(5,2),
+    administrative_quality_evaluation NUMERIC(5,2),
+    community_quality_evaluation NUMERIC(5,2),
+    other_relevant_information TEXT,
+    dept VARCHAR(255)
+);
+
+-- stress
+CREATE TABLE stress (
+    id SERIAL PRIMARY KEY,
+    pesuser_name VARCHAR(255) NOT NULL,              -- originally FK to pesuser(name)
+    org VARCHAR(255),
+    staff_stress_category_form TEXT,                 -- e.g. "workload, admin issues"
+    stress_theme_form TEXT,                          -- e.g. "occupational, personal"
+    stress_feeling_frequency_form TEXT,              -- e.g. "often, rarely, weekly"
+    dept VARCHAR(255)
+);
+
+-- userperformance
+CREATE TABLE userperformance (
+    id SERIAL PRIMARY KEY,
+    pesuser_name VARCHAR(255) NOT NULL,     -- originally FK to pesuser(name)
+    org VARCHAR(255),
+    competence NUMERIC(5,2),                -- e.g. 73.5
+    integrity NUMERIC(5,2),                 -- e.g. 41
+    compatibility NUMERIC(5,2),             -- nullable
+    use_of_resources NUMERIC(5,2),          -- nullable
+    dept VARCHAR(255)
+);
+
+-- stress_scores
+CREATE TABLE stress_scores (
+    id SERIAL PRIMARY KEY,
+    organizational INT,
+    student INT,
+    administrative INT,
+    teacher INT,
+    parents INT,
+    occupational INT,
+    personal INT,
+    academic_program INT,
+    negative_public_attitude INT,
+    misc INT
 );

@@ -68,8 +68,21 @@ export default function Formone({ formdata, setFormdata }: FormProps){
 
          <div className="w-[80%] ms-8 me-auto mb-4 flex justify-between">
             <div className="formgroup flex flex-col">
-               <label htmlFor="" className='my-2 text-sm'>Present post:</label>
-               <input name="role" onChange={ (event) => setFormdata({...formdata, [event?.target.name]: event.target.value }) } type="text" className='font-light text-sm text-gray-500 placeholder-gray-300 py-3 px-6 outline-0 border focus:border-gray-400 rounded-sm' placeholder="Present post" />
+               <label htmlFor="role" className="my-2 text-sm">Present post:</label>
+               <select
+                  name="role"
+                  value={formdata.role || ""}
+                  onChange={(event) =>
+                     setFormdata({ ...formdata, [event.target.name]: event.target.value })
+                  }
+                  className="font-light text-sm text-gray-500 placeholder-gray-300 py-3 px-6 outline-0 border focus:border-gray-400 rounded-sm"
+               >
+                  <option value="" disabled>Select a role</option>
+                  <option value="employee-ac">Employee Academic</option>
+                  <option value="employee-nac">Employee Non-Academic</option>
+                  <option value="team-lead">Team Lead</option>
+                  <option value="employee-w">Employee Works</option>
+               </select>
             </div>
 
             <div className="formgroup flex flex-col">

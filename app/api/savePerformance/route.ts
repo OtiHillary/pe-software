@@ -3,7 +3,7 @@ import prisma from '../prisma.dev'
 
 export async function POST(req: NextRequest) {
   const body = await req.json();
-  const { pesuser_name, dept, payload } = body;
+  const { pesuser_name, org, payload } = body;
   const value = body[payload];
 
   const allowedFields = [
@@ -13,7 +13,7 @@ export async function POST(req: NextRequest) {
     'use_of_resources',
   ];
 
-  if (!pesuser_name || !payload || value === undefined) {
+  if (!pesuser_name || !org || !payload || value === undefined) {
     return NextResponse.json({ message: 'Missing required fields' }, { status: 400 });
   }
 
@@ -22,31 +22,34 @@ export async function POST(req: NextRequest) {
   }
 
   try {
-    // Check if user userperformance already exists
-    const existing = await prisma.$queryRawUnsafe(
-      `SELECT * FROM "userperformance" WHERE pesuser_name = $1 AND dept = $2`,
+    // Fetch dept from pesuser
+    const userResult = await prisma.$queryRawUnsafe<{ dept: string }[]>(
+      `SELECT dept FROM "pesuser" WHERE name = $1 AND org = $2 LIMIT 1`,
       pesuser_name,
-      dept
-    ) as any[];
+      org
+    );
 
-    if (existing.length === 0) {
-      await prisma.$executeRawUnsafe(
-        `INSERT INTO "userperformance" (pesuser_name, dept, "${payload}") VALUES ($1, $2, $3)`,
-        pesuser_name,
-        dept,
-        value
-      );
-      return NextResponse.json({ message: 'userperformance created' }, { status: 201 });
-    } else {
-      // Update the field
-      await prisma.$executeRawUnsafe(
-        `UPDATE "userperformance" SET "${payload}" = $1 WHERE pesuser_name = $2 `,
-        value,
-        dept,
-        pesuser_name
-      );
-      return NextResponse.json({ message: 'userperformance updated' }, { status: 200 });
+    if (userResult.length === 0 || !userResult[0].dept) {
+      return NextResponse.json({ message: 'User not found or department missing' }, { status: 404 });
     }
+
+    const dept = userResult[0].dept;
+
+    // Insert or update into userperformance
+    await prisma.$executeRawUnsafe(
+      `
+      INSERT INTO "userperformance" (pesuser_name, org, dept, "${payload}")
+      VALUES ($1, $2, $3, $4)
+      ON CONFLICT (pesuser_name, org, dept)
+      DO UPDATE SET "${payload}" = EXCLUDED."${payload}"
+      `,
+      pesuser_name,
+      org,
+      dept,
+      value
+    );
+
+    return NextResponse.json({ message: 'userperformance saved/updated' }, { status: 200 });
   } catch (error) {
     console.error('Prisma query error:', error);
     return NextResponse.json({ message: 'Internal Server Error' }, { status: 500 });
