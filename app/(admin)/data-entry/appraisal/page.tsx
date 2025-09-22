@@ -1,6 +1,8 @@
 'use client'
 import { useState } from 'react'
 import { jwtDecode } from 'jwt-decode'
+import jsPDF from "jspdf";
+import html2canvas from "html2canvas";
 
 type JWTPayload = {
   name?: string
@@ -128,35 +130,65 @@ function CriteriaForm({
 function CriteriaFormPrint({
   title,
   criteria,
-  scores,
-}:{
-  title: string
-  criteria: { id: string; name: string; maxScore: number }[]
-  scores: Record<string, number>
+}: {
+  title: string;
+  criteria: { id: string; name: string; maxScore: number }[];
 }) {
+  const handlePrintPDF = async () => {
+    const element = document.getElementById(`print-section-${title}`);
+    if (!element) return;
+
+    // Convert section to canvas
+    const canvas = await html2canvas(element);
+    const imgData = canvas.toDataURL("image/png");
+
+    // Create PDF
+    const pdf = new jsPDF("p", "mm", "a4");
+    const pageWidth = pdf.internal.pageSize.getWidth();
+    const pageHeight = pdf.internal.pageSize.getHeight();
+
+    // Scale image to fit page
+    const imgProps = (pdf as any).getImageProperties(imgData);
+    const pdfWidth = pageWidth;
+    const pdfHeight = (imgProps.height * pdfWidth) / imgProps.width;
+
+    pdf.addImage(imgData, "PNG", 0, 0, pdfWidth, pdfHeight);
+
+    pdf.save(`${title.replace(/\s+/g, "_")}.pdf`);
+  };
+
   return (
     <div className="space-y-4">
-      <h2 className="text-xl font-bold">{title}</h2>
-      <table className="w-full border-collapse border border-gray-300">
-        <thead>
-          <tr className="bg-gray-100 border">
-            <th className="border p-2">Criterion</th>
-            <th className="border p-2">Max</th>
-            <th className="border p-2">Score</th>
-          </tr>
-        </thead>
-        <tbody>
-          {criteria.map((c) => (
-            <tr key={c.id}>
-              <td className="border p-2">{c.name}</td>
-              <td className="border p-2 text-center">{c.maxScore}</td>
-              <td className="border p-2 text-center">{scores[c.id] || 0}</td>
+      <div id={`print-section-${title}`}>
+        <h2 className="text-xl font-bold mb-4">{title}</h2>
+        <table className="w-full border-collapse border border-gray-300">
+          <thead>
+            <tr className="bg-gray-100 border">
+              <th className="border p-2">Criterion</th>
+              <th className="border p-2">Max</th>
+              <th className="border p-2">Score</th>
             </tr>
-          ))}
-        </tbody>
-      </table>
+          </thead>
+          <tbody>
+            {criteria.map((c) => (
+              <tr key={c.id}>
+                <td className="border p-2">{c.name}</td>
+                <td className="border p-2 text-center">{c.maxScore}</td>
+                <td className="border p-2 text-center">{""}</td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+
+      <button
+        onClick={handlePrintPDF}
+        className="px-4 py-2 bg-green-600 text-white rounded"
+      >
+        Print as PDF
+      </button>
     </div>
-  )
+  );
 }
 
 /* ---------------- Step Form Component ---------------- */
@@ -187,7 +219,6 @@ export default function AppraisalStep() {
         <CriteriaFormPrint
           title="Teaching Quality Assessment(Students)"
           criteria={teachingStudentCriteria}
-          scores={studentTeachingScores}
         />
       ),
     },

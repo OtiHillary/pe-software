@@ -161,3 +161,46 @@ CREATE TABLE stress_scores (
     negative_public_attitude INT,
     misc INT
 );
+
+
+-- Plans table (unchanged)
+CREATE TABLE plans (
+  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  paypal_plan_id TEXT UNIQUE NOT NULL,  
+  name TEXT NOT NULL,
+  price_cents INTEGER NOT NULL,          
+  currency_code VARCHAR(10) NOT NULL,     
+  billing_cycle_interval_unit VARCHAR(10) NOT NULL, 
+  billing_cycle_interval_count INTEGER NOT NULL,    
+  trial_days INTEGER DEFAULT 0,           
+  is_active BOOLEAN NOT NULL DEFAULT TRUE,
+  created_at TIMESTAMPTZ NOT NULL DEFAULT now(),
+  updated_at TIMESTAMPTZ NOT NULL DEFAULT now()
+);
+
+-- Subscriptions table
+CREATE TABLE subscriptions (
+  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  pesuser_id INTEGER NOT NULL REFERENCES pesuser(id),
+  plan_id UUID NOT NULL REFERENCES plans(id),
+  paypal_subscription_id TEXT UNIQUE NOT NULL,  
+  status VARCHAR(50) NOT NULL,  
+  start_time TIMESTAMPTZ,        
+  next_billing_time TIMESTAMPTZ, 
+  last_billing_time TIMESTAMPTZ, 
+  cancel_time TIMESTAMPTZ,       
+  failed_payment_count INTEGER DEFAULT 0,
+  metadata JSONB,               
+  created_at TIMESTAMPTZ NOT NULL DEFAULT now(),
+  updated_at TIMESTAMPTZ NOT NULL DEFAULT now()
+);
+
+-- Subscription events table
+CREATE TABLE subscription_events (
+  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  subscription_id UUID NOT NULL REFERENCES subscriptions(id),
+  event_type TEXT NOT NULL,      
+  event_time TIMESTAMPTZ NOT NULL DEFAULT now(),
+  raw_payload JSONB NOT NULL,     
+  processed BOOLEAN NOT NULL DEFAULT FALSE
+);

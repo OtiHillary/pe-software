@@ -18,8 +18,6 @@ export default function Navbar({is_sidebar_active, handleSideBar}:
    useEffect(() =>{
       const access_token = localStorage.getItem('access_token') as string
       const user = jwt.decode(access_token);
-      // console.log(access_token)
-
       setUser(user)
    }, [])
 

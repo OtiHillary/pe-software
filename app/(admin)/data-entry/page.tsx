@@ -5,8 +5,8 @@ import { EntrySection } from "../../components/EntrySection";
 
 const stress = [
   { label: "Staff Stress Category form",   templateUrl: "/templates/stress_category.xlsx",   formId: "/stress/stress-category"   },
-  { label: "Stress Theme form",            templateUrl: "/templates/stress_theme.xlsx",      formId: "/stress/stress-theme"      },
-  { label: "Stress Feeling/Frequency form",templateUrl: "/templates/stress_frequency.xlsx",  formId: "/stress/stress-feeling"  },
+  { label: "Stress Theme/Feeling/Frequency form",            templateUrl: "/templates/stress_theme.xlsx",      formId: "/stress/stress-feeling"      },
+  // { label: "Stress Feeling/Frequency form",templateUrl: "/templates/stress_frequency.xlsx",  formId: "/stress/stress-feeling"  },
 ];
 
 export default function DataEntryPage() {
