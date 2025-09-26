@@ -119,20 +119,22 @@ export default function PerformanceStep() {
     const user: JWTPayload = jwtDecode(token)
 
     // exact keys like your previous components & endpoint
-    const payload = {
+    const bodyContent = {
       pesuser_name: user.name,
       org: user.org,
-      competence: Number(weightedTotal(competenceCriteria, competenceRatings).toFixed(2)),
-      integrity: Number(weightedTotal(integrityCriteria, integrityRatings).toFixed(2)),
-      compatibility: Number(weightedTotal(compatibilityCriteria, compatibilityRatings).toFixed(2)),
-      use_of_resources: Number(weightedTotal(resourceCriteria, resourceRatings).toFixed(2)),
+      payload: {
+        competence: Number(weightedTotal(competenceCriteria, competenceRatings).toFixed(2)),
+        integrity: Number(weightedTotal(integrityCriteria, integrityRatings).toFixed(2)),
+        compatibility: Number(weightedTotal(compatibilityCriteria, compatibilityRatings).toFixed(2)),
+        use_of_resources: Number(weightedTotal(resourceCriteria, resourceRatings).toFixed(2)),
+      }
     }
 
     try {
       const res = await fetch('/api/savePerformance', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(payload),
+        body: JSON.stringify(bodyContent),
       })
 
       if (!res.ok) {

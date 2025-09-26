@@ -2,10 +2,24 @@
 import { NextRequest, NextResponse } from "next/server";
 import { resolvePackages } from "../../lib/utils/paypalSetup";
 import prisma from "../prisma.dev"; // assuming you have prisma client set up
+import { UUID } from "crypto";
+
+function serialize(obj: any) {
+  const result: any = {};
+  for (const key in obj) {
+    const val = (obj as any)[key];
+    if (typeof val === 'bigint') {
+      result[key] = val.toString();
+    } else {
+      result[key] = val;
+    }
+  }
+  return result;
+}
 
 export async function POST(req: NextRequest) {
   try {
-    const { plan, email, userID } = await req.json();
+    const { plan, userID } = await req.json();
     if (!plan || !userID) {
       return NextResponse.json({ error: "Plan & userID are required" }, { status: 400 });
     }
@@ -60,9 +74,9 @@ export async function POST(req: NextRequest) {
         },
         body: JSON.stringify({
           plan_id: pkg.planId,
-          subscriber: {
-            email_address: email,  // optional, but useful to pass
-          },
+          // subscriber: {
+          //   email_address: email,  // optional, but useful to pass
+          // },
           application_context: {
             brand_name: "My App",
             user_action: "SUBSCRIBE_NOW",
@@ -97,34 +111,35 @@ export async function POST(req: NextRequest) {
     const metadata = {
       paypalPlanId,
       links,
-      subscriber_email: email,
+      // subscriber_email: email,
       // you can include whole subJson if needed, but consider size
     };
 
     const metadataJson = JSON.stringify(metadata);
 
     // Insert into your subscriptions table using $queryRaw, using userID passed in
-    // Also you'll need to know your local plan_id (foreign key) in your DB if using normalized schema.
     // Here, for simplicity, assume `plan` variable matches a local plan key and you have a table "plans" with column "key" that stores that.
     const planRow = await prisma.$queryRaw<
       Array<{ id: string }>
-    >`SELECT id FROM "plans" WHERE key = ${plan} LIMIT 1`;
+    >`SELECT id FROM "plans" WHERE name = ${pkg.name} LIMIT 1`;
 
     if (!planRow || planRow.length === 0) {
       return NextResponse.json({ error: "Plan not found in database" }, { status: 500 });
     }
     const localPlanId = planRow[0].id;
+    
+    console.log(localPlanId)
 
     // Now insert into subscriptions
     const inserted = await prisma.$queryRaw<
       Array<{
         id: string;
         pesuser_id: string;
-        plan_id: string;
+        plan_id: UUID;
         paypal_subscription_id: string;
         status: string;
         start_time: Date | null;
-        metadata: any;
+        metadata: JSON;
         created_at: Date;
         updated_at: Date;
       }>
@@ -141,11 +156,11 @@ export async function POST(req: NextRequest) {
       )
       VALUES (
         ${userID},
-        ${localPlanId},
+        ${localPlanId}::uuid,
         ${paypalSubId},
         ${status},
         ${startTime ? new Date(startTime) : null},
-        ${metadataJson},
+        ${metadataJson}::jsonb,
         now(),
         now()
       )
@@ -155,7 +170,7 @@ export async function POST(req: NextRequest) {
     const createdSub = inserted[0];
 
     return NextResponse.json({
-      subscription: createdSub,
+      subscription: serialize(createdSub),
       paypal: subJson,
     });
 

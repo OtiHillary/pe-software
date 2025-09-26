@@ -36,16 +36,17 @@ export default function SubscriptionButton({ plan }: { plan: string }) {
     <PayPalButtons
       style={{ layout: "vertical", label: "subscribe" }}
       createSubscription={async (data, actions) => {
-        const token = localStorage.getItem("token");
-        if (!token) throw new Error("Not authenticated");
-        let decoded = jwtDecode<{ email: string, userID: string }>(token);
-        if (!decoded.email || !decoded.userID) throw new Error("Invalid token");
-        let {email, userID} = decoded;
+      const token = localStorage.getItem("access_token");
+      if (!token) throw new Error("Not authenticated");
+      type MyJwtPayload = { userID: string, name: string };
+      let decoded = jwtDecode<MyJwtPayload>(token);
+      console.log("the decoded", decoded)
+      let { userID, name } = decoded;
 
         const res = await fetch("/api/subByPaypal", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ plan, email, userID }),
+          body: JSON.stringify({ plan, userID, name }),
         });
         const sub = await res.json();
         if (sub.error) {
@@ -54,7 +55,8 @@ export default function SubscriptionButton({ plan }: { plan: string }) {
         // PayPal JS SDK expects actions.subscription.create from client
         // But instead you can return sub.id so PayPal picks up the subscription
         // If you want, you could also provide a direct JS-SDK create with plan_id
-        return sub.id;
+        console.log("the sub", sub)
+        return sub.paypal.id;
       }}
       onApprove={async (data, actions) => {
         // subscription approved

@@ -272,26 +272,29 @@ export default function AppraisalStep() {
     const researchTotal = Object.values(researchScores).reduce((a, b) => a + b, 0)
     const teachingTotal = Object.values(teachingScores).reduce((a, b) => a + b, 0)
 
-    const payload = {
+    const bodyContent = {
       pesuser_name: user.name,
       org: user.org,
-      administrative_quality_evaluation: adminTotal,
-      community_quality_evaluation: communityTotal,
-      research_quality_evaluation: researchTotal,
-      teaching_quality_evaluation: teachingTotal,
-      // teaching_quality_evaluation: teachingTotal,
+      payload: {
+        administrative_quality_evaluation: adminTotal,
+        community_quality_evaluation: communityTotal,
+        research_quality_evaluation: researchTotal,
+        teaching_quality_evaluation: teachingTotal,
+      }
     }
 
     try {
       const res = await fetch('/api/saveAppraisal', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(payload),
+        body: JSON.stringify(bodyContent),
       })
 
       if (!res.ok) throw new Error('Error saving appraisal ❌')
 
       alert('Appraisal submitted successfully ✅')
+      window.location.href = '/app/data-entry';
+      
     } catch (err) {
       console.error(err)
       alert('Error submitting appraisal ❌')

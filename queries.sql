@@ -129,9 +129,8 @@ CREATE TABLE stress (
     id SERIAL PRIMARY KEY,
     pesuser_name VARCHAR(255) NOT NULL,              -- originally FK to pesuser(name)
     org VARCHAR(255),
-    staff_stress_category_form TEXT,                 -- e.g. "workload, admin issues"
-    stress_theme_form TEXT,                          -- e.g. "occupational, personal"
-    stress_feeling_frequency_form TEXT,              -- e.g. "often, rarely, weekly"
+    stress_theme INT,                          -- e.g. "occupational, personal"
+    stress_feeling_frequency INT,              -- e.g. "often, rarely, weekly"
     dept VARCHAR(255)
 );
 
@@ -147,7 +146,7 @@ CREATE TABLE userperformance (
     dept VARCHAR(255)
 );
 
--- stress_scores
+-- stress_category_settings
 CREATE TABLE stress_scores (
     id SERIAL PRIMARY KEY,
     organizational INT,
@@ -162,8 +161,7 @@ CREATE TABLE stress_scores (
     misc INT
 );
 
-
--- Plans table (unchanged)
+-- Plans table
 CREATE TABLE plans (
   id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
   paypal_plan_id TEXT UNIQUE NOT NULL,  
@@ -181,7 +179,7 @@ CREATE TABLE plans (
 -- Subscriptions table
 CREATE TABLE subscriptions (
   id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-  pesuser_id INTEGER NOT NULL REFERENCES pesuser(id),
+  pesuser_id UUID NOT NULL REFERENCES pesuser(id),
   plan_id UUID NOT NULL REFERENCES plans(id),
   paypal_subscription_id TEXT UNIQUE NOT NULL,  
   status VARCHAR(50) NOT NULL,  
@@ -204,3 +202,22 @@ CREATE TABLE subscription_events (
   raw_payload JSONB NOT NULL,     
   processed BOOLEAN NOT NULL DEFAULT FALSE
 );
+
+-- (
+--    'Chika Okafor',
+--    'chika.okafor@example.com',
+--    'hashedpassword1',
+--    '08012345678',
+--    'auditor',
+--    '12 Herbert Macaulay Way, Yaba, Lagos',
+--    'Business Administration',
+--    '1992-05-14',
+--    '2020-01-10',
+--    'Yaba',
+--    '2020-01-11',
+--    'Auditor I',
+--    '2020-01-15',
+--    'Senior',
+--    'chika.jpg',
+--    'university of lagos'
+-- ),

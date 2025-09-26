@@ -78,15 +78,15 @@ export default function Sidebar({is_sidebar_active, handleSideBar}:
 
    console.log(pathname.split('/'))
 
-   // roles are: Admin, dean, hod 
+   // roles should be : admin, dean, hod, auditor 
    const tabs = [
-      { key: 1, name: 'Dashboard', icon: <Home3 />, href: '/dashboard', role_access: ['admin', 'employee-ac', 'employee-nac', 'team-lead', 'employee-w', 'external'] },
+      { key: 1, name: 'Dashboard', icon: <Home3 />, href: '/dashboard', role_access: ['admin', 'employee-ac', 'employee-nac', 'team-lead', 'employee-w', 'auditor'] },
       { key: 4, name: 'Employee Database', icon: <People />, href: '/em-database', role_access: ['admin', 'team-lead'] }, 
       { key: 5, name: 'Goals', icon: <Setting4 />, href: '/goals', role_access: ['admin', 'employee-ac', 'employee-nac', 'team-lead', 'employee-w'] }, 
-      { key: 3, name: 'Data Entry', icon: <Home3 />, href: '/data-entry', role_access: ['employee-ac', 'employee-nac', 'team-lead', 'employee-w'] }, 
-      { key: 6, name: 'Assessment', icon: <Award />, href: '/assessment', role_access: ['admin', 'external'] }, 
-      { key: 7, name: 'Performance Review', icon: <Teacher />, href: '/performance', role_access: ['employee-ac', 'employee-nac', 'team-lead', 'employee-w', 'external'] }, 
-      { key: 2, name: 'Profile', icon: <ProfileCircle />, href: '/profile', role_access: ['employee-ac', 'employee-nac', 'team-lead', 'employee-w'] },
+      { key: 3, name: 'Data Entry', icon: <Home3 />, href: '/data-entry', role_access: ['employee-ac', 'employee-nac', 'team-lead', 'employee-w', 'auditor'] }, 
+      { key: 6, name: 'Assessment', icon: <Award />, href: '/assessment', role_access: ['admin'] }, 
+      { key: 7, name: 'Performance Review', icon: <Teacher />, href: '/performance', role_access: ['employee-ac', 'employee-nac', 'team-lead', 'employee-w'] }, 
+      { key: 2, name: 'Profile', icon: <ProfileCircle />, href: '/profile', role_access: ['employee-ac', 'employee-nac', 'team-lead', 'employee-w', 'auditor'] },
       { key: 8, name: 'Pricing', icon: <DollarCircle />, href: '/pricing', role_access: ['admin'] },
       { key: 9, name: 'Maintenance Model', icon: <Setting3 />, href: '/maintenance', role_access: ['employee-ac', 'employee-nac', 'team-lead', 'employee-w', 'admin'] }
    ]
@@ -152,6 +152,7 @@ export default function Sidebar({is_sidebar_active, handleSideBar}:
                      </div>            
                   </div>
                </div>
+
                <div className={`hover:bg-gray-200 bg-white fixed rounded-lg top-[20px] z-20 right-6 ${is_sidebar_active ? '' : 'hidden'}`} >
                   <button className={`p-[2px]`} onClick={() => handleSideBar()} >
                      <CloseSquare size={40} color={"black"}/>

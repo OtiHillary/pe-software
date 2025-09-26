@@ -46,7 +46,7 @@ const categoryMap: Record<string, string> = {
   Miscellaneous: "misc",
 };
 
-export default function Form6({ onSave }: { onSave: (data: any) => void }) {
+export default function Form6({ onSave }: { onSave: (data: number) => void }) {
   const [values, setValues] = useState<Record<string, Record<string, number>>>({});
   const [maxScores, setMaxScores] = useState<Record<string, number>>({});
   const [loading, setLoading] = useState(true);
@@ -129,7 +129,7 @@ export default function Form6({ onSave }: { onSave: (data: any) => void }) {
       },
     };
 
-    onSave(data);
+    onSave(data.grandTotal);
   };
 
   if (loading) return <p className="p-12">Loading stress scores...</p>;
