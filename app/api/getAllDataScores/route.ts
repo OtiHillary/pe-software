@@ -22,7 +22,7 @@ export async function GET(req: NextRequest) {
 
     // Fetch all stress data
     const stresses = await prisma.$queryRawUnsafe<any[]>(
-      `SELECT pesuser_name, dept, staff_stress_category_form, stress_theme_form, stress_feeling_frequency_form FROM stress ${whereClause}`
+      `SELECT pesuser_name, dept, stress_category, stress_theme_form, stress_feeling_frequency_form FROM stress ${whereClause}`
     );
 
     // Fetch all lead scores
@@ -68,7 +68,7 @@ export async function GET(req: NextRequest) {
     for (const s of stresses) {
       if (!userMap[s.pesuser_name]) userMap[s.pesuser_name] = { pesuser_name: s.pesuser_name, dept: s.dept };
       userMap[s.pesuser_name].stress = {
-        staff_stress_category_form: s.staff_stress_category_form,
+        stress_category: s.stress_category,
         stress_theme_form: s.stress_theme_form,
         stress_feeling_frequency_form: s.stress_feeling_frequency_form,
       };

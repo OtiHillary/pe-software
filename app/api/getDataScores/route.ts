@@ -51,9 +51,9 @@ export async function GET(req: Request) {
 
     // stress values
     const stress = await prisma.$queryRaw<
-      { staff_stress_category_form: string | null; stress_theme_form: string | null; stress_feeling_frequency_form: string | null; pesuser_name: string }[]
+      { stress_category: string | null; stress_theme_form: string | null; stress_feeling_frequency_form: string | null; pesuser_name: string }[]
     >`
-      SELECT staff_stress_category_form, stress_theme_form, stress_feeling_frequency_form, pesuser_name
+      SELECT stress_category, stress_theme_form, stress_feeling_frequency_form, pesuser_name
       FROM stress
       WHERE org = ${org};
     `;

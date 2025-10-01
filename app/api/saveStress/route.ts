@@ -8,7 +8,7 @@ export async function POST(req: NextRequest) {
   const value = body[payload];
 
   const allowedFields = [
-    'staff_stress_category_form',
+    'stress_category',
     'stress_theme_form',
     'stress_feeling_frequency_form',
   ];

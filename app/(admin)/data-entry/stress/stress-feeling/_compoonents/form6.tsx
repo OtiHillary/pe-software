@@ -129,7 +129,7 @@ export default function Form6({ onSave }: { onSave: (data: number) => void }) {
       },
     };
 
-    onSave(data.grandTotal);
+    onSave(data.totals.grandTotal);
   };
 
   if (loading) return <p className="p-12">Loading stress scores...</p>;
