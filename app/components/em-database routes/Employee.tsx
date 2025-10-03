@@ -32,7 +32,7 @@ export default function Employee(){
    function roleColor(role: string){
       if (role == 'admin') return 'red'
       if (role == 'developer') return 'blue'
-      if (role == 'team-lead') return 'green'
+      if (role == 'hod') return 'green'
       if (role == 'UI/UX designer') return 'yellow'
       else return 'gray'
    }
@@ -83,11 +83,17 @@ export default function Employee(){
                </div>
 
                <div className='flex justify-between my-auto mx-0 text-xs'>
-                  <a href='/em-database/add-employee' className='flex justify-center bg-pes text-white px-10 py-2 m-4 border h-fit border-pes my-auto text-center'>
+                  <a href='/em-database/add-employee' className='flex justify-center bg-pes text-white px-10 py-2 m-2 border h-fit border-pes my-auto text-center'>
                      <span className='my-auto'>Add an Employee</span>
                      <Add size={20} className='my-auto ms-2'/>
                   </a>
-                  <a className='flex border border-pes text-pes px-4 py-2 mx-4 h-fit my-auto'>Bulk Import</a>
+                  
+                  <a href='/em-database/add-auditor' className='flex justify-center bg-blue-600 text-white px-10 py-2 m-2 border h-fit border-pes my-auto text-center'>
+                     <span className='my-auto'>Add an External Auditor</span>
+                     <Add size={20} className='my-auto ms-2'/>
+                  </a>
+                  
+                  <a className='flex border border-pes text-pes px-4 py-2 mx-2 h-fit my-auto'>Bulk Import</a>
                </div>
             </div>
 

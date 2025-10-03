@@ -1,7 +1,7 @@
 DO $$
 DECLARE
     depts TEXT[] := ARRAY['mechanical engineering', 'electrical engineering', 'computer engineering', 'chemical engineering'];
-    roles TEXT[] := ARRAY['employee-ac', 'employee-nac', 'employee-w'];
+    roles TEXT[] := ARRAY['lecturer', 'industrial-engineer', 'employee-w'];
     d TEXT;
     i INT;
     rand_role TEXT;

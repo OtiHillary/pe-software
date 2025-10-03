@@ -72,7 +72,7 @@ export default function DataEntryPage() {
 
 
       {
-        user?.role === "team-lead"?
+        user?.role === "hod"?
           <EntrySection to={'/data-entry/employee'} title={'Staff data entries'} />
         :
         <></>
