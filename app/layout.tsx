@@ -5,7 +5,7 @@ import { AuthProvider } from './components/useAuth'
 const lato = Lato( 
   {
     weight: ['100', '300', '400', '700', '900'],
-    subsets: ['latin']
+    subsets: ['latin'],
    }
   )
 
