@@ -1,5 +1,15 @@
 import { NextResponse } from "next/server";
 import prisma from "../../prisma.dev";
+import nodemailer from "nodemailer";
+
+// Configure Nodemailer transporter
+const transporter = nodemailer.createTransport({
+  service: "Gmail", // You can use other services like Outlook, Yahoo, etc.
+  auth: {
+    user: process.env.EMAIL_USER, // Your email address
+    pass: process.env.EMAIL_PASS, // Your email password or app password
+  },
+});
 
 // Get all pending auditors
 export async function GET() {
@@ -53,6 +63,24 @@ export async function POST(req: Request) {
         `UPDATE auditor_responses SET status = 'approved' WHERE id = $1`,
         id
       );
+
+      // Send success email to the auditor
+      await transporter.sendMail({
+        from: `"Audit System" <${process.env.EMAIL_USER}>`,
+        to: auditor[0].email,
+        subject: "Approval Notification",
+        html: `
+          <h2>Congratulations, ${auditor[0].name}!</h2>
+          <p>Your application as an auditor has been approved.</p>
+          <p>You can now log in to the system using the following credentials:</p>
+          <ul>
+            <li><strong>Email:</strong> ${auditor[0].email}</li>
+            <li><strong>Password:</strong> default_password</li>
+          </ul>
+          <p>Please change your password after logging in for the first time.</p>
+          <p>Thank you for joining our team!</p>
+        `,
+      });
 
       return NextResponse.json({ success: true, message: "Auditor approved & added to system" });
     }

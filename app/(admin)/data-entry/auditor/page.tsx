@@ -45,7 +45,7 @@ export default function AuditorScoresPage() {
       return;
     }
 
-    fetch(`/api/getAllDataScores?org=${org}`)
+    fetch(`/api/getFlaggedScores?org=${org}`)
       .then((res) => res.json())
       .then((data) => {
         setScores(data);
@@ -57,21 +57,32 @@ export default function AuditorScoresPage() {
       });
   }, []);
 
-  function handleAuditorChange(metric: string, value: number) {
-    setAuditorScores((prev) => ({ ...prev, [metric]: value }));
+  function handleAuditorChange(metric: string, value: string) {
+    const numValue = Number(value);
+    setAuditorScores((prev) => ({ ...prev, [metric]: isNaN(numValue) ? 0 : numValue }));
   }
+
+  const allInputsFilled = selectedEmployee
+    ? Object.keys(selectedEmployee[selectedGroup as GroupKey] || {}).every(
+        (metric) => auditorScores[metric] !== undefined && auditorScores[metric] !== null && auditorScores[metric] !== 0
+      )
+    : false;
 
   async function handleSubmit() {
     if (!selectedEmployee || !selectedGroup) return;
 
+    if (!allInputsFilled) {
+      alert("Please fill in all auditor resolution fields ⚠️");
+      return;
+    }
+
     const decoded = jwtDecode<JWTPayload>(localStorage.getItem("access_token") || "");
     const org = decoded.org;
-    // const dept = decoded.dept;
 
     const apiEndpoints: Record<GroupKey, string> = {
-      appraisal: `/api/saveAppraisal?org=${org}`,
-      performance: `/api/savePerformance?org=${org}`,
-      stress: `/api/saveStress?org=${org}`,
+      appraisal: `/api/saveAuditorAppraisal?org=${org}`,
+      performance: `/api/saveAuditorPerformance?org=${org}`,
+      stress: `/api/saveAuditorStress?org=${org}`,
     };
 
     const endpoint = apiEndpoints[selectedGroup];
@@ -83,7 +94,7 @@ export default function AuditorScoresPage() {
         body: JSON.stringify({
           pesuser_name: selectedEmployee.pesuser_name,
           org,
-          isAuditor: true, // 👈 mark as auditor resolution
+          isAuditor: true,
           ...auditorScores,
         }),
       });
@@ -91,13 +102,12 @@ export default function AuditorScoresPage() {
       const result = await res.json();
       if (!res.ok) throw new Error(result.message || "Failed");
 
-      console.log("Auditor scores submitted:", result);
-      alert("Auditor scores submitted successfully!");
+      alert("✅ Auditor scores submitted successfully!");
       setAuditorScores({});
       setSelectedEmployee(null);
     } catch (err) {
       console.error("Error submitting auditor scores:", err);
-      alert("Failed to submit auditor scores");
+      alert("❌ Failed to submit auditor scores");
     }
   }
 
@@ -121,7 +131,7 @@ export default function AuditorScoresPage() {
       {/* Step 1: Select Group */}
       {!selectedGroup && (
         <div className="grid grid-cols-3 gap-4">
-          {(["appraisal", "performance", "stress"] as GroupKey[]).map((g) => (
+          {(["appraisal", "performance"] as GroupKey[]).map((g) => (
             <button
               key={g}
               onClick={() => setSelectedGroup(g)}
@@ -161,76 +171,80 @@ export default function AuditorScoresPage() {
         </div>
       )}
 
-        {/* Step 3: Auditor Resolution */}
-        {selectedGroup && selectedEmployee && (
+      {/* Step 3: Auditor Resolution */}
+      {selectedGroup && selectedEmployee && (
         <div>
-            <button
+          <button
             onClick={() => setSelectedEmployee(null)}
             className="mb-4 ms-auto px-3 py-1 bg-gray-200 rounded"
-            >
+          >
             ← Back to {selectedGroup} list
-            </button>
-            <h2 className="text-lg font-semibold mb-4">
+          </button>
+          <h2 className="text-lg font-semibold mb-4">
             {selectedEmployee.pesuser_name} ({selectedEmployee.dept})
-            </h2>
+          </h2>
 
-            {/* Table header */}
-            <div className="grid grid-cols-3 font-semibold bg-gray-100 p-2 rounded">
+          {/* Table header */}
+          <div className="grid grid-cols-3 font-semibold bg-gray-100 p-2 rounded">
             <span>Employee Score</span>
-            <span>HOD Score for employee</span>
+            <span>HOD Score</span>
             <span>Auditor Resolution</span>
-            </div>
+          </div>
 
-            {/* Table rows */}
-            <div className="space-y-2 mt-2">
+          {/* Table rows */}
+          <div className="space-y-2 mt-2">
             {Object.entries(selectedEmployee[selectedGroup] || {}).map(([metric, empScore]) => {
-                const counterKey = `counter_${selectedGroup}` as keyof EmployeeScores;
-                const hodScore = selectedEmployee[counterKey]?.[metric];
+              const counterKey = `counter_${selectedGroup}` as keyof EmployeeScores;
+              const hodScore = selectedEmployee[counterKey]?.[metric];
 
-                return (
+              return (
                 <div
-                    key={metric}
-                    className="grid grid-cols-3 items-center border rounded p-2 bg-white shadow-sm"
+                  key={metric}
+                  className="grid grid-cols-3 items-center border rounded p-2 bg-white shadow-sm"
                 >
-                    {/* Employee score */}
-                    <div>
+                  {/* Employee score */}
+                  <div>
                     <p className="font-medium capitalize">{metric.replace(/_/g, " ")}</p>
                     <p className="text-green-600 font-bold">{empScore}</p>
-                    </div>
+                  </div>
 
-                    {/* HOD Counter */}
-                    <div>
+                  {/* HOD score */}
+                  <div>
                     {hodScore !== undefined ? (
-                        <p className="text-blue-600 font-bold">{hodScore}</p>
+                      <p className="text-blue-600 font-bold">{hodScore}</p>
                     ) : (
-                        <p className="text-gray-400 italic">N/A</p>
+                      <p className="text-gray-400 italic">N/A</p>
                     )}
-                    </div>
+                  </div>
 
-                    {/* Auditor input */}
-                    <div>
+                  {/* Auditor input */}
+                  <div>
                     <input
-                        type="number"
-                        placeholder="Resolution"
-                        className="border border-gray-400 rounded p-1 w-28"
-                        onChange={(e) =>
-                        handleAuditorChange(metric, parseInt(e.target.value, 10))
-                        }
+                      type="number"
+                      className="border border-gray-400 rounded p-1 w-20 text-sm"
+                      value={auditorScores[metric] ?? ""}
+                      onChange={(e) => handleAuditorChange(metric, e.target.value)}
+                      placeholder="Enter"
                     />
-                    </div>
+                  </div>
                 </div>
-                );
+              );
             })}
-            </div>
+          </div>
 
-            <button
+          <button
+            disabled={!allInputsFilled}
             onClick={handleSubmit}
-            className="mt-6 px-4 py-2 bg-purple-700 hover:bg-purple-900 text-white rounded shadow"
-            >
+            className={`mt-6 px-4 py-2 rounded shadow text-white ${
+              allInputsFilled
+                ? "bg-purple-700 hover:bg-purple-900"
+                : "bg-gray-400 cursor-not-allowed"
+            }`}
+          >
             Submit Auditor Scores
-            </button>
+          </button>
         </div>
-        )}
+      )}
     </div>
   );
 }

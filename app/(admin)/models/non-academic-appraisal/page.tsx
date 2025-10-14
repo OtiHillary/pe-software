@@ -33,7 +33,16 @@ export default function NonAcademicAppraisalPage() {
     color: string;
   } | null>(null);
 
-  const calculateScore = () => {
+  // NEW STATES
+  const [loading, setLoading] = useState(false);
+  const [successMsg, setSuccessMsg] = useState<string | null>(null);
+  const [errorMsg, setErrorMsg] = useState<string | null>(null);
+
+  const calculateScore = async () => {
+    setLoading(true);
+    setSuccessMsg(null);
+    setErrorMsg(null);
+
     const total =
       metrics.output * weights.output +
       metrics.quality * weights.quality +
@@ -59,6 +68,34 @@ export default function NonAcademicAppraisalPage() {
     }
 
     setResult({ score: total, rating, color });
+
+    try {
+      const token = localStorage.getItem("access_token");
+      const res = await fetch("/api/nonAcademicAppraisal", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify({
+          metrics,
+          weights,
+          thresholds,
+          totalScore: total,
+          rating,
+        }),
+      });
+
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error || "Failed to save");
+      console.log("✅ Saved to DB:", data);
+      setSuccessMsg("Appraisal saved successfully!");
+    } catch (err: any) {
+      console.error("Error saving appraisal:", err);
+      setErrorMsg(err.message || "Error saving appraisal.");
+    } finally {
+      setLoading(false);
+    }
   };
 
   const renderNumberInput = (
@@ -79,7 +116,7 @@ export default function NonAcademicAppraisalPage() {
 
   return (
     <div className="w-full mx-auto p-6">
-      <div className="border rounded">
+      <div className="border rounded shadow-sm">
         <button
           onClick={() => setOpen(!open)}
           className="w-full text-left px-4 py-3 bg-gray-100 font-semibold"
@@ -154,21 +191,36 @@ export default function NonAcademicAppraisalPage() {
             </div>
 
             {/* Calculate */}
-            <div>
+            <div className="flex items-center gap-3">
               <button
                 onClick={calculateScore}
-                className="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700"
+                disabled={loading}
+                className={`px-4 py-2 rounded text-white ${
+                  loading
+                    ? "bg-gray-400 cursor-not-allowed"
+                    : "bg-blue-600 hover:bg-blue-700"
+                }`}
               >
-                Calculate Appraisal
+                {loading ? "Saving..." : "Calculate Appraisal"}
               </button>
             </div>
 
             {/* Result */}
             {result && (
-              <div
-                className={`p-4 rounded mt-4 font-semibold ${result.color}`}
-              >
+              <div className={`p-4 rounded mt-4 font-semibold ${result.color}`}>
                 Score: {result.score.toFixed(2)} — {result.rating}
+              </div>
+            )}
+
+            {/* Messages */}
+            {successMsg && (
+              <div className="p-3 rounded bg-green-100 text-green-800 border border-green-300">
+                ✅ {successMsg}
+              </div>
+            )}
+            {errorMsg && (
+              <div className="p-3 rounded bg-red-100 text-red-800 border border-red-300">
+                ❌ {errorMsg}
               </div>
             )}
           </div>

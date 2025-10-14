@@ -8,9 +8,8 @@ export async function POST(req: NextRequest) {
   const value = body[payload];
 
   const allowedFields = [
-    'stress_category',
-    'stress_theme_form',
-    'stress_feeling_frequency_form',
+    'stress_theme',
+    'stress_feeling_frequency',
   ];
 
   if (!pesuser_name || !payload || value === undefined) {

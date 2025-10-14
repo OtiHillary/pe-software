@@ -1,6 +1,13 @@
 "use client";
 
 import { useState } from "react";
+import { jwtDecode } from "jwt-decode";
+
+type JWTPayload = {
+  org?: string;
+  name?: string;
+  role?: string;
+};
 
 export default function PersonnelRedundancyPage() {
   const [open, setOpen] = useState(true);
@@ -9,8 +16,8 @@ export default function PersonnelRedundancyPage() {
   const [optimalStaff, setOptimalStaff] = useState<number>(0);
 
   const [thresholds, setThresholds] = useState({
-    low: 10, // PR% below this = Low redundancy
-    moderate: 25, // PR% below this but >= low = Moderate redundancy
+    low: 10,
+    moderate: 25,
   });
 
   const [result, setResult] = useState<{
@@ -19,13 +26,15 @@ export default function PersonnelRedundancyPage() {
     color: string;
   } | null>(null);
 
+  const [saving, setSaving] = useState(false);
+
   const calculatePR = () => {
-    if (actualStaff <= 0) {
-      alert("Actual Staff Strength must be greater than 0");
+    if (actualStaff <= 0 || optimalStaff <= 0) {
+      alert("Both Actual and Optimal Staff Strength must be greater than 0");
       return;
     }
-    const pr = ((actualStaff - optimalStaff) / actualStaff) * 100;
 
+    const pr = ((actualStaff - optimalStaff) / actualStaff) * 100;
     let rating = "";
     let color = "";
 
@@ -43,6 +52,58 @@ export default function PersonnelRedundancyPage() {
     setResult({ pr, rating, color });
   };
 
+  const saveToDatabase = async () => {
+    try {
+      setSaving(true);
+
+      const token = localStorage.getItem("access_token");
+      if (!token) {
+        alert("User not authenticated");
+        return;
+      }
+
+      const decoded = jwtDecode<JWTPayload>(token);
+      const org = decoded.org;
+
+      if (!org) {
+        alert("Organization not found in token");
+        return;
+      }
+
+      const response = await fetch("/api/personnelRedundancy", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          org,
+          actual_staff: actualStaff,
+          optimal_staff: optimalStaff,
+          low_threshold: thresholds.low,
+          moderate_threshold: thresholds.moderate,
+          pr_value: result?.pr,
+          rating: result?.rating,
+        }),
+      });
+
+      const data = await response.json();
+
+      if (response.ok) {
+        alert("Redundancy data saved successfully!");
+        setResult(null);
+        setActualStaff(0);
+        setOptimalStaff(0);
+      } else {
+        alert("Failed to save data: " + (data.error || "Unknown error"));
+      }
+    } catch (error) {
+      console.error(error);
+      alert("An error occurred while saving data.");
+    } finally {
+      setSaving(false);
+    }
+  };
+
   return (
     <div className="w-full p-12">
       <div className="border rounded">
@@ -52,21 +113,18 @@ export default function PersonnelRedundancyPage() {
         >
           25. Determining Real Percentage Redundancy (PR%)
         </button>
+
         {open && (
           <div className="p-4 space-y-6">
-            {/* Placeholder PDF Link */}
-            <div>
-              <a
-                href="https://example.com/personnel-utilization-table.pdf"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="px-4 py-2 bg-pes text-white rounded hover:opacity-90"
-              >
-                View Personnel Utilization Table
-              </a>
-            </div>
+            <a
+              href="https://example.com/personnel-utilization-table.pdf"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="px-4 py-2 bg-pes text-white rounded hover:opacity-90"
+            >
+              View Personnel Utilization Table
+            </a>
 
-            {/* Inputs */}
             <label className="block">
               <span className="block mb-1 font-medium">Actual Staff Strength (A)</span>
               <input
@@ -87,7 +145,6 @@ export default function PersonnelRedundancyPage() {
               />
             </label>
 
-            {/* Thresholds */}
             <div>
               <h3 className="font-semibold mb-2">Redundancy Thresholds</h3>
               <label className="block mb-3">
@@ -114,17 +171,27 @@ export default function PersonnelRedundancyPage() {
               </label>
             </div>
 
-            {/* Calculate Button */}
-            <div>
+            <div className="flex space-x-3">
               <button
                 onClick={calculatePR}
-                className="px-4 py-2 bg-pes text-white rounded hover:opacity-90"
+                className="px-6 py-2 bg-pes text-white rounded hover:opacity-90"
               >
                 Calculate PR%
               </button>
+
+              <button
+                onClick={saveToDatabase}
+                disabled={!result || saving}
+                className={`px-6 py-2 rounded ${
+                  result
+                    ? "bg-green-600 hover:bg-green-700 text-white"
+                    : "bg-gray-400 text-gray-100 cursor-not-allowed"
+                }`}
+              >
+                {saving ? "Saving..." : "Save"}
+              </button>
             </div>
 
-            {/* Result */}
             {result && (
               <div className={`p-4 rounded mt-4 font-semibold ${result.color}`}>
                 PR%: {result.pr.toFixed(2)}% — {result.rating}

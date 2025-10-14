@@ -1,87 +1,112 @@
-import { NextRequest, NextResponse } from 'next/server';
-import prisma from '../prisma.dev';
+import { NextResponse } from "next/server";
+import prisma from "../prisma.dev";
 
-export async function GET(req: NextRequest) {
+export async function GET(req: Request) {
   try {
     const { searchParams } = new URL(req.url);
-    const dept = searchParams.get('dept');
-    let whereClause = '';
-    if (dept) {
-      whereClause = `WHERE dept = '${dept.replace(/'/g, "''")}'`;
+    const org = searchParams.get("org");
+
+    let whereClause = "";
+    if (org) {
+      // escape quotes to prevent SQL injection
+      whereClause = `WHERE org = '${org.replace(/'/g, "''")}'`;
     }
 
-    // Fetch all appraisal data
-    const appraisals = await prisma.$queryRawUnsafe<any[]>(
-      `SELECT pesuser_name, dept, teaching_quality_evaluation, research_quality_evaluation, administrative_quality_evaluation, community_quality_evaluation FROM appraisal ${whereClause}`
-    );
+    // --- Appraisals (main + counter) ---
+    const appraisals = await prisma.$queryRawUnsafe<any[]>(`
+      SELECT pesuser_name, dept,
+             teaching_quality_evaluation, research_quality_evaluation,
+             administrative_quality_evaluation, community_quality_evaluation,
+             'main' AS source
+      FROM appraisal ${whereClause}
+      UNION ALL
+      SELECT pesuser_name, dept,
+             teaching_quality_evaluation, research_quality_evaluation,
+             administrative_quality_evaluation, community_quality_evaluation,
+             'counter' AS source
+      FROM counter_appraisal ${whereClause}
+    `);
 
-    // Fetch all userperformance data
-    const performances = await prisma.$queryRawUnsafe<any[]>(
-      `SELECT pesuser_name, dept, competence, integrity, compatibility, use_of_resources FROM userperformance ${whereClause}`
-    );
+    // --- Performance (main + counter) ---
+    const performances = await prisma.$queryRawUnsafe<any[]>(`
+      SELECT pesuser_name, dept,
+             competence, integrity, compatibility, use_of_resources,
+             'main' AS source
+      FROM userperformance ${whereClause}
+      UNION ALL
+      SELECT pesuser_name, dept,
+             competence, integrity, compatibility, use_of_resources,
+             'counter' AS source
+      FROM counter_userperformance ${whereClause}
+    `);
 
-    // Fetch all stress data
-    const stresses = await prisma.$queryRawUnsafe<any[]>(
-      `SELECT pesuser_name, dept, stress_theme, stress_feeling_frequency FROM stress ${whereClause}`
-    );
+    // --- Stress (main + counter) ---
+    const stresses = await prisma.$queryRawUnsafe<any[]>(`
+      SELECT pesuser_name, dept,
+             stress_theme, stress_feeling_frequency,
+             'main' AS source
+      FROM stress ${whereClause}
+      UNION ALL
+      SELECT pesuser_name, dept,
+             stress_theme, stress_feeling_frequency,
+             'counter' AS source
+      FROM counter_stress ${whereClause}
+    `);
 
-    // Fetch all lead scores
-    const leadScores = await prisma.$queryRawUnsafe<any[]>(
-      `SELECT pesuser_name, dept, competence, integrity, compatibility, use_of_resources FROM lead_scores ${whereClause}`
-    );
-    const leadMap: Record<string, any> = {};
-    for (const l of leadScores) {
-      leadMap[l.pesuser_name] = {
-        competence: l.competence,
-        integrity: l.integrity,
-        compatibility: l.compatibility,
-        use_of_resources: l.use_of_resources,
-      };
+    // --- Leadership scores (only one source) ---
+    const leadership = await prisma.$queryRawUnsafe<any[]>(`
+      SELECT pesuser_name, dept,
+             competence, integrity, compatibility, use_of_resources
+      FROM lead_scores;
+    `);
+
+    // --- Helper to group by source ---
+    function groupBySource(rows: any[], type: string) {
+      const grouped: Record<string, any> = {};
+      for (const row of rows) {
+        const key = `${row.pesuser_name}-${row.dept}`;
+        if (!grouped[key]) grouped[key] = { pesuser_name: row.pesuser_name, dept: row.dept };
+    
+        const data = { ...row };
+        delete data.pesuser_name;
+        delete data.dept;
+        delete data.source;
+    
+        if (row.source === "main") {
+          grouped[key][type] = data;
+        } else {
+          grouped[key][`counter_${type}`] = data;
+        }
+      }
+      return Object.values(grouped);
     }
 
-    // Group by user
-    const userMap: Record<string, any> = {};
+    const appraisalGrouped = groupBySource(appraisals, "appraisal");
+    const performanceGrouped = groupBySource(performances, "performance");
+    const stressGrouped = groupBySource(stresses, "stress");
 
-    // Add appraisal data
-    for (const a of appraisals) {
-      if (!userMap[a.pesuser_name]) userMap[a.pesuser_name] = { pesuser_name: a.pesuser_name, dept: a.dept };
-      userMap[a.pesuser_name].appraisal = {
-        teaching_quality_evaluation: a.teaching_quality_evaluation,
-        research_quality_evaluation: a.research_quality_evaluation,
-        administrative_quality_evaluation: a.administrative_quality_evaluation,
-        community_quality_evaluation: a.community_quality_evaluation,
-      };
+    // --- Merge all datasets by pesuser_name + dept ---
+    const merged: Record<string, any> = {};
+    function merge(list: any[]) {
+      for (const row of list) {
+        const key = `${row.pesuser_name}-${row.dept}`;
+        merged[key] = { ...merged[key], ...row };
+      }
+    }
+    
+    merge(appraisalGrouped);
+    merge(performanceGrouped);
+    merge(stressGrouped);
+
+    // attach leadership scores
+    for (const l of leadership) {
+      const key = `${l.pesuser_name}-${l.dept}`;
+      merged[key] = { ...merged[key], leadership: l };
     }
 
-    // Add performance data
-    for (const p of performances) {
-      if (!userMap[p.pesuser_name]) userMap[p.pesuser_name] = { pesuser_name: p.pesuser_name, dept: p.dept };
-      userMap[p.pesuser_name].performance = {
-        competence: p.competence,
-        integrity: p.integrity,
-        compatibility: p.compatibility,
-        use_of_resources: p.use_of_resources,
-      };
-    }
-
-    // Add stress data
-    for (const s of stresses) {
-      if (!userMap[s.pesuser_name]) userMap[s.pesuser_name] = { pesuser_name: s.pesuser_name, dept: s.dept };
-      userMap[s.pesuser_name].stress = {
-        // stress_category: s.stress_category,
-        stress_theme: s.stress_theme,
-        stress_feeling_frequency: s.stress_feeling_frequency,
-      };
-    }
-
-    // Add lead scores to result
-    const result = Object.values(userMap).map((u: any) => ({
-      ...u,
-      lead_scores: leadMap[u.pesuser_name] || null,
-    }));
-    return NextResponse.json(result, { status: 200 });
-  } catch (error) {
-    console.error('Error fetching all data scores:', error);
-    return NextResponse.json({ error: 'Failed to fetch all data scores' }, { status: 500 });
+    return NextResponse.json(Object.values(merged));
+  } catch (err: any) {
+    console.error("Error fetching all data scores:", err);
+    return NextResponse.json({ error: "Failed to fetch appraisal data" }, { status: 500 });
   }
 }

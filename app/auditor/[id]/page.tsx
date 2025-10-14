@@ -6,10 +6,9 @@ import { useRouter } from "next/navigation";
 export default function AuditorQuestions({ params }: { params: { id: string } }) {
   const router = useRouter();
   const email = params.id; // Extracted email
-  const [responses, setResponses] = useState<string[]>(Array(10).fill(""));
+  const [responses, setResponses] = useState<string[]>(Array(12).fill("")); // updated to match 12 questions
   const [message, setMessage] = useState("");
 
-  // Only minimal fields auditor provides
   const [formData, setFormData] = useState({
     name: "",
     gsm: "",
@@ -27,6 +26,14 @@ export default function AuditorQuestions({ params }: { params: { id: string } })
   const handleFormChange = (field: string, value: string) => {
     setFormData((prev) => ({ ...prev, [field]: value }));
   };
+
+  // ✅ check all required fields are filled
+  const isFormComplete =
+    formData.name.trim() !== "" &&
+    formData.gsm.trim() !== "" &&
+    formData.address.trim() !== "" &&
+    formData.dob.trim() !== "" &&
+    responses.every((r) => r.trim() !== "");
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -59,11 +66,13 @@ export default function AuditorQuestions({ params }: { params: { id: string } })
     "Do you accept that your Management letter at the end of the process be made available to the management?",
     "Where awards are applicable for motivation purposes as suggested by the system software, will you validate to ensure that there isn’t marginalization or nepotism?",
     "Are you welcome to open criticism?",
+    "Will you be executing on proxy this exercise you are called on to do?",
+    "Will this exercise you are called on to do be done remotely?",
     "If invited again in the future, will you accept the invitation even if you were openly criticized?",
   ];
 
   return (
-    <div className="max-w-3xl h-fit mx-auto mt-10 p-6 rounded-2xl shadow-md bg-white text-pes">
+    <div className="max-w-3xl mx-auto mt-10 p-6 rounded-2xl shadow-md bg-white text-pes">
       <h1 className="text-2xl font-semibold mb-6">Auditor Registration</h1>
 
       <form onSubmit={handleSubmit} className="space-y-6">
@@ -106,14 +115,6 @@ export default function AuditorQuestions({ params }: { params: { id: string } })
             required
             className="w-full px-3 py-2 border rounded-lg"
           />
-
-          <input
-            type="text"
-            placeholder="Image URL (optional)"
-            value={formData.image}
-            onChange={(e) => handleFormChange("image", e.target.value)}
-            className="w-full px-3 py-2 border rounded-lg"
-          />
         </div>
 
         {/* Yes/No Questions */}
@@ -141,7 +142,12 @@ export default function AuditorQuestions({ params }: { params: { id: string } })
 
         <button
           type="submit"
-          className="w-full py-2 px-4 rounded-lg bg-pes text-white font-medium hover:opacity-90 transition"
+          disabled={!isFormComplete}
+          className={`w-full py-2 px-4 rounded-lg text-white font-medium transition ${
+            isFormComplete
+              ? "bg-pes hover:opacity-90 cursor-pointer"
+              : "bg-gray-400 cursor-not-allowed opacity-60"
+          }`}
         >
           Submit
         </button>

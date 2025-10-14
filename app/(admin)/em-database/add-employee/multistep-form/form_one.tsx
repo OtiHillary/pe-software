@@ -79,9 +79,8 @@ export default function Formone({ formdata, setFormdata }: FormProps){
                >
                   <option value="" disabled>Select a role</option>
                   <option value="lecturer">Employee Academic</option>
-                  <option value="industrial-engineer">Employee Non-Academic</option>
-                  <option value="hod">Team Lead</option>
-                  <option value="employee-w">Employee Works</option>
+                  <option value="industrial-engineer">Employee Non-Academic(industrial/production engineer)</option>
+                  <option value="hod">Department Lead</option>
                </select>
             </div>
 

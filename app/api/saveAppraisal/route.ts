@@ -1,14 +1,17 @@
-import { NextRequest, NextResponse } from 'next/server'
-import prisma from '../prisma.dev'
+import { NextRequest, NextResponse } from "next/server";
+import prisma from "../prisma.dev";
 
 export async function POST(req: NextRequest) {
   try {
-    const body = await req.json();
-    const { pesuser_name, org, isCounter = false, payload } = body;
+    // ✅ Clone the request to prevent the stream from being locked
+    const clonedReq = req.clone();
+    const body = await clonedReq.json();
 
-    if (!pesuser_name || !org || !payload || Object.keys(payload).length === 0) {
+    const { pesuser_name, org, isCounter = false, isAuditor = false, ...payload } = body;
+
+    if (!pesuser_name || !org || Object.keys(payload).length === 0) {
       return NextResponse.json(
-        { message: 'Missing required fields or empty payload' },
+        { message: "Missing required fields or empty payload" },
         { status: 400 }
       );
     }
@@ -22,35 +25,37 @@ export async function POST(req: NextRequest) {
 
     if (userResult.length === 0 || !userResult[0].dept) {
       return NextResponse.json(
-        { message: 'User not found or department missing' },
+        { message: "User not found or department missing" },
         { status: 404 }
       );
     }
 
     const dept = userResult[0].dept;
-    const targetTable = isCounter ? "counter_appraisal" : "appraisal";
+    const targetTable = isCounter || !isAuditor ? "counter_appraisal" : "appraisal";
 
-    // Build dynamic query
+    // Build query
     const columns = Object.keys(payload).map((c) => `"${c}"`).join(", ");
     const placeholders = Object.keys(payload).map((_, i) => `$${i + 4}`).join(", ");
     const values = Object.values(payload);
 
-    let query = `
+    console.log(columns, placeholders, values);
+
+    const updates = Object.keys(payload)
+      .map((c) => `"${c}" = EXCLUDED."${c}"`)
+      .join(", ");
+
+    // This ensures replace behavior on every insert
+    const query = `
       INSERT INTO "${targetTable}" (pesuser_name, org, dept, ${columns})
       VALUES ($1, $2, $3, ${placeholders})
+      ON CONFLICT (pesuser_name, org, dept)
+      DO UPDATE SET ${updates};
     `;
-
-    if (!isCounter) {
-      const updates = Object.keys(payload)
-        .map((c) => `"${c}" = EXCLUDED."${c}"`)
-        .join(", ");
-      query += ` ON CONFLICT (pesuser_name, org, dept) DO UPDATE SET ${updates}`;
-    }
 
     await prisma.$executeRawUnsafe(query, pesuser_name, org, dept, ...values);
 
     return NextResponse.json(
-      { message: `${isCounter ? "Counter Appraisal" : "Appraisal"} saved/updated` },
+      { message: `${isCounter ? "Counter" : "Main"} appraisal saved (replaced if existed)` },
       { status: 200 }
     );
   } catch (error) {

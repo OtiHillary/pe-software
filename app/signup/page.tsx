@@ -5,9 +5,6 @@ import Image from 'next/image';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 
-type roleParams = {
-  role: string
-}
 
 let slider_index = 0
 
@@ -37,15 +34,13 @@ const third = <>
 </>
 
 
-export default function Home({ params }: { params: roleParams }) {
-  console.log(params);
-  
+export default function Home() {
   const slider_arr = [ true, false, false ]
   const content_arr = [ first, second, third ]
   const [ slide, setSlide ] = useState(slider_arr)
   const router = useRouter()
   const [message, setMessage] = useState({ visibility: 'invisible', text: '', color: '' })
-  const [formData, setFormData] = useState({ name: '', email: '', password: '', type: params.role })
+  const [formData, setFormData] = useState({ name: '', email: '', password: '', type: "admin" })
 
   const switchSlide = () => {
     slider_index++;

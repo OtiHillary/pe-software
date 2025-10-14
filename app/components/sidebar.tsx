@@ -92,8 +92,8 @@ export default function Sidebar({is_sidebar_active, handleSideBar}:
       { key: 7, name: 'Performance Review', icon: <Teacher />, href: '/performance', role_access: ['lecturer', 'industrial-engineer', 'hod', 'employee-w'] }, 
       { key: 2, name: 'Profile', icon: <ProfileCircle />, href: '/profile', role_access: ['lecturer', 'industrial-engineer', 'hod', 'employee-w', 'auditor'] },
       { key: 8, name: 'Pricing', icon: <DollarCircle />, href: '/pricing', role_access: ['admin'] },
-      { key: 9, name: 'Maintenance Model', icon: <Setting3 />, href: '/maintenance', role_access: ['lecturer', 'industrial-engineer', 'hod', 'employee-w', 'admin'] },
-      { key: 9, name: 'Other Models', icon: <Setting2 />, href: '/models', role_access: ['industrial-engineer'] }
+      { key: 9, name: 'Maintenance Model', icon: <Setting3 />, href: '/maintenance', role_access: [ 'industrial-engineer', 'admin'] },
+      { key: 10, name: 'Other Models', icon: <Setting2 />, href: '/models', role_access: ['industrial-engineer', 'admin'] }
    ]
 
    const allowedTabs = tabs.filter(tab => tab.role_access.includes(user.role));

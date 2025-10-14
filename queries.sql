@@ -42,7 +42,8 @@ CREATE TABLE pesuser (
    name VARCHAR(255) PRIMARY KEY NOT NULL,
    email VARCHAR(255) UNIQUE NOT NULL,
    password VARCHAR(255) NOT NULL,
-   gsm VARCHAR(50),
+   gsm VARCHAR(50),cls
+   clscccccc
    role VARCHAR(50),
    address TEXT,
    faculty_college VARCHAR(255),
@@ -103,7 +104,6 @@ CREATE TABLE facilities (
 -- index
 CREATE TABLE "index" (
    id SERIAL PRIMARY KEY,
-   user_id VARCHAR(255) NOT NULL,
    redundancy NUMERIC,
    dept VARCHAR(255)
    productivity NUMERIC,
@@ -221,3 +221,31 @@ CREATE TABLE subscription_events (
 --    'chika.jpg',
 --    'university of lagos'
 -- ),
+
+CREATE TABLE personnel_utilization (
+  id SERIAL PRIMARY KEY,
+  org TEXT NOT NULL,
+  b NUMERIC(10, 2),
+  w NUMERIC(10, 2),
+  p0 NUMERIC(6, 3),
+  t1 NUMERIC(6, 3),
+  t2 NUMERIC(6, 3),
+  t3 NUMERIC(6, 3),
+  t4 NUMERIC(6, 3),
+  s0 NUMERIC(6, 3),
+  g NUMERIC(10, 2),
+  d NUMERIC(10, 2),
+  y NUMERIC(6, 3),
+  alpha NUMERIC(6, 3),
+  lambda NUMERIC(6, 3),
+  mu NUMERIC(6, 3),
+  j NUMERIC(10, 2),
+  kmin INTEGER,
+  kmax INTEGER,
+  kstar INTEGER,
+  hstar NUMERIC(12, 6),
+  constraints_ok BOOLEAN DEFAULT true,
+  violations TEXT[],
+  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+

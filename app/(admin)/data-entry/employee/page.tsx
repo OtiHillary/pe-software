@@ -15,7 +15,7 @@ interface EmployeeScores {
   stress?: Record<string, number>;
 }
 
-type GroupKey = "appraisal" | "performance" | "stress";
+type GroupKey = "appraisal" | "performance" ;
 
 export default function EmployeeScoresPage() {
   const [scores, setScores] = useState<EmployeeScores[]>([]);
@@ -67,16 +67,16 @@ async function handleSubmit() {
   const org = decoded.org
   const dept = decoded.dept
 
-  console.log(decoded)
+  console.log('counter scores are:', counterScores)
 
   const apiEndpoints: Record<GroupKey, string> = {
     appraisal: `/api/saveAppraisal?dept=${dept}`,
     performance: `/api/savePerformance?dept=${dept}`,
-    stress: `/api/saveStress?dept=${dept}`,
+    // stress: `/api/saveStress?dept=${dept}`,
   };
 
   const endpoint = apiEndpoints[selectedGroup];
-
+  console.log(selectedEmployee, org)
   try {
     const res = await fetch(endpoint, {
       method: "POST",
@@ -85,7 +85,7 @@ async function handleSubmit() {
         pesuser_name: selectedEmployee.pesuser_name,
         org,
         isCounter: true, // 👈 tell backend this is a counter-offer
-        ...counterScores, // all counter scores for that employee/group
+        payload: counterScores, // all counter scores for that employee/group
       }),
     });
 
@@ -125,7 +125,7 @@ async function handleSubmit() {
       {/* Step 1: Select Group */}
       {!selectedGroup && (
         <div className="grid grid-cols-3 gap-4">
-          {(["appraisal", "performance", "stress"] as GroupKey[]).map((g) => (
+          {(["appraisal", "performance"] as GroupKey[]).map((g) => (
             <button
               key={g}
               onClick={() => setSelectedGroup(g)}
