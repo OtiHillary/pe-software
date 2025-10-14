@@ -43,10 +43,17 @@ export default function Dashboard() {
                <div className="w-full shadow-md shadow-gray-100 p-4 bg-white">
                   <div className='flex justify-between w-full p-4'>
                      <p className='text-3xl text-black my-auto'>Goals</p>
-                     <a href={'/goals'} className='text-md font-light my-auto text-pes flex'>
-                        Set new Goal
-                        <Add className='mx-2 font-thin' />
-                     </a>                
+                     
+                     {
+                        user?.role == 'admin'?
+                           <a href={'/goals'} className='text-md font-light my-auto text-pes flex'>
+                              Set new Goal
+                              <Add className='mx-2 font-thin' />
+                           </a> 
+                        :
+                           <></>                        
+                     }
+               
                   </div>
 
                   <div className= 'text-white flex justify-between w-full py-4'>

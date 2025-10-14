@@ -2,7 +2,7 @@
 
 import { createContext, useContext, useState, ReactNode } from "react";
 
-type Role = "admin" | "employee-ac" | "employee-nac" | "team-lead" | "employee-w" | "external"  | null;
+type Role = "admin" | "lecturer" | "industrial-engineer" | "hod" | "auditor"  | null;
 
 type AuthContextType = {
   role: Role;

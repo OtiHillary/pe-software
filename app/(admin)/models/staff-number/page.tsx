@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { saveResult} from "./util/sharedPost"
 
 export default function Method1Page() {
   const [basicTime, setBasicTime] = useState<number>(0);
@@ -12,12 +13,23 @@ export default function Method1Page() {
 
   const [result, setResult] = useState<number | null>(null);
 
-  const calculate = () => {
+  const calculate = async () => {
     // Formula: Number of Staff = (Total Standard Man-hours) / (Available Man-hours per Person)
     const standardManHoursPerTask = basicTime * (1 + relaxAllowance / 100) * loadFactor;
     const totalStandardManHours = standardManHoursPerTask * numTasks * timePerTask;
     const staffNeeded = totalStandardManHours / availableHoursPerPerson;
     setResult(staffNeeded);
+    
+    await saveResult({
+      methodType: "Method1",
+      staffNeeded,
+      basicTime,
+      relaxAllowance,
+      loadFactor,
+      numTasks,
+      timePerTask,
+      availableHoursPerPerson
+    })
   };
 
   return (

@@ -1,121 +1,117 @@
-'use client'
-import React, { useState, useEffect } from "react";
+'use client';
 
-interface UserData {
-  id: string;
-  name: string;
-  dept: string;
-  role: 'academic' | 'non-academic' | 'hod' | 'dean' | 'personnel';
-  hasSubmitted: boolean;
-}
+import React, { useState } from 'react';
 
-export default function Home() {
-    const [data, setData] = useState<{ wasted: number, total: number }>({
-        wasted: 0,
-        total: 0
-    });
-    const [result, setResult] = useState<number | null>(null);
-    const [users, setUsers] = useState<UserData[]>([]);
-    const [userOption, setUserOption] = useState<UserData | null>(null);
-    const [save, setSave] = useState(false)
+export default function RedundancyIndex() {
+  const [data, setData] = useState({ wasted: '', total: '' });
+  const [result, setResult] = useState<number | null>(null);
+  const [loading, setLoading] = useState(false);
+  const [successMsg, setSuccessMsg] = useState('');
 
-    function red_index() {
-        setResult(data.wasted / data.total);
-        setSave(true)
+  function evaluateIndex() {
+    const wasted = parseFloat(data.wasted);
+    const total = parseFloat(data.total);
+
+    if (isNaN(wasted) || isNaN(total)) return alert('Please enter valid numbers');
+    if (total === 0) return alert('Total man-hours cannot be zero');
+
+    const index = wasted / total;
+    setResult(Number(index.toFixed(4))); // keep to 4 decimals
+    setSuccessMsg('');
+  }
+
+  async function handleSubmit() {
+    if (result === null) return alert('Please evaluate the index first');
+
+    setLoading(true);
+    setSuccessMsg('');
+
+    try {
+      const res = await fetch('/api/addPersonnelIndex', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          authorization: `Bearer ${localStorage.getItem('access_token')}`,
+        },
+        body: JSON.stringify({
+          payload: 'redundancy',
+          redundancy: Number(result), // ensure numeric type
+        }),
+      });
+
+      if (!res.ok) throw new Error('Failed to save data');
+
+      setSuccessMsg('✅ Successfully saved to database');
+      setData({ wasted: '', total: '' });
+      setResult(null);
+    } catch (err) {
+      console.error('Error saving data:', err);
+      alert('Error saving redundancy index ❌');
+    } finally {
+      setLoading(false);
     }
+  }
 
-    function handleChange(event: React.ChangeEvent<HTMLInputElement>) {
-        const { name, value } = event.target;
-        setData(prevData => ({
-            ...prevData,
-            [name]: parseFloat(value)
-        }));
-    }
+  return (
+    <div className="m-6">
+      <h1 className="font-bold text-3xl mb-6">Redundancy Index</h1>
 
-    function handleSubmit() {
-        console.log('lets save')
-        // Here you can handle the form submission, e.g., save the data to a database
-        fetch('/api/addPersonnelIndex', {
-            method: 'POST',
-            headers: { 
-                "Content-Type": "application/json",
-                "authorization": `Bearer ${localStorage.getItem('access_token')}`
-            },
-            body: JSON.stringify({
-                    user_id: userOption?.id,
-                    dept: userOption?.dept,
-                    payload: "redundancy",
-                    redundancy: result
-                })
-            })
-            .catch(err => console.error('Error saving data:', err))
-            .finally(() => {
-                setSave(false);
-                setResult(null);
-            });
+      <div className="flex gap-8 mb-6 flex-wrap">
+        <label className="flex flex-col w-72">
+          Wasted Man-hours
+          <input
+            type="number"
+            name="wasted"
+            value={data.wasted}
+            onChange={(e) => setData((d) => ({ ...d, wasted: e.target.value }))}
+            className="border px-4 py-2 rounded mt-1"
+            placeholder="Enter wasted hours"
+          />
+        </label>
 
-        console.log('Form submitted:', data);
-    }
+        <label className="flex flex-col w-72">
+          Total Establishment Man-hours
+          <input
+            type="number"
+            name="total"
+            value={data.total}
+            onChange={(e) => setData((d) => ({ ...d, total: e.target.value }))}
+            className="border px-4 py-2 rounded mt-1"
+            placeholder="Enter total hours"
+          />
+        </label>
+      </div>
 
-    useEffect(() => {
-        const userToken = localStorage.getItem('access_token') || '{}';
-        async function fetchUsers() {
-            const response = await fetch('/api/getUsers', {
-                method: 'POST',
-                headers: {
-                'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({ token: userToken }),
-            });
+      {result !== null && (
+        <p className="text-green-700 font-semibold mb-3">
+          Redundancy Index: {result}
+        </p>
+      )}
 
-            if (response.ok) {
-                const data = await response.json();
-                setUsers(data);
-            }
-        }
+      {successMsg && (
+        <p className="text-green-600 font-semibold mb-3">{successMsg}</p>
+      )}
 
-        fetchUsers();
-    }, []);
+      <div className="flex gap-4">
+        <button
+          type="button"
+          className="bg-pes hover:opacity-90 text-white font-semibold px-12 py-3 rounded"
+          onClick={evaluateIndex}
+        >
+          Evaluate
+        </button>
 
-    return (
-        <form className="flex flex-col m-4">
-            <h1 className="font-bold text-3xl my-6">Redundacy index</h1>
-
-            <div className='p-1 mb-2'>
-                <label htmlFor="user" className='flex'>
-                <p className='my-auto'>Select User:</p>
-                <select name="" id="user" className='m-2 p-2 rounded-md border' onChange={(e) => { setUserOption(JSON.parse(e.target.value)) }} required>
-                    <option value="">No user selected</option>
-
-                    {users?.map(user => (
-                    <option key={user.id} value={JSON.stringify(user)}>
-                        {user.name}
-                    </option>
-                    ))}
-                </select>
-                </label>           
-            </div>
-
-            <div className="flex m-4">
-                <label htmlFor="" className="flex flex-col w-72">
-                    Wasted man-hours
-                    <input onChange={handleChange} name="wasted" required className="border me-6 mb-3 px-16 py-2 rounded" type="number"  value={data.wasted}/>
-                </label>
-
-                <label htmlFor="" className="flex flex-col w-72">
-                    Total establishment manhours
-                    <input onChange={handleChange} name="total" required className="border me-6 mb-3 px-16 py-2 rounded" type="number"  value={data.total}/>
-                </label>                
-            </div>
-
-            <p className="text-green-500">{ result? 'successful': '' }</p>
-
-
-            <div className="flex mx-4">
-                <a className="bg-pes cursor-pointer w-fit my-3 me-2 rounded text-white px-32 py-3" onClick={red_index}>Evaluate</a>
-                <button className="bg-pes disabled:bg-gray-400 w-fit my-3 me-2 rounded text-white px-32 py-3" onClick={handleSubmit} disabled = { save? false: true }>Save</button>
-            </div>
-
-        </form>
-    )
+        <button
+          type="button"
+          className={`${
+            loading ? 'bg-gray-400 cursor-not-allowed' : 'bg-pes hover:opacity-90'
+          } text-white font-semibold px-12 py-3 rounded`}
+          onClick={handleSubmit}
+          disabled={loading}
+        >
+          {loading ? 'Saving...' : 'Save'}
+        </button>
+      </div>
+    </div>
+  );
 }

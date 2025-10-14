@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { saveResult } from "../util/sharedPost";
 
 export default function Method2Page() {
   const [observedTime, setObservedTime] = useState<number>(0);
@@ -13,7 +14,7 @@ export default function Method2Page() {
 
   const [result, setResult] = useState<number | null>(null);
 
-  const calculate = () => {
+  const calculate = async () => {
     // Corrected estimate
     const correctedEstimate = personsEstimate * (1 + correctiveFactor);
     // Basic time (average of observed and estimated times, as placeholder logic)
@@ -24,7 +25,20 @@ export default function Method2Page() {
     const totalStandardManHours = standardManHoursPerTask * numTasks;
     // Staff needed
     const staffNeeded = totalStandardManHours / availableHoursPerPerson;
+
     setResult(staffNeeded);
+    
+    await saveResult({
+      methodType: "Method2",
+      staffNeeded,
+      observedTime,
+      estimatedTime,
+      correctiveFactor,
+      personsEstimate,
+      numTasks,
+      relaxAllowance,
+      availableHoursPerPerson
+    });
   };
 
   return (

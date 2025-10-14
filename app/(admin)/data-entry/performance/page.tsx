@@ -1,5 +1,5 @@
 'use client'
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { jwtDecode } from 'jwt-decode'
 import CriteriaForm from './criteria/form'
 
@@ -9,7 +9,7 @@ type JWTPayload = {
   org?: number
 }
 
-/* ---- Criteria definitions (use your original weights) ---- */
+/* ---------------- Criteria Definitions ---------------- */
 const competenceCriteria = [
   { name: 'Hardwork (quantity)', percentage: 55 },
   { name: 'Quality of work', percentage: 10 },
@@ -44,88 +44,111 @@ const resourceCriteria = [
   { name: 'Use of resources', percentage: 400 },
 ]
 
-/* ---- Helpers ---- */
+/* ---------------- Helpers ---------------- */
 function weightedTotal(criteria: { percentage: number }[], ratings: Record<number, number>) {
   return criteria.reduce((sum, c, i) => {
-    const r = ratings[i] ?? 1 // default rating = 1 like your originals
+    const r = ratings[i] ?? 1
     return sum + (r / 10) * c.percentage
   }, 0)
 }
 
-/* ---- Main Component ---- */
+/* ---------------- Main Component ---------------- */
 export default function PerformanceStep() {
   const [step, setStep] = useState(0)
-
-  // ratings are maps: index -> rating (1..10)
   const [competenceRatings, setCompetenceRatings] = useState<Record<number, number>>({})
   const [integrityRatings, setIntegrityRatings] = useState<Record<number, number>>({})
   const [compatibilityRatings, setCompatibilityRatings] = useState<Record<number, number>>({})
   const [resourceRatings, setResourceRatings] = useState<Record<number, number>>({})
+  const [staffScores, setStaffScores] = useState<any>(null)
+  const [hodScores, setHodScores] = useState<any>(null)
+  const [loading, setLoading] = useState(true)
 
+  /* ---------------- Steps ---------------- */
   const steps = [
-    {
-      title: 'Competence',
-      form: (
-        <CriteriaForm
-          title="Competence"
-          criteria={competenceCriteria}
-          ratings={competenceRatings}
-          setRatings={setCompetenceRatings}
-        />
-      ),
-    },
-    {
-      title: 'Integrity',
-      form: (
-        <CriteriaForm
-          title="Integrity"
-          criteria={integrityCriteria}
-          ratings={integrityRatings}
-          setRatings={setIntegrityRatings}
-        />
-      ),
-    },
-    {
-      title: 'Compatibility',
-      form: (
-        <CriteriaForm
-          title="Compatibility"
-          criteria={compatibilityCriteria}
-          ratings={compatibilityRatings}
-          setRatings={setCompatibilityRatings}
-        />
-      ),
-    },
-    {
-      title: 'Use of Resources',
-      form: (
-        <CriteriaForm
-          title="Use of Resources"
-          criteria={resourceCriteria}
-          ratings={resourceRatings}
-          setRatings={setResourceRatings}
-        />
-      ),
-    },
+    { title: 'Competence', key: 'competence', criteria: competenceCriteria, ratings: competenceRatings, setRatings: setCompetenceRatings },
+    { title: 'Integrity', key: 'integrity', criteria: integrityCriteria, ratings: integrityRatings, setRatings: setIntegrityRatings },
+    { title: 'Compatibility', key: 'compatibility', criteria: compatibilityCriteria, ratings: compatibilityRatings, setRatings: setCompatibilityRatings },
+    { title: 'Use of Resources', key: 'use_of_resources', criteria: resourceCriteria, ratings: resourceRatings, setRatings: setResourceRatings },
   ]
 
+  /* ---------------- Fetch Scores ---------------- */
+  useEffect(() => {
+    const fetchScores = async () => {
+      try {
+        const token = localStorage.getItem('access_token')
+        if (!token) return
+        const user: JWTPayload = jwtDecode(token)
+
+        const [staffRes, hodRes] = await Promise.all([
+          fetch(`/api/userPerformance?staff=${encodeURIComponent(user.name ?? '')}`),
+          fetch(`/api/counterUserPerformance?staff=${encodeURIComponent(user.name ?? '')}`),
+        ])
+
+        const staffData = staffRes.ok ? await staffRes.json() : null
+        const hodData = hodRes.ok ? await hodRes.json() : null
+        setStaffScores(staffData)
+        setHodScores(hodData)
+      } catch (err) {
+        console.error('Error fetching performance data:', err)
+      } finally {
+        setLoading(false)
+      }
+    }
+    fetchScores()
+  }, [])
+
+  /* ---------------- Accept / Reject ---------------- */
+  const handleAcceptReject = async (section: string, decision: 'accepted' | 'rejected') => {
+    try {
+      const token = localStorage.getItem('access_token')
+      if (!token) return alert('No token found ❌')
+      const user: JWTPayload = jwtDecode(token)
+
+      const res = await fetch('/api/acceptRejectPerformance', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          section,
+          decision,
+          staff: staffScores?.user_name ?? user.name,
+          user: user.name,
+        }),
+      })
+
+      if (!res.ok) throw new Error('Accept/Reject failed ❌')
+      alert(`You have ${decision} the HOD counter score for ${section} ✅`)
+      window.location.reload()
+    } catch (err) {
+      console.error(err)
+      alert('Error performing accept/reject ❌')
+    }
+  }
+
+  /* ---------------- Form Validation ---------------- */
+  const isStepComplete = (index: number) =>
+    steps[index].criteria.every((_, i) => steps[index].ratings[i] !== undefined && steps[index].ratings[i] !== '')
+
+  /* ---------------- Submit ---------------- */
   const handleFinalSubmit = async () => {
-    const token = localStorage.getItem('access_token')
-    if (!token) {
-      alert('No token found ❌')
+    const incomplete = steps.find((_, i) => !isStepComplete(i))
+    if (incomplete) {
+      alert(`Please complete all fields in "${incomplete.title}" ✅`)
       return
     }
 
-    const user: JWTPayload = jwtDecode(token)
+    const token = localStorage.getItem('access_token')
+    if (!token) return alert('No token found ❌')
 
-    // exact keys like your previous components & endpoint
+    const user: JWTPayload = jwtDecode(token)
     const payload = {
       pesuser_name: user.name,
       org: user.org,
-      competence: Number(weightedTotal(competenceCriteria, competenceRatings).toFixed(2)),
-      integrity: Number(weightedTotal(integrityCriteria, integrityRatings).toFixed(2)),
-      compatibility: Number(weightedTotal(compatibilityCriteria, compatibilityRatings).toFixed(2)),
-      use_of_resources: Number(weightedTotal(resourceCriteria, resourceRatings).toFixed(2)),
+      payload: {
+        competence: weightedTotal(competenceCriteria, competenceRatings).toFixed(2),
+        integrity: weightedTotal(integrityCriteria, integrityRatings).toFixed(2),
+        compatibility: weightedTotal(compatibilityCriteria, compatibilityRatings).toFixed(2),
+        use_of_resources: weightedTotal(resourceCriteria, resourceRatings).toFixed(2),
+      },
     }
 
     try {
@@ -135,30 +158,77 @@ export default function PerformanceStep() {
         body: JSON.stringify(payload),
       })
 
-      if (!res.ok) {
-        let msg = 'Error saving performance ❌'
-        try {
-          const data = await res.json()
-          if (data?.message) msg = data.message
-        } catch {}
-        throw new Error(msg)
-      }
-
+      if (!res.ok) throw new Error('Error saving performance ❌')
       alert('Performance submitted successfully ✅')
     } catch (err) {
       console.error(err)
-      alert(err instanceof Error ? err.message : 'Error submitting performance ❌')
+      alert('Error submitting performance ❌')
     }
   }
 
+  /* ---------------- Render Logic ---------------- */
+  const current = steps[step]
+  const staffVal = staffScores?.[0]?.[current.key]
+  const hodVal = hodScores?.[0]?.[current.key]
+  const hasScores = staffVal !== undefined || hodVal !== undefined
+
+  if (loading) return <p className="text-center p-8">Loading...</p>
+
   return (
     <div className="w-full mx-auto p-8 space-y-6">
-      <h1 className="text-2xl font-bold text-center">Performance data entry</h1>
+      <h1 className="text-2xl font-bold text-center">Performance Data Entry</h1>
+      <div className="text-center text-gray-600">
+        Step {step + 1} of {steps.length} — <span className="font-semibold">{current.title}</span>
+      </div>
 
       {/* Step content */}
-      <div>{steps[step].form}</div>
+      <div>
+        {hasScores ? (
+          <div className="space-y-4">
+            <h2 className="text-xl font-bold">{current.title} — Submitted Scores</h2>
+            <table className="w-full border border-gray-300">
+              <thead>
+                <tr className="bg-gray-100">
+                  <th className="border p-2">Section</th>
+                  <th className="border p-2">Staff Score</th>
+                  <th className="border p-2">HOD Counter Score</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td className="border p-2">{current.title}</td>
+                  <td className="border p-2 text-center">{staffVal ?? '—'}</td>
+                  <td className="border p-2 text-center">{hodVal ?? '—'}</td>
+                </tr>
+              </tbody>
+            </table>
 
-      {/* Controls */}
+            <div className="flex gap-4">
+              <button
+                onClick={() => handleAcceptReject(current.key, 'accepted')}
+                className="px-3 py-1 bg-green-600 text-white rounded"
+              >
+                Accept
+              </button>
+              <button
+                onClick={() => handleAcceptReject(current.key, 'rejected')}
+                className="px-3 py-1 bg-red-600 text-white rounded"
+              >
+                Reject
+              </button>
+            </div>
+          </div>
+        ) : (
+          <CriteriaForm
+            title={current.title}
+            criteria={current.criteria}
+            ratings={current.ratings}
+            setRatings={current.setRatings}
+          />
+        )}
+      </div>
+
+      {/* Navigation */}
       <div className="flex justify-between pt-6">
         <button
           disabled={step === 0}
@@ -167,21 +237,16 @@ export default function PerformanceStep() {
         >
           Prev
         </button>
+
         {step < steps.length - 1 ? (
-          <button
-            onClick={() => setStep(step + 1)}
-            className="px-4 py-2 bg-blue-500 text-white rounded"
-          >
+          <button onClick={() => setStep(step + 1)} className="px-4 py-2 bg-blue-500 text-white rounded">
             Next
           </button>
-        ) : (
-          <button
-            onClick={handleFinalSubmit}
-            className="px-4 py-2 bg-green-600 text-white rounded"
-          >
+        ) : !hasScores ? (
+          <button onClick={handleFinalSubmit} className="px-4 py-2 bg-green-600 text-white rounded">
             Submit All
           </button>
-        )}
+        ) : null}
       </div>
     </div>
   )

@@ -1,11 +1,27 @@
 import { NextRequest, NextResponse } from 'next/server'
 import prisma from '../prisma.dev'
+import { jwtDecode } from 'jwt-decode';
+
+function decodeJWT(jwt: string){
+  const decoded = jwtDecode<{ org: string, user_id: string, dept: string }>(jwt);
+  return decoded;
+}
 
 export async function POST(req: NextRequest) {
   const body = await req.json();
-  const { user_id, dept, payload } = body;
+  const authHeader = req.headers.get('authorization');
+  if (!authHeader) {
+    return NextResponse.json({ message: 'Authorization header missing' }, { status: 401 });
+  }
+  const { payload } = body;
   const value = body[payload];
   console.log('i was hit')
+  const token = authHeader.split(' ')[1];
+  if (!token) {
+    return NextResponse.json({ message: 'Token missing' }, { status: 401 });
+  }
+  const { org, user_id, dept } = decodeJWT(token);
+  console.log({ org, user_id, dept })
 
   const allowedFields = [
     'productivity',
@@ -13,7 +29,7 @@ export async function POST(req: NextRequest) {
     'utility'
   ];
 
-  if (!user_id || !payload || value === undefined) {
+  if (!payload || value === undefined) {
     return NextResponse.json({ message: 'Missing required fields' }, { status: 400 });
   }
 
@@ -24,17 +40,15 @@ export async function POST(req: NextRequest) {
   try {
     // Check if user appraisal already exists
     const existing = await prisma.$queryRawUnsafe(
-      `SELECT * FROM "index" WHERE user_id = $1 AND dept = $2`,
-      user_id,
-      dept
+      `SELECT * FROM "index" WHERE org = $1`,
+      org,
     ) as any[];
 
     if (existing.length === 0) {
       // Insert new row with only the given field
       await prisma.$executeRawUnsafe(
-        `INSERT INTO "index" (user_id, dept, "${payload}") VALUES ($1, $2, $3)`,
-        user_id,
-        dept,
+        `INSERT INTO "index" (org, "${payload}") VALUES ($1, $2)`,
+        org,
         value
       );
 
@@ -42,10 +56,9 @@ export async function POST(req: NextRequest) {
     } else {
       // Update the field
       await prisma.$executeRawUnsafe(
-        `UPDATE "index" SET "${payload}" = $1 WHERE user_id = $2 AND dept = $3`,
+        `UPDATE "index" SET "${payload}" = $1 WHERE org = $2`,
         value,
-        user_id,
-        dept
+        org
       );
 
       return NextResponse.json({ message: 'index updated' }, { status: 200 });

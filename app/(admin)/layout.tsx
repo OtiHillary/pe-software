@@ -48,25 +48,28 @@ export default function RootLayout({ children, }: { children: React.ReactNode })
     <Provider store={ store }>
         <div className={ lato.className + 'bg-gray-10 flex flex-row relative justify-center w-screen' }
         onChange={handleMobile}>
-          <Dimmer />
-          <Notification />
-          <SetNotification />
-          <Success />
-          <Failure />
-          <Action />
-          <Newgoal/>
-          <Editgoal/>
-          <Viewgoal />
-          <Deletegoal/>
-          <NotificationSent/>
-          <RoleCreated />
+            <Dimmer />
+            <Notification />
+            <SetNotification />
+            <Success />
+            <Failure />
+            <Action />
+            <Newgoal />
+            <Editgoal />
+            <Viewgoal />
+            <Deletegoal/>
+            <NotificationSent/>
+            <RoleCreated />
 
-          <Sidebar is_sidebar_active={is_sidebar_active} handleSideBar={handleSideBar} />
-          <div className="flex flex-col w-4/5 max-lg:w-full">
-            <Navbar is_sidebar_active={is_sidebar_active} handleSideBar={handleSideBar} />
-            {children}          
-          </div>
+            <Sidebar is_sidebar_active={is_sidebar_active} handleSideBar={handleSideBar} />
+            <div className="flex flex-col w-4/5 max-lg:w-full">
+              <Navbar is_sidebar_active={is_sidebar_active} handleSideBar={handleSideBar} />
+              {children}          
+            </div>
         </div>
     </Provider>
   )
 }
+
+
+

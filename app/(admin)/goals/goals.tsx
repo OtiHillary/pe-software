@@ -5,15 +5,10 @@ import { useDispatch, useSelector } from 'react-redux';
 import { RootState } from '../../state/store'
 import { newGoal, viewGoal } from "@/app/state/goals/goalSlice";
 import { Status, CalendarRemove } from 'iconsax-react'
-import jwt, { JwtPayload } from "jsonwebtoken";
+import jwt from "jsonwebtoken";
 
 function colorGrade( num: any ): string{
     return (num < 50)? 'red' : 'green';       
-}
-
-type storage_token = {
-    name: string
-    role: string
 }
 
 type Goal = {
@@ -27,12 +22,18 @@ export default function Goals(){
     const [grid, setGrid] = useState(false)
     const [goals, setGoals] = useState<Goal[]>([])
     const dispatch = useDispatch()
+   const [user, setUser] = useState({name: '', role: ''})
 
 
     useEffect(() => {
-        const access_token = localStorage.getItem('access_token') as string
-        const tokenData = jwt.decode(access_token)
+    const access_token = localStorage.getItem('access_token') as string
+    const tokenData = jwt.decode(access_token)
 
+    if (tokenData && typeof tokenData === 'object' && 'name' in tokenData && 'role' in tokenData) {
+        setUser({ name: (tokenData as any).name, role: (tokenData as any).role });
+    } else {
+        setUser({ name: '', role: '' });
+    }
         async function fetchGoal() {
             const data = await fetch('/api/getGoals', {
                 method: 'POST',
@@ -60,9 +61,15 @@ export default function Goals(){
                     <div className={`${ grid? '': 'border-pes text-pes' } list border rounded-md mx-3 my-auto p-1 hover:border-pes`} onClick={ () => setGrid(false) }>
                         <Image width={ 25 } height={ 25 } src={ `/list.svg` } alt={`list`}/>
                     </div>
-                    <div className="bg-pes py-3 px-8 rounded-md text-white new ms-12" onClick={ () => dispatch( newGoal() )}>
-                        Set new Goal
-                    </div>
+
+                    {
+                        user?.role == 'admin'?
+                        <div className="bg-pes py-3 px-8 rounded-md text-white new ms-12" onClick={ () => dispatch( newGoal() )}>
+                            Set new Goal
+                        </div>
+                        :
+                        <></>
+                    }
                 </div>
             </div>
             

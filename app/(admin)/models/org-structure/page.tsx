@@ -4,6 +4,48 @@ import { useState } from "react";
 
 export default function OrgStructurePage() {
   const [openSection, setOpenSection] = useState<string | null>(null);
+  const [loading, setLoading] = useState(false);
+  const [message, setMessage] = useState("");
+
+  const token = typeof window !== "undefined" ? localStorage.getItem("access_token") : null;
+
+  // ===== Helper to Save =====
+  async function saveResult(
+    section: number,
+    result: number,
+    numerator: number[] = [],
+    denominator: number[] = [],
+    extra_data: any = {}
+  ) {
+    if (!token) {
+      setMessage("❌ Missing authentication token.");
+      return;
+    }
+
+    try {
+      setLoading(true);
+      const res = await fetch("/api/orgStructure", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify({ section, result, numerator, denominator, extra_data }),
+      });
+
+      const data = await res.json();
+
+      if (res.ok) {
+        setMessage(`✅ Results saved successfully`);
+      } else {
+        setMessage(`❌ Error: ${data.error || "Failed to save"}`);
+      }
+    } catch (err: any) {
+      setMessage(`❌ ${String(err)}`);
+    } finally {
+      setLoading(false);
+    }
+  }
 
   // ===== Section 17 =====
   const section17Link = "https://example.com/personnel-utilization.pdf";
@@ -14,12 +56,13 @@ export default function OrgStructurePage() {
   const [section18DenominatorB, setSection18DenominatorB] = useState<number[]>([0]);
   const [section18Result, setSection18Result] = useState<number | null>(null);
 
-  const calcSection18 = () => {
+  const calcSection18 = async () => {
     const sumNum = section18Numerator.reduce((a, b) => a + b, 0);
     const sumDenA = section18DenominatorA.reduce((a, b) => a + b, 0);
     const sumDenB = section18DenominatorB.reduce((a, b) => a + b, 0);
     const result = sumDenA && sumDenB ? sumNum / (sumDenA * sumDenB) : 0;
     setSection18Result(result);
+    await saveResult(18, result, section18Numerator, [...section18DenominatorA, ...section18DenominatorB]);
   };
 
   // ===== Section 19 =====
@@ -28,11 +71,12 @@ export default function OrgStructurePage() {
   const [Z, setZ] = useState<number | "">("");
   const [section19Result, setSection19Result] = useState<number | null>(null);
 
-  const calcSection19 = () => {
+  const calcSection19 = async () => {
     const sumNum = section19Numerator.reduce((a, b) => a + b, 0);
     const sumDen = section19Denominator.reduce((a, b) => a + b, 0);
     const result = sumDen ? (Number(Z) * sumNum) / sumDen : 0;
     setSection19Result(result);
+    await saveResult(19, result, section19Numerator, section19Denominator, { Z });
   };
 
   // ===== Section 20 =====
@@ -41,20 +85,29 @@ export default function OrgStructurePage() {
   const [maxResult, setMaxResult] = useState<number | null>(null);
   const [minResult, setMinResult] = useState<number | null>(null);
 
-  const calcMax = () => setMaxResult(Number(maxInput)); // Replace with PDF formula
-  const calcMin = () => setMinResult(Number(minInput)); // Replace with PDF formula
+  const calcMax = async () => {
+    const result = Number(maxInput);
+    setMaxResult(result);
+    await saveResult(20, result, [Number(maxInput)], [], { type: "Max" });
+  };
+  const calcMin = async () => {
+    const result = Number(minInput);
+    setMinResult(result);
+    await saveResult(20, result, [Number(minInput)], [], { type: "Min" });
+  };
 
   // ===== Section 21 =====
   const [prNumerator, setPrNumerator] = useState<number | "">("");
   const [prDenominator, setPrDenominator] = useState<number | "">("");
   const [prResult, setPrResult] = useState<number | null>(null);
 
-  const calcPR = () => {
+  const calcPR = async () => {
     const result =
       Number(prDenominator) !== 0
         ? (Number(prNumerator) / Number(prDenominator)) * 100
         : 0;
     setPrResult(result);
+    await saveResult(21, result, [Number(prNumerator)], [Number(prDenominator)]);
   };
 
   // ===== Section 22 =====
@@ -63,9 +116,10 @@ export default function OrgStructurePage() {
   const [x, setX] = useState<number | "">("");
   const [projResult, setProjResult] = useState<number | null>(null);
 
-  const calcProjection = () => {
+  const calcProjection = async () => {
     const result = Number(a) + Number(b) * Number(x);
     setProjResult(result);
+    await saveResult(22, result, [Number(a), Number(b), Number(x)]);
   };
 
   // ===== Helpers =====
@@ -120,11 +174,7 @@ export default function OrgStructurePage() {
     </div>
   );
 
-  const section = (
-    key: string,
-    title: string,
-    children: React.ReactNode
-  ) => (
+  const section = (key: string, title: string, children: React.ReactNode) => (
     <div className="border rounded mb-4">
       <button
         onClick={() => setOpenSection(openSection === key ? null : key)}
@@ -141,6 +191,12 @@ export default function OrgStructurePage() {
       <h1 className="text-2xl font-bold mb-6">
         Organization Structure Models (17–22)
       </h1>
+
+      {message && (
+        <div className="p-3 mb-4 text-sm text-center bg-gray-100 rounded">
+          {message}
+        </div>
+      )}
 
       {/* Section 17 */}
       {section(
@@ -173,12 +229,15 @@ export default function OrgStructurePage() {
           <button
             className="px-4 py-2 bg-blue-600 text-white rounded"
             onClick={calcSection18}
+            disabled={loading}
           >
-            Calculate
+            {loading ? "Saving..." : "Calculate & Save"}
           </button>
           {section18Result !== null && (
             <div className="mt-4 bg-white p-4 rounded shadow">
-              <p><strong>Result (S):</strong> {section18Result.toFixed(2)}</p>
+              <p>
+                <strong>Result (S):</strong> {section18Result.toFixed(2)}
+              </p>
             </div>
           )}
         </>
@@ -195,12 +254,15 @@ export default function OrgStructurePage() {
           <button
             className="px-4 py-2 bg-blue-600 text-white rounded"
             onClick={calcSection19}
+            disabled={loading}
           >
-            Calculate
+            {loading ? "Saving..." : "Calculate & Save"}
           </button>
           {section19Result !== null && (
             <div className="mt-4 bg-white p-4 rounded shadow">
-              <p><strong>Shape (E):</strong> {section19Result.toFixed(2)}</p>
+              <p>
+                <strong>Shape (E):</strong> {section19Result.toFixed(2)}
+              </p>
             </div>
           )}
         </>
@@ -218,12 +280,11 @@ export default function OrgStructurePage() {
               <button
                 className="px-4 py-2 bg-blue-600 text-white rounded"
                 onClick={calcMax}
+                disabled={loading}
               >
-                Calculate Max
+                {loading ? "Saving..." : "Calculate Max & Save"}
               </button>
-              {maxResult !== null && (
-                <p className="mt-2"><strong>Max:</strong> {maxResult}</p>
-              )}
+              {maxResult !== null && <p className="mt-2"><strong>Max:</strong> {maxResult}</p>}
             </div>
             <div>
               <h3 className="font-semibold mb-2">Min (p.74)</h3>
@@ -231,12 +292,11 @@ export default function OrgStructurePage() {
               <button
                 className="px-4 py-2 bg-blue-600 text-white rounded"
                 onClick={calcMin}
+                disabled={loading}
               >
-                Calculate Min
+                {loading ? "Saving..." : "Calculate Min & Save"}
               </button>
-              {minResult !== null && (
-                <p className="mt-2"><strong>Min:</strong> {minResult}</p>
-              )}
+              {minResult !== null && <p className="mt-2"><strong>Min:</strong> {minResult}</p>}
             </div>
           </div>
         </>
@@ -252,12 +312,15 @@ export default function OrgStructurePage() {
           <button
             className="px-4 py-2 bg-blue-600 text-white rounded"
             onClick={calcPR}
+            disabled={loading}
           >
-            Calculate
+            {loading ? "Saving..." : "Calculate & Save"}
           </button>
           {prResult !== null && (
             <div className="mt-4 bg-white p-4 rounded shadow">
-              <p><strong>PR%:</strong> {prResult.toFixed(2)}%</p>
+              <p>
+                <strong>PR%:</strong> {prResult.toFixed(2)}%
+              </p>
             </div>
           )}
         </>
@@ -274,12 +337,15 @@ export default function OrgStructurePage() {
           <button
             className="px-4 py-2 bg-blue-600 text-white rounded"
             onClick={calcProjection}
+            disabled={loading}
           >
-            Calculate
+            {loading ? "Saving..." : "Calculate & Save"}
           </button>
           {projResult !== null && (
             <div className="mt-4 bg-white p-4 rounded shadow">
-              <p><strong>Predicted Personnel Requirement:</strong> {projResult.toFixed(2)}</p>
+              <p>
+                <strong>Predicted Personnel Requirement:</strong> {projResult.toFixed(2)}
+              </p>
             </div>
           )}
         </>

@@ -175,6 +175,7 @@ export default function StaffAppraisalAllPage() {
           >
             Calculate
           </button>
+
           {staffAppraisalResult && (
             <div className="mt-4 bg-white p-4 rounded shadow">
               <p>
@@ -287,6 +288,46 @@ export default function StaffAppraisalAllPage() {
                     <strong>Total Wasted Man-Hour Cost:</strong>{" "}
                     {totalWastedCost.toFixed(2)}
                 </p>
+                <button
+                    className="mt-6 px-4 py-2 bg-green-600 text-white rounded"
+                    onClick={async () => {
+                      const token = localStorage.getItem("access_token");
+                      if (!token) {
+                        alert("Missing token");
+                        return;
+                      }
+
+                      const payload = {
+                        shared,
+                        OQ,
+                        WQ,
+                        points,
+                        RTP,
+                        staffAppraisalResult,
+                        Na,
+                        Ta,
+                        unitOverloadingResult,
+                        Pidle,
+                        bossLostResult,
+                        totalWastedCost,
+                      };
+
+                      const res = await fetch("/api/staffAppraisal", {
+                        method: "POST",
+                        headers: {
+                          "Content-Type": "application/json",
+                          authorization: `Bearer ${token}`,
+                        },
+                        body: JSON.stringify(payload),
+                      });
+
+                      const data = await res.json();
+                      if (res.ok) alert("✅ Saved successfully!");
+                      else alert(`❌ Failed to save: ${data.error}`);
+                    }}
+                  >
+                    Save All Results
+                  </button>
                 </div>
             )}            
           </div>
