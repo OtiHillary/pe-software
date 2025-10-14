@@ -37,6 +37,9 @@ export default function StaffMotivationPage() {
     color: string;
   } | null>(null);
 
+  const [saving, setSaving] = useState(false);
+  const [message, setMessage] = useState<string | null>(null);
+
   const updateCategory = (index: number, field: keyof Category, value: any) => {
     const updated = [...categories];
     (updated as any)[index][field] = value;
@@ -61,7 +64,7 @@ export default function StaffMotivationPage() {
     setCategories(updated);
   };
 
-  const calculateScore = () => {
+  const calculateScore = async () => {
     let total = 0;
     categories.forEach((cat) => {
       const subtotal = cat.subItems.reduce((sum, s) => sum + s.score, 0);
@@ -83,6 +86,41 @@ export default function StaffMotivationPage() {
     }
 
     setResult({ score: total, rating, color });
+
+    // 🔥 Save to backend
+    setSaving(true);
+    setMessage(null);
+
+    try {
+      const token = localStorage.getItem("access_token"); 
+      const res = await fetch("/api/motivation", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify({
+          total_score: total,
+          rating,
+          thresholds,
+          categories,
+        }),
+      });
+
+      const data = await res.json();
+
+      if (res.ok) {
+        setMessage("✅ Motivation record saved successfully!");
+      } else {
+        console.error("Error saving:", data);
+        setMessage(`❌ Save failed: ${data.error || "Unknown error"}`);
+      }
+    } catch (err) {
+      console.error("Request error:", err);
+      setMessage("❌ Could not connect to server.");
+    } finally {
+      setSaving(false);
+    }
   };
 
   return (
@@ -98,7 +136,7 @@ export default function StaffMotivationPage() {
 
         {open && (
           <div className="p-4 space-y-6">
-            {/* Placeholder PDF Link */}
+            {/* PDF link */}
             <div>
               <a
                 href="https://example.com/staff-motivation-table.pdf"
@@ -117,7 +155,6 @@ export default function StaffMotivationPage() {
 
               return (
                 <div key={cIndex} className="border rounded">
-                  {/* Category Header */}
                   <button
                     onClick={() => updateCategory(cIndex, "open", !cat.open)}
                     className="w-full text-left px-4 py-2 bg-gray-50 border-b font-medium"
@@ -125,10 +162,8 @@ export default function StaffMotivationPage() {
                     {cat.name} (Weight: {cat.weight})
                   </button>
 
-                  {/* Category Content */}
                   {cat.open && (
                     <div className="p-4 space-y-4">
-                      {/* Editable name & weight */}
                       <div className="flex gap-4 items-center">
                         <input
                           type="text"
@@ -148,7 +183,6 @@ export default function StaffMotivationPage() {
                         <span className="text-sm text-gray-600">Weight</span>
                       </div>
 
-                      {/* Sub-items */}
                       {cat.subItems.map((sub, sIndex) => (
                         <div key={sIndex} className="flex gap-2 items-center">
                           <input
@@ -177,7 +211,6 @@ export default function StaffMotivationPage() {
                         </div>
                       ))}
 
-                      {/* Add sub-item button */}
                       <button
                         onClick={() => addSubItem(cIndex)}
                         className="px-4 py-2 bg-pes text-white rounded hover:opacity-90"
@@ -185,7 +218,6 @@ export default function StaffMotivationPage() {
                         + Add Sub-item
                       </button>
 
-                      {/* Totals */}
                       <div className="text-sm text-gray-700">
                         Subtotal: {subtotal.toFixed(2)} | Weighted: {weighted.toFixed(2)}
                       </div>
@@ -222,13 +254,14 @@ export default function StaffMotivationPage() {
               </label>
             </div>
 
-            {/* Calculate Button */}
+            {/* Calculate & Save Button */}
             <div>
               <button
                 onClick={calculateScore}
-                className="px-4 py-2 bg-pes text-white rounded hover:opacity-90"
+                disabled={saving}
+                className="px-4 py-2 bg-pes text-white rounded hover:opacity-90 disabled:opacity-70"
               >
-                Calculate Motivation Score
+                {saving ? "Saving..." : "Calculate & Save"}
               </button>
             </div>
 
@@ -236,6 +269,13 @@ export default function StaffMotivationPage() {
             {result && (
               <div className={`p-4 rounded mt-4 font-semibold ${result.color}`}>
                 Total Score: {result.score.toFixed(2)} — {result.rating}
+              </div>
+            )}
+
+            {/* Feedback Message */}
+            {message && (
+              <div className="mt-3 text-sm font-medium">
+                {message}
               </div>
             )}
           </div>

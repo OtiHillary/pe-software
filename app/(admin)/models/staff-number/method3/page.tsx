@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { saveResult } from "../util/sharedPost";
 
 export default function Method3Page() {
   const [A, setA] = useState<number>(0);
@@ -12,10 +13,21 @@ export default function Method3Page() {
 
   const [result, setResult] = useState<number | null>(null);
 
-  const calculate = () => {
+  const calculate =async () => {
     // Placeholder simple formula: Staff = (Utilization Factor * Annual Man-hours) / Standard Man-hours
     const staffNeeded = (utilizationFactor * annualManHours) / standardManHours;
     setResult(staffNeeded);
+
+    await saveResult({
+      methodType: "Method3",
+      staffNeeded,
+      A,
+      B,
+      confidenceLimit,
+      utilizationFactor,
+      annualManHours,
+      standardManHours
+    });
   };
 
   return (

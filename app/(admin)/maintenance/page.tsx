@@ -65,8 +65,8 @@ export default function Home(){
                     headers : {
                         "Content-Type": "application/json"
                     },
-                    body: JSON.stringify(tokenData)
-                })  
+                    body: JSON.stringify({ org: typeof tokenData === 'object' && tokenData !== null && 'org' in tokenData ? (tokenData as JwtPayload).org : undefined })
+                })
                 const res = await req.json()
                 console.log(res);
                 

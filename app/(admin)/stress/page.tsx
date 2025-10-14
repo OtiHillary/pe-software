@@ -1,6 +1,6 @@
 'use client'
 import React, { useState, useEffect } from 'react';
-import { Calculator, Users, Clock, AlertTriangle, BarChart3, FileText, Play } from 'lucide-react';
+import { Calculator, BarChart3, FileText, Play } from 'lucide-react';
 
 interface DataPoint {
   id: number;

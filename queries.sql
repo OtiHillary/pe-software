@@ -42,7 +42,8 @@ CREATE TABLE pesuser (
    name VARCHAR(255) PRIMARY KEY NOT NULL,
    email VARCHAR(255) UNIQUE NOT NULL,
    password VARCHAR(255) NOT NULL,
-   gsm VARCHAR(50),
+   gsm VARCHAR(50),cls
+   clscccccc
    role VARCHAR(50),
    address TEXT,
    faculty_college VARCHAR(255),
@@ -103,7 +104,6 @@ CREATE TABLE facilities (
 -- index
 CREATE TABLE "index" (
    id SERIAL PRIMARY KEY,
-   user_id VARCHAR(255) NOT NULL,
    redundancy NUMERIC,
    dept VARCHAR(255)
    productivity NUMERIC,
@@ -129,9 +129,8 @@ CREATE TABLE stress (
     id SERIAL PRIMARY KEY,
     pesuser_name VARCHAR(255) NOT NULL,              -- originally FK to pesuser(name)
     org VARCHAR(255),
-    staff_stress_category_form TEXT,                 -- e.g. "workload, admin issues"
-    stress_theme_form TEXT,                          -- e.g. "occupational, personal"
-    stress_feeling_frequency_form TEXT,              -- e.g. "often, rarely, weekly"
+    stress_theme INT,                          -- e.g. "occupational, personal"
+    stress_feeling_frequency INT,              -- e.g. "often, rarely, weekly"
     dept VARCHAR(255)
 );
 
@@ -147,7 +146,7 @@ CREATE TABLE userperformance (
     dept VARCHAR(255)
 );
 
--- stress_scores
+-- stress_category_settings
 CREATE TABLE stress_scores (
     id SERIAL PRIMARY KEY,
     organizational INT,
@@ -161,3 +160,92 @@ CREATE TABLE stress_scores (
     negative_public_attitude INT,
     misc INT
 );
+
+-- Plans table
+CREATE TABLE plans (
+  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  paypal_plan_id TEXT UNIQUE NOT NULL,  
+  name TEXT NOT NULL,
+  price_cents INTEGER NOT NULL,          
+  currency_code VARCHAR(10) NOT NULL,     
+  billing_cycle_interval_unit VARCHAR(10) NOT NULL, 
+  billing_cycle_interval_count INTEGER NOT NULL,    
+  trial_days INTEGER DEFAULT 0,           
+  is_active BOOLEAN NOT NULL DEFAULT TRUE,
+  created_at TIMESTAMPTZ NOT NULL DEFAULT now(),
+  updated_at TIMESTAMPTZ NOT NULL DEFAULT now()
+);
+
+-- Subscriptions table
+CREATE TABLE subscriptions (
+  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  pesuser_id UUID NOT NULL REFERENCES pesuser(id),
+  plan_id UUID NOT NULL REFERENCES plans(id),
+  paypal_subscription_id TEXT UNIQUE NOT NULL,  
+  status VARCHAR(50) NOT NULL,  
+  start_time TIMESTAMPTZ,        
+  next_billing_time TIMESTAMPTZ, 
+  last_billing_time TIMESTAMPTZ, 
+  cancel_time TIMESTAMPTZ,       
+  failed_payment_count INTEGER DEFAULT 0,
+  metadata JSONB,               
+  created_at TIMESTAMPTZ NOT NULL DEFAULT now(),
+  updated_at TIMESTAMPTZ NOT NULL DEFAULT now()
+);
+
+-- Subscription events table
+CREATE TABLE subscription_events (
+  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  subscription_id UUID NOT NULL REFERENCES subscriptions(id),
+  event_type TEXT NOT NULL,      
+  event_time TIMESTAMPTZ NOT NULL DEFAULT now(),
+  raw_payload JSONB NOT NULL,     
+  processed BOOLEAN NOT NULL DEFAULT FALSE
+);
+
+-- (
+--    'Chika Okafor',
+--    'chika.okafor@example.com',
+--    'hashedpassword1',
+--    '08012345678',
+--    'auditor',
+--    '12 Herbert Macaulay Way, Yaba, Lagos',
+--    'Business Administration',
+--    '1992-05-14',
+--    '2020-01-10',
+--    'Yaba',
+--    '2020-01-11',
+--    'Auditor I',
+--    '2020-01-15',
+--    'Senior',
+--    'chika.jpg',
+--    'university of lagos'
+-- ),
+
+CREATE TABLE personnel_utilization (
+  id SERIAL PRIMARY KEY,
+  org TEXT NOT NULL,
+  b NUMERIC(10, 2),
+  w NUMERIC(10, 2),
+  p0 NUMERIC(6, 3),
+  t1 NUMERIC(6, 3),
+  t2 NUMERIC(6, 3),
+  t3 NUMERIC(6, 3),
+  t4 NUMERIC(6, 3),
+  s0 NUMERIC(6, 3),
+  g NUMERIC(10, 2),
+  d NUMERIC(10, 2),
+  y NUMERIC(6, 3),
+  alpha NUMERIC(6, 3),
+  lambda NUMERIC(6, 3),
+  mu NUMERIC(6, 3),
+  j NUMERIC(10, 2),
+  kmin INTEGER,
+  kmax INTEGER,
+  kstar INTEGER,
+  hstar NUMERIC(12, 6),
+  constraints_ok BOOLEAN DEFAULT true,
+  violations TEXT[],
+  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+

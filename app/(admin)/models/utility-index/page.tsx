@@ -1,120 +1,140 @@
-'use client'
-import React, { useState, useEffect } from "react";
+'use client';
+import React, { useState } from "react";
 
-interface UserData {
-  id: string;
-  name: string;
-  dept: string;
-  role: 'academic' | 'non-academic' | 'hod' | 'dean' | 'personnel';
-  hasSubmitted: boolean;
-}
+export default function UtilizationIndex() {
+  const [data, setData] = useState({ used: 0, given: 0 });
+  const [result, setResult] = useState<number | null>(null);
+  const [status, setStatus] = useState<"idle" | "calculating" | "saving" | "success" | "error">("idle");
+  const [message, setMessage] = useState("");
 
-export default function Home() {
-    const [data, setData] = useState<{ used: number, given: number }>({
-        used: 0,
-        given: 0
-    });
-    const [result, setResult] = useState<number | null>(null);
-    const [users, setUsers] = useState<UserData[]>([]);
-    const [userOption, setUserOption] = useState<UserData | null>(null);
-    const [save, setSave] = useState(false)
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const { name, value } = e.target;
+    setData(prev => ({ ...prev, [name]: parseFloat(value) || 0 }));
+  };
 
-    function util_index() {
-        setResult(data.used / data.given);
-        setSave(true)
+  const evaluate = () => {
+    if (data.given <= 0) {
+      setMessage("❌ Given hours must be greater than zero.");
+      setStatus("error");
+      return;
     }
 
-    function handleChange(event: React.ChangeEvent<HTMLInputElement>) {
-        const { name, value } = event.target;
-        setData(prevData => ({
-            ...prevData,
-            [name]: parseFloat(value)
-        }));
+    const value = data.used / data.given;
+    setResult(value);
+    setStatus("success");
+    setMessage(`✅ Utilization index calculated: ${value.toFixed(2)}`);
+  };
+
+  const handleSubmit = async () => {
+    if (result === null) {
+      setMessage("⚠️ Please calculate utilization first.");
+      setStatus("error");
+      return;
     }
 
-    function handleSubmit() {
-        console.log('lets save')
-        // Here you can handle the form submission, e.g., save the data to a database
-        fetch('/api/addPersonnelIndex', {
-            method: 'POST',
-            headers: { 
-                "Content-Type": "application/json",
-                "authorization": `Bearer ${localStorage.getItem('access_token')}`
-            },
-            body: JSON.stringify({
-                    user_id: userOption?.id,
-                    dept: userOption?.dept,
-                    payload: "utility",
-                    utility: result
-                })
-            })
-            .catch(err => console.error('Error saving data:', err))
-            .finally(() => {
-                setSave(false);
-                setResult(null);
-            });
+    setStatus("saving");
+    setMessage("Saving utilization index...");
 
-        console.log('Form submitted:', data);
+    try {
+      const res = await fetch("/api/addPersonnelIndex", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "Authorization": `Bearer ${localStorage.getItem("access_token")}`,
+        },
+        body: JSON.stringify({
+          payload: "utility",
+          utility: result,
+        }),
+      });
+
+      if (!res.ok) throw new Error("Failed to save data.");
+
+      setStatus("success");
+      setMessage("✅ Utilization index saved successfully!");
+      setData({ used: 0, given: 0 });
+      setResult(null);
+    } catch (err) {
+      console.error("Error saving data:", err);
+      setStatus("error");
+      setMessage("❌ Error saving data. Please try again.");
     }
+  };
 
-    useEffect(() => {
-        const userToken = localStorage.getItem('access_token') || '{}';
-        async function fetchUsers() {
-            const response = await fetch('/api/getUsers', {
-                method: 'POST',
-                headers: {
-                'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({ token: userToken }),
-            });
+  return (
+    <div className="flex flex-col m-4">
+      <h1 className="font-bold text-3xl my-6">Utilization Index</h1>
 
-            if (response.ok) {
-                const data = await response.json();
-                setUsers(data);
-            }
-        }
+      <div className="flex flex-wrap gap-6 mb-6">
+        <label className="flex flex-col w-72">
+          <span>Used hours</span>
+          <input
+            onChange={handleChange}
+            name="used"
+            type="number"
+            value={data.used}
+            className="border px-4 py-2 rounded"
+            placeholder="Enter used hours"
+            min={0}
+          />
+        </label>
 
-        fetchUsers();
-    }, []);
+        <label className="flex flex-col w-72">
+          <span>Given hours</span>
+          <input
+            onChange={handleChange}
+            name="given"
+            type="number"
+            value={data.given}
+            className="border px-4 py-2 rounded"
+            placeholder="Enter given hours"
+            min={0}
+          />
+        </label>
+      </div>
 
-    return (
-        <form className="flex flex-col m-4">
-            <h1 className="font-bold text-3xl my-6">Utilization index</h1>
+      {message && (
+        <p
+          className={`text-sm mb-2 ${
+            status === "error"
+              ? "text-red-500"
+              : status === "success"
+              ? "text-green-600"
+              : "text-gray-600"
+          }`}
+        >
+          {message}
+        </p>
+      )}
 
-            <div className='p-1 mb-2'>
-                <label htmlFor="user" className='flex'>
-                <p className='my-auto'>Select User:</p>
-                <select name="" id="user" className='m-2 p-2 rounded-md border' onChange={(e) => { setUserOption(JSON.parse(e.target.value)) }} required>
-                    <option value="">No user selected</option>
+      <div className="flex gap-4">
+        <button
+          onClick={evaluate}
+          className="bg-pes text-white px-8 py-2 rounded hover:opacity-90"
+        >
+          Evaluate
+        </button>
+        <button
+          onClick={handleSubmit}
+          disabled={status === "saving" || result === null}
+          className={`px-8 py-2 rounded text-white ${
+            result === null
+              ? "bg-gray-400 cursor-not-allowed"
+              : "bg-pes hover:opacity-90"
+          }`}
+        >
+          {status === "saving" ? "Saving..." : "Save"}
+        </button>
+      </div>
 
-                    {users?.map(user => (
-                    <option key={user.id} value={JSON.stringify(user)}>
-                        {user.name}
-                    </option>
-                    ))}
-                </select>
-                </label>           
-            </div>
-
-            <div className="flex m-4">
-                <label htmlFor="" className="flex flex-col w-72">
-                    Used hours
-                    <input onChange={handleChange} name="used" required className="border me-6 mb-3 px-16 py-2 rounded" type="number"  value={data.used}/>
-                </label>
-
-                <label htmlFor="" className="flex flex-col w-72">
-                    Given hours
-                    <input onChange={handleChange} name="given" required className="border me-6 mb-3 px-16 py-2 rounded" type="number"  value={data.given}/>
-                </label>                
-            </div>
-
-            <p className="text-green-500">{ result? 'successful': '' }</p>
-
-            <div className="flex mx-4">
-                <a className="bg-pes cursor-pointer w-fit my-3 me-2 rounded text-white px-32 py-3" onClick={util_index}>Evaluate</a>
-                <button className="bg-pes disabled:bg-gray-400 w-fit my-3 me-2 rounded text-white px-32 py-3" onClick={handleSubmit} disabled = { save? false: true }>Save</button>
-            </div>
-
-        </form>
-    )
+      {result !== null && (
+        <div className="mt-4">
+          <p className="font-semibold">
+            Utilization Index:{" "}
+            <span className="text-blue-600">{result.toFixed(3)}</span>
+          </p>
+        </div>
+      )}
+    </div>
+  );
 }

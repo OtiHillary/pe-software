@@ -1,120 +1,147 @@
-'use client'
+"use client";
 import React, { useState, useEffect } from "react";
 
-interface UserData {
-  id: string;
-  name: string;
-  dept: string;
-  role: 'academic' | 'non-academic' | 'hod' | 'dean' | 'personnel';
-  hasSubmitted: boolean;
-}
+export default function ProductivityIndex() {
+  const [data, setData] = useState({
+    output: "",
+    input: "",
+  });
 
-export default function Home() {
-    const [data, setData] = useState<{ output: number, input: number }>({
-        output: 0,
-        input: 0
-    });
-    const [result, setResult] = useState<number | null>(null);
-    const [users, setUsers] = useState<UserData[]>([]);
-    const [userOption, setUserOption] = useState<UserData | null>(null);
-    const [save, setSave] = useState(false)
+  const [result, setResult] = useState<number | null>(null);
+  const [loading, setLoading] = useState(false);
+  const [success, setSuccess] = useState(false);
+  const [userToken, setUserToken] = useState<string>("");
 
-    function prod_index() {
-        setResult(data.output / data.input);
-        setSave(true)
+  useEffect(() => {
+    const token = localStorage.getItem("access_token");
+    if (token) setUserToken(token);
+  }, []);
+
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const { name, value } = e.target;
+    setData((prev) => ({
+      ...prev,
+      [name]: value,
+    }));
+  };
+
+  const evaluateProductivity = () => {
+    const { output, input } = data;
+    if (!output || !input || Number(input) === 0) {
+      alert("Please enter valid input and output values.");
+      return;
     }
 
-    function handleChange(event: React.ChangeEvent<HTMLInputElement>) {
-        const { name, value } = event.target;
-        setData(prevData => ({
-            ...prevData,
-            [name]: parseFloat(value)
-        }));
+    const index = Number(output) / Number(input);
+    setResult(Number(index.toFixed(3)));
+    setSuccess(false);
+  };
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!result) return;
+
+    setLoading(true);
+
+    try {
+      const res = await fetch("/api/addPersonnelIndex", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          authorization: `Bearer ${userToken}`,
+        },
+        body: JSON.stringify({
+          payload: "productivity",
+          productivity: result,
+        }),
+      });
+
+      if (!res.ok) throw new Error("Failed to save productivity index");
+
+      setSuccess(true);
+      setData({ output: "", input: "" });
+      setResult(null);
+    } catch (err) {
+      console.error("Error:", err);
+      alert("Something went wrong while saving data.");
+    } finally {
+      setLoading(false);
     }
+  };
 
-    function handleSubmit() {
-        console.log('lets save')
-        // Here you can handle the form submission, e.g., save the data to a database
-        fetch('/api/addPersonnelIndex', {
-            method: 'POST',
-            headers: { 
-                "Content-Type": "application/json",
-                "authorization": `Bearer ${localStorage.getItem('access_token')}`
-            },
-            body: JSON.stringify({
-                    user_id: userOption?.id,
-                    dept: userOption?.dept,
-                    payload: "productivity",
-                    productivity: result
-                })
-            })
-            .catch(err => console.error('Error saving data:', err))
-            .finally(() => {
-                setSave(false);
-                setResult(null);
-            });
+  return (
+    <div className="p-6">
+      <h1 className="font-bold text-3xl my-6">Productivity Index</h1>
 
-        console.log('Form submitted:', data);
-    }
+      <form
+        className="bg-white shadow-md rounded-xl p-6 w-full max-w-2xl"
+        onSubmit={handleSubmit}
+      >
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-4">
+          <label className="flex flex-col">
+            <span className="mb-2 font-semibold">
+              Output Resources (uninflated)
+            </span>
+            <input
+              name="output"
+              type="number"
+              required
+              onChange={handleChange}
+              value={data.output}
+              className="border rounded px-3 py-2 focus:outline-pes"
+            />
+          </label>
 
-    useEffect(() => {
-        const userToken = localStorage.getItem('access_token') || '{}';
-        async function fetchUsers() {
-            const response = await fetch('/api/getUsers', {
-                method: 'POST',
-                headers: {
-                'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({ token: userToken }),
-            });
+          <label className="flex flex-col">
+            <span className="mb-2 font-semibold">
+              Input Resources (uninflated)
+            </span>
+            <input
+              name="input"
+              type="number"
+              required
+              onChange={handleChange}
+              value={data.input}
+              className="border rounded px-3 py-2 focus:outline-pes"
+            />
+          </label>
+        </div>
 
-            if (response.ok) {
-                const data = await response.json();
-                setUsers(data);
-            }
-        }
+        {result !== null && (
+          <p className="my-2 text-lg">
+            Productivity Index:{" "}
+            <span className="font-bold text-blue-600">{result}</span>
+          </p>
+        )}
 
-        fetchUsers();
-    }, []);
+        {success && (
+          <p className="text-green-600 mt-2 font-semibold">
+            ✅ Successfully saved.
+          </p>
+        )}
 
-    return (
-        <form className="flex flex-col m-4">
-            <h1 className="font-bold text-3xl my-6">Productivity index</h1>
+        <div className="flex gap-4 mt-6">
+          <button
+            type="button"
+            onClick={evaluateProductivity}
+            className="bg-pes hover:bg-pes/90 text-white font-semibold py-2 px-6 rounded"
+          >
+            Evaluate
+          </button>
 
-            <div className='p-1 mb-2'>
-                <label htmlFor="user" className='flex'>
-                <p className='my-auto'>Select User:</p>
-                <select name="" id="user" className='m-2 p-2 rounded-md border' onChange={(e) => { setUserOption(JSON.parse(e.target.value)) }} required>
-                    <option value="">No user selected</option>
-
-                    {users?.map(user => (
-                    <option key={user.id} value={JSON.stringify(user)}>
-                        {user.name}
-                    </option>
-                    ))}
-                </select>
-                </label>           
-            </div>
-
-            <div className="flex m-4">
-                <label htmlFor="" className="flex flex-col w-72">
-                    Output resources(uninflated)
-                    <input onChange={handleChange} name="output" required className="border me-6 mb-3 px-16 py-2 rounded" type="number" value={data.output}/>
-                </label>
-
-                <label htmlFor="" className="flex flex-col w-72">
-                    Input resources(uninflated)
-                    <input onChange={handleChange} name="input" required className="border me-6 mb-3 px-16 py-2 rounded" type="number" value={data.input} />
-                </label>
-            </div>
-
-            <p className="text-green-500">{ result? 'successful': '' }</p>
-
-            <div className="flex mx-4">
-                <a className="bg-pes cursor-pointer w-fit my-3 me-2 rounded text-white px-32 py-3" onClick={prod_index}>Evaluate</a>
-                <button className="bg-pes disabled:bg-gray-400 w-fit my-3 me-2 rounded text-white px-32 py-3" onClick={handleSubmit} disabled = { save? false: true }>Save</button>
-            </div>
-
-        </form>
-    )
+          <button
+            type="submit"
+            disabled={!result || loading}
+            className={`${
+              result
+                ? "bg-green-600 hover:bg-green-700"
+                : "bg-gray-400 cursor-not-allowed"
+            } text-white font-semibold py-2 px-6 rounded`}
+          >
+            {loading ? "Saving..." : "Save"}
+          </button>
+        </div>
+      </form>
+    </div>
+  );
 }

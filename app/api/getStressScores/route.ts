@@ -1,24 +1,46 @@
 import { NextResponse } from "next/server";
 import prisma from "../prisma.dev";
 
-export async function GET() {
+export async function GET(req: Request) {
   try {
-    const [row] = await prisma.$queryRawUnsafe<any[]>(`
+    const { searchParams } = new URL(req.url);
+    const user_name = searchParams.get("user_name");
+    const org = searchParams.get("org");
+
+    if (!user_name || !org) {
+      return NextResponse.json(
+        { error: "user_name and org are required" },
+        { status: 400 }
+      );
+    }
+
+    console.log("Fetching stress scores for:", { user_name, org });
+
+    const [row] = await prisma.$queryRawUnsafe<any[]>(
+      `
       SELECT organizational, student, administrative, teacher, parents,
              occupational, personal, academic_program, negative_public_attitude, misc
       FROM stress_scores
+      WHERE user_name = $1 AND org = $2
       LIMIT 1
-    `);
+      `,
+      user_name,
+      org
+    );
 
     if (!row) {
-      return NextResponse.json({ error: "No stress scores found" }, { status: 404 });
+      return NextResponse.json(
+        { error: "No stress scores found" },
+        { status: 404 }
+      );
     }
 
     return NextResponse.json({ data: row }, { status: 200 });
   } catch (error) {
     console.error("Error fetching stress scores:", error);
-    return NextResponse.json({ error: "Failed to fetch stress scores" }, { status: 500 });
+    return NextResponse.json(
+      { error: "Failed to fetch stress scores" },
+      { status: 500 }
+    );
   }
 }
-
-

@@ -1,7 +1,7 @@
 DO $$
 DECLARE
     depts TEXT[] := ARRAY['mechanical engineering', 'electrical engineering', 'computer engineering', 'chemical engineering'];
-    roles TEXT[] := ARRAY['employee-ac', 'employee-nac', 'employee-w'];
+    roles TEXT[] := ARRAY['lecturer', 'industrial-engineer', 'employee-w'];
     d TEXT;
     i INT;
     rand_role TEXT;
@@ -39,7 +39,7 @@ BEGIN
         phone_seq := phone_seq + 1;
 
         -- add related data for team lead
-        INSERT INTO stress (pesuser_name, org, staff_stress_category_form, stress_theme_form, stress_feeling_frequency_form, dept)
+        INSERT INTO stress (pesuser_name, org, stress_category, stress_theme_form, stress_feeling_frequency_form, dept)
         VALUES (uname, 'university of lagos', 'workload', 'occupational', 'often', d);
 
         INSERT INTO appraisal (pesuser_name, org, teaching_quality_evaluation, research_quality_evaluation, administrative_quality_evaluation, community_quality_evaluation, dept)
@@ -80,7 +80,7 @@ BEGIN
 
             -- only insert related data if not employee-w
             IF rand_role <> 'employee-w' THEN
-                INSERT INTO stress (pesuser_name, org, staff_stress_category_form, stress_theme_form, stress_feeling_frequency_form, dept)
+                INSERT INTO stress (pesuser_name, org, stress_category, stress_theme_form, stress_feeling_frequency_form, dept)
                 VALUES (uname, 'university of lagos', 'deadlines', 'personal', 'sometimes', d);
 
                 INSERT INTO appraisal (pesuser_name, org, teaching_quality_evaluation, research_quality_evaluation, administrative_quality_evaluation, community_quality_evaluation, dept)

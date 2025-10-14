@@ -1,6 +1,6 @@
 // Types for your database structure
 interface StressData {
-  staff_stress_category_form: number;
+  stress_category: number;
   stress_theme_form: number;
   stress_feeling_frequency_form: number;
 }
@@ -156,7 +156,7 @@ class DataFittingModel {
     for (const record of records) {
       // Stress data
       values.push(
-        record.stress.staff_stress_category_form,
+        record.stress.stress_category,
         record.stress.stress_theme_form,
         record.stress.stress_feeling_frequency_form
       );
@@ -248,7 +248,7 @@ class DataFittingModel {
   private calculateFMax(records: StaffRecord[]): number {
     // Group data by categories and calculate variances
     const stressValues = records.map(r => [
-      r.stress.staff_stress_category_form,
+      r.stress.stress_category,
       r.stress.stress_theme_form,
       r.stress.stress_feeling_frequency_form
     ]).flat();
