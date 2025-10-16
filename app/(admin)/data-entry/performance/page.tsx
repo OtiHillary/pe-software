@@ -126,7 +126,7 @@ export default function PerformanceStep() {
 
   /* ---------------- Form Validation ---------------- */
   const isStepComplete = (index: number) =>
-    steps[index].criteria.every((_, i) => steps[index].ratings[i] !== undefined && steps[index].ratings[i] !== '')
+    steps[index].criteria.every((_, i) => steps[index].ratings[i] !== undefined && !isNaN(steps[index].ratings[i]))
 
   /* ---------------- Submit ---------------- */
   const handleFinalSubmit = async () => {

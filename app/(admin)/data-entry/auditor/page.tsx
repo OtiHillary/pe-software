@@ -195,7 +195,12 @@ export default function AuditorScoresPage() {
           <div className="space-y-2 mt-2">
             {Object.entries(selectedEmployee[selectedGroup] || {}).map(([metric, empScore]) => {
               const counterKey = `counter_${selectedGroup}` as keyof EmployeeScores;
-              const hodScore = selectedEmployee[counterKey]?.[metric];
+              const hodScore =
+                typeof selectedEmployee[counterKey] === "object" &&
+                selectedEmployee[counterKey] !== null &&
+                !Array.isArray(selectedEmployee[counterKey]) // Ensure it's not an array
+                  ? (selectedEmployee[counterKey] as Record<string, number>)[metric]
+                  : undefined;
 
               return (
                 <div

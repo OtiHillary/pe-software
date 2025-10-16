@@ -17,7 +17,7 @@ export async function POST(req: Request) {
     const { metrics, weights, thresholds, totalScore, rating } = body;
 
     // Check if record exists
-    const existing = await prisma.$queryRawUnsafe(
+    const existing: any = await prisma.$queryRawUnsafe(
       `SELECT id FROM non_academic_appraisal WHERE org = $1 LIMIT 1`,
       org
     );

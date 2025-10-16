@@ -61,7 +61,7 @@ export default function ParametersForm({ params, setParams }: Props) {
               step="any"
               id={key}
               name={key}
-              value={value}
+              value={String(value)}
               onChange={handleChange}
               className="border rounded-lg p-2 focus:ring-2 focus:ring-blue-500 focus:outline-none"
             />

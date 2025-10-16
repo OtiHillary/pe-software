@@ -16,7 +16,7 @@ export function middleware(req: NextRequest) {
 
   try {
     const decoded: any = jwt.decode(token); // or jwt.verify(token, process.env.JWT_SECRET!)
-    if (decoded?.role !== 'EXTERNAL_AUDITOR') {
+    if (decoded?.role !== 'auditor') {
       return NextResponse.redirect(new URL('/unauthorized', req.url));
     }
     // Optionally attach to request headers for API handlers

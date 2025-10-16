@@ -61,7 +61,7 @@ export async function GET(req: Request) {
     `);
 
     // --- Helper to group by source ---
-    function groupBySource(rows: any[], type: string) {
+    const groupBySource = (rows: any[], type: string) => {
       const grouped: Record<string, any> = {};
       for (const row of rows) {
         const key = `${row.pesuser_name}-${row.dept}`;
@@ -87,7 +87,7 @@ export async function GET(req: Request) {
 
     // --- Merge all datasets by pesuser_name + dept ---
     const merged: Record<string, any> = {};
-    function merge(list: any[]) {
+    const merge = (list: any[]) => {
       for (const row of list) {
         const key = `${row.pesuser_name}-${row.dept}`;
         merged[key] = { ...merged[key], ...row };

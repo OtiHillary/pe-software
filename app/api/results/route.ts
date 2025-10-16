@@ -52,7 +52,7 @@ export async function POST(req: Request) {
     S0,
   } = data;
 
-  const result = await prisma.$queryRawUnsafe(
+  const result: any[] = await prisma.$queryRawUnsafe(
     `
     INSERT INTO "OptimizationResult" (
       mode, "optimalK", "efficiencyValue", "totalStaffNeeded",

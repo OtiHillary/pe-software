@@ -14,7 +14,7 @@ export async function POST(req: NextRequest) {
     }
 
     // ✅ Update role in DB
-    const updatedUser = await prisma.$queryRawUnsafe(`
+    const updatedUser = await prisma.$queryRawUnsafe<Array<{ name: string; email: string; role: string; org: string; dept: string }>>(`
       UPDATE pesuser
       SET role = 'hod'
       WHERE email = '${email}'
