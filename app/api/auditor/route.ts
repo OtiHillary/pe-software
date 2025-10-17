@@ -1,6 +1,6 @@
 // app/api/auditor/submissions/route.ts
 import { NextResponse } from 'next/server';
-import prisma from '../../prisma.dev';
+import prisma from '../prisma.dev';
 
 export async function GET() {
 const data = await prisma.$queryRawUnsafe(`
