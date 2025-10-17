@@ -13,10 +13,9 @@ export default function DataEntryPage() {
   const [open, setOpen] = useState(false);
 
   const go = (formId: string) => {
-    const session = localStorage.getItem("appraisal_session_id") ?? "";
-    const qs = session ? `?session=${encodeURIComponent(session)}` : "";
-    window.location.href = `/data-entry/${formId}${qs}`;
+    window.location.href = `/data-entry/${formId}`;
   };
+  
   const token = localStorage.getItem("access_token");
   const user = jwtDecode<any>(token || "") || null;
 
