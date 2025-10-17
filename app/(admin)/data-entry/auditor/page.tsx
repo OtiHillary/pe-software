@@ -15,10 +15,10 @@ interface EmployeeScores {
   stress?: Record<string, number>;
   counter_appraisal?: Record<string, number>;
   counter_performance?: Record<string, number>;
-  counter_stress?: Record<string, number>;
+  // counter_stress?: Record<string, number>;
 }
 
-type GroupKey = "appraisal" | "performance" | "stress";
+type GroupKey = "appraisal" | "performance" ;
 
 export default function AuditorScoresPage() {
   const [scores, setScores] = useState<EmployeeScores[]>([]);
@@ -82,7 +82,7 @@ export default function AuditorScoresPage() {
     const apiEndpoints: Record<GroupKey, string> = {
       appraisal: `/api/saveAuditorAppraisal?org=${org}`,
       performance: `/api/saveAuditorPerformance?org=${org}`,
-      stress: `/api/saveAuditorStress?org=${org}`,
+      // stress: `/api/saveAuditorStress?org=${org}`,
     };
 
     const endpoint = apiEndpoints[selectedGroup];

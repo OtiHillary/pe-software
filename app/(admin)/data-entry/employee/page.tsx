@@ -35,13 +35,18 @@ export default function EmployeeScoresPage() {
     }
     const decoded: JWTPayload = jwtDecode(token);
     const dept = decoded.dept;
+    const org = decoded.org;
     if (!dept) {
       setError("No dept found in token");
       setLoading(false);
       return;
     }
 
-    fetch(`/api/getAllDataScores?dept=${dept}`)
+    fetch(`/api/getAllDataScores`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ dept, org }),
+    })
       .then((res) => res.json())
       .then((data) => {
         setScores(data);
@@ -70,9 +75,8 @@ async function handleSubmit() {
   console.log('counter scores are:', counterScores)
 
   const apiEndpoints: Record<GroupKey, string> = {
-    appraisal: `/api/saveAppraisal?dept=${dept}`,
-    performance: `/api/savePerformance?dept=${dept}`,
-    // stress: `/api/saveStress?dept=${dept}`,
+    appraisal: `/api/saveAppraisal`,
+    performance: `/api/savePerformance`,
   };
 
   const endpoint = apiEndpoints[selectedGroup];
@@ -84,6 +88,7 @@ async function handleSubmit() {
       body: JSON.stringify({
         pesuser_name: selectedEmployee.pesuser_name,
         org,
+        dept,
         isCounter: true, // 👈 tell backend this is a counter-offer
         payload: counterScores, // all counter scores for that employee/group
       }),

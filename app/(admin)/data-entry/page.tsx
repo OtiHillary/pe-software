@@ -1,4 +1,5 @@
 "use client";
+
 import { useState } from "react";
 import { EntrySection } from "../../components/EntrySection";
 import { jwtDecode } from "jwt-decode";

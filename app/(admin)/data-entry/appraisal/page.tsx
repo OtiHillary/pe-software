@@ -46,8 +46,16 @@ export default function AppraisalStep() {
   const fetchScores = async (staffName: string) => {
     try {
       setLoading(true);
-      const appRes = await fetch(`/api/appraisal?pesuser_name=${staffName}`);
-      const counterRes = await fetch(`/api/counter_appraisal?pesuser_name=${staffName}`);
+      const appRes = await fetch(`/api/appraisal`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ pesuser_name: staffName }),
+      });
+      const counterRes = await fetch(`/api/counter_appraisal`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ pesuser_name: staffName }),
+      });
 
       const staffData = appRes.ok ? await appRes.json() : null;
       const hodData = counterRes.ok ? await counterRes.json() : null;

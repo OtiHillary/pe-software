@@ -3,8 +3,8 @@ import prisma from "../prisma.dev";
 
 export async function GET(req: Request) {
   try {
-    const { searchParams } = new URL(req.url);
-    const org = searchParams.get("org");
+    const body = await req.json();
+    const { org } = body;
 
     let whereClause = "";
     if (org) {
