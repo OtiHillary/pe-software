@@ -27,7 +27,11 @@ export default function AppraisalStep() {
   useEffect(() => {
     (async () => {
       try {
-        const res = await fetch(`/api/staff?org=${user?.org}`);
+        const res = await fetch("/api/staff", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ org: user?.org }),
+        });
         if (res.ok) {
           const data = await res.json();
           setEmployees(data || []);

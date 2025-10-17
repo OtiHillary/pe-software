@@ -1,10 +1,9 @@
-import { NextResponse } from "next/server";
+import { NextRequest, NextResponse } from "next/server";
 import prisma from "../prisma.dev";
 
-export async function GET(req: Request) {
+export async function POST(req: NextRequest) {
   try {
-    const { searchParams } = new URL(req.url);
-    const org = searchParams.get("org");
+    const { org } = await req.json();
 
     let whereClause = "WHERE pending = TRUE";
     if (org) {
