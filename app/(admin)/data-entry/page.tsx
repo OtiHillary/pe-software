@@ -2,6 +2,8 @@
 import { useState } from "react";
 import { EntrySection } from "../../components/EntrySection";
 import { jwtDecode } from "jwt-decode";
+export const dynamic = "force-dynamic";
+
 
 
 const stress = [
