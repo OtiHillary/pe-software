@@ -80,8 +80,20 @@ export default function PerformanceStep() {
         const user: JWTPayload = jwtDecode(token)
 
         const [staffRes, hodRes] = await Promise.all([
-          fetch(`/api/userPerformance?staff=${encodeURIComponent(user.name ?? '')}`),
-          fetch(`/api/counterUserPerformance?staff=${encodeURIComponent(user.name ?? '')}`),
+          fetch(`/api/userPerformance`, {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ name: user.name ?? '' }),
+          }),
+          fetch(`/api/counterUserPerformance`, {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ name: user.name ?? '' }),
+          }),
         ])
 
         const staffData = staffRes.ok ? await staffRes.json() : null

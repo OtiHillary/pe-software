@@ -3,9 +3,8 @@
 import { useState } from "react";
 import { EntrySection } from "../../components/EntrySection";
 import { jwtDecode } from "jwt-decode";
+// Enable dynamic rendering for this page
 export const dynamic = "force-dynamic";
-
-
 
 const stress = [
   { label: "Staff Stress Category form",   templateUrl: "/templates/stress_category.xlsx",   formId: "/stress/stress-category"   },
@@ -18,8 +17,8 @@ export default function DataEntryPage() {
   const go = (formId: string) => {
     window.location.href = `/data-entry/${formId}`;
   };
-  const token = localStorage.getItem("access_token");
-  const user = jwtDecode<any>(token || "") || null;
+  const token = typeof window !== "undefined" ? localStorage.getItem("access_token") : null;
+  const user = token ? jwtDecode<any>(token) : null;
 
   return (
     <div className="w-full p-12">

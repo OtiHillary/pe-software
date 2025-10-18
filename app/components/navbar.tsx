@@ -20,18 +20,24 @@ export default function Navbar({ is_sidebar_active, handleSideBar }:
       if (access_token) {
          const decoded = jwt.decode(access_token);
          console.log(decoded);
-         setUser(decoded)
+         setUser(decoded);
 
          // 🔑 fetch unread notifications count
-         fetch(`/api/notifications?org=${(decoded as any)?.org}`)
+         fetch(`/api/notifications`, {
+            method: 'POST',
+            headers: {
+               'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ org: (decoded as any)?.org }),
+         })
             .then(res => res.json())
             .then(data => {
                if (data.notifications) {
-                  const unread = data.notifications.filter((n: any) => !n.is_read).length
-                  setUnreadCount(unread)
+                  const unread = data.notifications.filter((n: any) => !n.is_read).length;
+                  setUnreadCount(unread);
                }
             })
-            .catch(err => console.error("Failed to fetch notifications", err))
+            .catch(err => console.error("Failed to fetch notifications", err));
       }
    }, [])
 

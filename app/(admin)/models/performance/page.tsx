@@ -29,11 +29,11 @@ export default function AchievementCriteriaPage() {
 
       try {
         const res = await fetch("/api/getPerformance", {
-          method: "GET",
+          method: "POST",
           headers: {
             "Content-Type": "application/json",
-            "Authorization": `Bearer ${token}`,
           },
+          body: JSON.stringify({ token }),
         });
         const data = await res.json();
         console.log("Fetched performance data:", data);

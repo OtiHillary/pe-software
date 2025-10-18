@@ -2,11 +2,10 @@
 import { NextRequest, NextResponse } from "next/server";
 import prisma from "../prisma.dev";
 
-export async function GET(request: NextRequest) {
+export async function POST(request: NextRequest) {
   try {
-    // Example: get the user's ID or name from query params (or JWT later)
-    const { searchParams } = new URL(request.url);
-    const org = searchParams.get("org");
+    const body = await request.json();
+    const { org } = body;
 
     if (!org) {
       return NextResponse.json(

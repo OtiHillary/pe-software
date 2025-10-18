@@ -45,10 +45,14 @@ export default function Form7({ onSave }: { onSave: (data: any) => void }) {
         const org = decoded.org;
         if (!user_name || !org) return setLoading(false);
 
-        const res = await fetch(
-          `/api/getStressScores?user_name=${encodeURIComponent(user_name)}&org=${encodeURIComponent(org)}`,
-          { headers: { Authorization: `Bearer ${token}` } }
-        );
+        const res = await fetch(`/api/getStressScores`, {
+          method: 'POST',
+          headers: {
+            Authorization: `Bearer ${token}`,
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({ user_name, org }),
+        });
         const info = await res.json();
         if (!info.data) return setLoading(false);
 

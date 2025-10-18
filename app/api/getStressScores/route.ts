@@ -1,11 +1,10 @@
 import { NextResponse } from "next/server";
 import prisma from "../prisma.dev";
 
-export async function GET(req: Request) {
+export async function POST(req: Request) {
   try {
-    const { searchParams } = new URL(req.url);
-    const user_name = searchParams.get("user_name");
-    const org = searchParams.get("org");
+    const body = await req.json();
+    const { user_name, org } = body;
 
     if (!user_name || !org) {
       return NextResponse.json(

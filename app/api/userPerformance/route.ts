@@ -1,10 +1,10 @@
 import { NextResponse } from "next/server";
 import prisma from "../prisma.dev";
 
-export async function GET(req: Request) {
+export async function POST(req: Request) {
   try {
-    const { searchParams } = new URL(req.url);
-    const name = searchParams.get("name");
+    const body = await req.json();
+    const { name } = body;
 
     let whereClause = "";
     if (name) whereClause = `WHERE pesuser_name = '${name.replace(/'/g, "''")}'`;

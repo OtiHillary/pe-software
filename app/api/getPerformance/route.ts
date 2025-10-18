@@ -2,9 +2,11 @@ import { NextRequest, NextResponse } from "next/server";
 import prisma from "../prisma.dev";
 import { jwtDecode } from "jwt-decode";
 
-export async function GET(req: NextRequest) {
+export async function POST(req: NextRequest) {
   try {
-    const token = req.headers.get("authorization")?.split(" ")[1];
+    const body = await req.json();
+    const { token } = body;
+
     if (!token) {
       return NextResponse.json({ error: "Missing token" }, { status: 401 });
     }
