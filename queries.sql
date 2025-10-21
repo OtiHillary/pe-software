@@ -249,3 +249,23 @@ CREATE TABLE personnel_utilization (
   created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
+CREATE TABLE stress_analysis_results (
+  id SERIAL PRIMARY KEY,
+  org VARCHAR(255),
+  group_by VARCHAR(50),                  -- 'dept' or 'stress_theme'
+  ssto DOUBLE PRECISION,
+  sstr DOUBLE PRECISION,
+  sse DOUBLE PRECISION,
+  f_statistic DOUBLE PRECISION,
+  critical_value DOUBLE PRECISION,
+  conclusion TEXT,
+  df_between INT,
+  df_within INT,
+  ms_between DOUBLE PRECISION,
+  ms_within DOUBLE PRECISION,
+  mean DOUBLE PRECISION,
+  std_dev DOUBLE PRECISION,
+  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+

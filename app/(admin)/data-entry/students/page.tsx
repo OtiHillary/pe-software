@@ -20,7 +20,7 @@ export default function StudentEvaluationTotals() {
   const average = validScores.length > 0 ? (total / validScores.length).toFixed(2) : '0.00'
 
   return (
-    <div className="max-w-3xl mx-auto p-8 space-y-8">
+    <div className="w-11/12 mx-auto p-8 space-y-8">
       <h1 className="text-2xl font-bold text-center mb-6">
         Student Evaluation (Total Scores)
       </h1>

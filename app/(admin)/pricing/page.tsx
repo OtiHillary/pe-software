@@ -1,7 +1,6 @@
 "use client";
 import Link from "next/link";
 import Subscriptionbutton from "../../components/subscription/paypal";
-// import StripeCheckoutButton from "../../components/subscription/stripe";
 import PayPalProviderWrapper from "../../components/subscription/paypalWrapper";
 import { packages } from "../../lib/utils/packages";
 import { Suspense } from "react";
