@@ -42,8 +42,7 @@ CREATE TABLE pesuser (
    name VARCHAR(255) PRIMARY KEY NOT NULL,
    email VARCHAR(255) UNIQUE NOT NULL,
    password VARCHAR(255) NOT NULL,
-   gsm VARCHAR(50),cls
-   clscccccc
+   gsm VARCHAR(50),
    role VARCHAR(50),
    address TEXT,
    faculty_college VARCHAR(255),

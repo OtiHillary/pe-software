@@ -4,12 +4,14 @@ import prisma from "../prisma.dev";
 export async function POST(req: Request) {
   try {
     const body = await req.json();
-    const { org } = body;
+    const { org, name } = body;
 
     let whereClause = "";
     if (org) {
-      // escape quotes to prevent SQL injection
       whereClause = `WHERE org = '${org.replace(/'/g, "''")}'`;
+    }
+    if (name) {
+      whereClause += (whereClause ? " AND " : "WHERE ") + `pesuser_name = '${name.replace(/'/g, "''")}'`;
     }
 
     // --- Appraisals (main + counter) ---

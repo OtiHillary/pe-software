@@ -1,7 +1,5 @@
 import { NextResponse } from 'next/server'
 import jwt from 'jsonwebtoken'
-// import { PrismaClient } from '@prisma/client'
-// const prisma = new PrismaClient()
 import prisma from '../prisma.dev'
 
 type reqInfo = {
@@ -9,6 +7,8 @@ type reqInfo = {
   email: string
   password: string
   type: string
+  plan: string
+  category: string
 }
 
 type user = {
@@ -32,7 +32,7 @@ type user = {
 }
 
 async function addToDb(info: reqInfo) {
-  const {name, email, password, type} = info
+  const {name, email, password, type, category, plan} = info
   await prisma.$queryRaw`INSERT INTO users (name, email, password, gsm, role, faculty_college, dob, doa, poa, doc, post, dopp, level, image, org) VALUES( ${name}, ${email}, ${password}, null, ${type}, null, null, null, null, null, null, null, null, null, null, ); `
   const users = await prisma.$queryRaw`SELECT * FROM users WHERE email = ${email} AND password = ${password};`
 
@@ -44,13 +44,13 @@ export async function GET() {
 }
 
 export async function POST(req: Request) {
-  const { name, email, password , type } = await req.json()
+  const { name, email, password, type, category, plan } = await req.json()
   console.log(email, password)
   
   let sID = Math.floor(Math.random())
 
   try {
-    let data = await addToDb({ name, email, password, type })
+    let data = await addToDb({ name, email, password, type, category, plan })
     console.log(data);
     await prisma.$disconnect()
     

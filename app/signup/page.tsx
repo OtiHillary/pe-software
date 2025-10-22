@@ -1,9 +1,10 @@
 'use client'
-import { ArrowRight  } from 'iconsax-react';
+import { ArrowRight, Category  } from 'iconsax-react';
 import { FormEvent, useState } from "react";
 import Image from 'next/image';
 import Link from 'next/link';
-import { useRouter } from 'next/navigation';
+import { useRouter, useSearchParams } from 'next/navigation';
+
 
 
 let slider_index = 0
@@ -35,12 +36,23 @@ const third = <>
 
 
 export default function Home() {
+  const searchParams = useSearchParams();
+  const productCategory = searchParams.get('product_category');
+  const planType = searchParams.get('plan_type');
+
   const slider_arr = [ true, false, false ]
   const content_arr = [ first, second, third ]
   const [ slide, setSlide ] = useState(slider_arr)
   const router = useRouter()
   const [message, setMessage] = useState({ visibility: 'invisible', text: '', color: '' })
-  const [formData, setFormData] = useState({ name: '', email: '', password: '', type: "admin" })
+  // const [formData, setFormData] = useState({ name: '', email: '', password: '', type: "admin" })
+  const [formData, setFormData] = useState({
+    name: '',
+    email: '',
+    password: '',
+    category: productCategory || 'institution', // Default fallback
+    plan: planType || 'basic',        // Optional plan field
+  });
 
   const switchSlide = () => {
     slider_index++;
