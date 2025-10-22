@@ -33,8 +33,8 @@ type user = {
 
 async function addToDb(info: reqInfo) {
   const {name, email, password, type, category, plan} = info
-  await prisma.$queryRaw`INSERT INTO users (name, email, password, gsm, role, faculty_college, dob, doa, poa, doc, post, dopp, level, image, org) VALUES( ${name}, ${email}, ${password}, null, ${type}, null, null, null, null, null, null, null, null, null, null, ); `
-  const users = await prisma.$queryRaw`SELECT * FROM users WHERE email = ${email} AND password = ${password};`
+  await prisma.$queryRaw`INSERT INTO pesuser (name, email, password, gsm, role, faculty_college, dob, doa, poa, doc, post, dopp, level, image, org, category, plan) VALUES( ${name}, ${email}, ${password}, null, ${type}, null, null, null, null, null, null, null, null, null, null, ); `
+  const users = await prisma.$queryRaw`SELECT * FROM pesuser WHERE email = ${email} AND password = ${password};`
 
   return users as user[]
 }

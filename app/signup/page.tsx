@@ -38,7 +38,7 @@ const third = <>
 export default function Home() {
   const searchParams = useSearchParams();
   const productCategory = searchParams.get('product_category');
-  const planType = searchParams.get('plan_type');
+  const planType = searchParams.get('product_plan');
 
   const slider_arr = [ true, false, false ]
   const content_arr = [ first, second, third ]
