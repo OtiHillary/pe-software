@@ -137,7 +137,8 @@ const saveAnovaResult = async (
       ms_between: result.msBetween,
       ms_within: result.msWithin,
       mean: mean(allValues),
-      std_dev: Math.sqrt(variance(allValues)),
+      // std_dev: Math.sqrt(variance(allValues)),
+      std_dev: Math.sqrt(Number(variance(allValues))),
     };
 
     const res = await fetch("/api/stress-analysis", {
@@ -374,7 +375,8 @@ const StressBellCurveChart = ({ data }: { data: number[] }) => {
   if (!data || data.length === 0) return null;
   const m = mean(data);
   const v = variance(data);
-  const sd = Math.sqrt(v);
+  const sd = Math.sqrt(Number(v));
+  // const sd = Math.sqrt(v);
   const curveData = generateNormalCurve(m, sd);
 
   return (

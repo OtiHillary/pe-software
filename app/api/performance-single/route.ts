@@ -6,7 +6,7 @@ export async function POST(req: Request) {
     const { pesuser_name, org } = await req.json();
 
     // Fetch user performance record
-    const performance = await prisma.$queryRawUnsafe(`
+    const performance: any[] = await prisma.$queryRawUnsafe(`
       SELECT competence, integrity, compatibility, use_of_resources, dept
       FROM userperformance
       WHERE pesuser_name = '${pesuser_name}' AND org = '${org}'
@@ -14,7 +14,7 @@ export async function POST(req: Request) {
     `);
 
     // Fetch appraisal record
-    const appraisal = await prisma.$queryRawUnsafe(`
+    const appraisal: any[] = await prisma.$queryRawUnsafe(`
       SELECT teaching_quality_evaluation, research_quality_evaluation,
              administrative_quality_evaluation, community_quality_evaluation
       FROM appraisal
