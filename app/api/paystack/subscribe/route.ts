@@ -13,7 +13,8 @@ export async function POST(req: Request) {
       },
       body: JSON.stringify({
         email,
-        plan: planCode, // Attach plan code directly
+        amount: 10000, // Amount in kobo (e.g., 10000 kobo = 100 NGN)
+        plan: planCode,
         callback_url: `${process.env.NEXT_PUBLIC_BASE_URL}/subscription-success`,
       }),
     });

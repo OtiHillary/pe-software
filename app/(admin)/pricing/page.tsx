@@ -2,6 +2,7 @@
 import Link from "next/link";
 import Subscriptionbutton from "../../components/subscription/paypal";
 import PayPalProviderWrapper from "../../components/subscription/paypalWrapper";
+import PaystackButton from "@/app/components/subscription/paystackButton";
 import { packages } from "../../lib/utils/packages";
 import { Suspense } from "react";
 
@@ -18,7 +19,7 @@ export default function Home() {
       {/* Cards */}
       <div className="px-8 py-8 mx-6 bg-white flex justify-center flex-wrap gap-14">
          {/* Basic Plan */}
-         <div className="price-card overflow-scroll bg-white h-112 w-72 border rounded-3xl flex flex-col justify-between p-4">
+         <div className="price-card bg-white h-112 w-72 border rounded-3xl flex flex-col justify-between p-4">
             <div className="flex flex-col">
             <div className="bg-blue-100 text-pes rounded-full py-1 px-2 text-center mb-2 font-light text-sm">
                Current plan
@@ -34,25 +35,25 @@ export default function Home() {
                <li className="flex">
                   <p className="me-4">{String.fromCharCode(10004)}</p> feature goes here
                </li>
-               <li className="flex">
-                  <p className="me-4">{String.fromCharCode(10004)}</p> feature goes here
-               </li>
-               <li className="flex">
-                  <p className="me-4">{String.fromCharCode(10004)}</p> feature goes here
-               </li>
             </ul>
             </div>
 
             {/* PayPal Button */}
-            <div className="">
+            <div className="flex flex-col">
                <Suspense fallback={<button className="border-pes bg-white rounded-lg p-4">Loading...</button>}>
                   <Subscriptionbutton plan="basic" />
                </Suspense>
+
+               <PaystackButton
+                  email={"user@example.com"}               
+                  planCode="PLN_w4hf2tk7k3mu66a"          
+                  label="Subscribe"
+               />
             </div>
          </div>
 
          {/* Standard Plan */}
-         <div className="price-card overflow-scroll bg-white h-112 w-72 border rounded-3xl flex flex-col justify-between p-4">
+         <div className="price-card bg-white h-112 w-72 border rounded-3xl flex flex-col justify-between p-4">
             <div className="flex flex-col">
             <div className="opacity-0 bg-blue-100 text-pes rounded-xl py-1 px-2 text-center mb-2">Current plan</div>
             <div className="des my-2 pb-4 border-b border-gray-50">
@@ -80,11 +81,17 @@ export default function Home() {
                <Suspense fallback={<button className="border-pes bg-white rounded-lg p-4">Loading...</button>}>
                   <Subscriptionbutton plan="standard" />
                </Suspense>
+
+               <PaystackButton
+                  email={"user@example.com"}               
+                  planCode="PLN_pl6nmfsedqvm0oa"          
+                  label="Subscribe"
+               />
             </div>
          </div>
 
          {/* Premium Plan */}
-         <div className="price-card overflow-scroll bg-my bg-center h-112 w-72 border rounded-3xl flex flex-col justify-between p-4 text-white">
+         <div className="price-card bg-my bg-center h-112 w-72 border rounded-3xl flex flex-col justify-between p-4 text-white">
             <div className="flex flex-col">
             <div className="py-1 px-2 mb-2 flex relative h-8">
                <div className="bg-white opacity-20 rounded-xl w-full h-full"></div>
@@ -114,6 +121,12 @@ export default function Home() {
                <Suspense fallback={<button className="border-pes bg-white rounded-lg p-4">Loading...</button>}>
                   <Subscriptionbutton plan="premium" />
                </Suspense>
+
+               <PaystackButton
+                  email={"user@example.com"}               
+                  planCode="PLN_bquiv8u3t2otwuh"          
+                  label="Subscribe"
+               />
             </div>
          </div>
       </div>
