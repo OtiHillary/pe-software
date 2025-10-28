@@ -42,7 +42,7 @@ export default function PaystackButton({ email, planCode, label }: PaystackButto
     <button
       onClick={subscribeWithPaystack}
       disabled={loading}
-      className={`w-full mt-3 bg-green-600 hover:bg-green-700 text-white py-2 px-4 rounded-lg transition ${
+      className={`w-full mt-3 bg-black hover:bg-green-700 text-white py-2 px-4 rounded-lg transition ${
         loading ? "opacity-60 cursor-not-allowed" : ""
       }`}
     >
