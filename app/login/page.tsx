@@ -149,7 +149,7 @@ export default function Home() {
 
           <p className="text-center">
             {"Don't have an Account?"}{" "}
-            <Link className="text-pes" href={"/signup/admin"}>
+            <Link className="text-pes" href={"/signup"}>
               Sign Up
             </Link>
           </p>

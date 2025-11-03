@@ -41,8 +41,10 @@ export default function Home() {
   const [ slide, setSlide ] = useState(slider_arr)
   const router = useRouter()
   const searchParams = useSearchParams();
-  const productCategory = searchParams.get('product_category');
-  const planType = searchParams.get('product_plan');
+  const productCategory = searchParams.get('product_category') as string;
+  const planType = searchParams.get('product_plan') as string;
+
+  // planCodes
 
   // Redirect if query params missing
   useEffect(() => {
@@ -51,15 +53,37 @@ export default function Home() {
     }
   }, [productCategory, planType, router]);
 
-  const [message, setMessage] = useState({ visibility: 'invisible', text: '', color: '' })
-  // const [formData, setFormData] = useState({ name: '', email: '', password: '', type: "admin" })
-  const [formData, setFormData] = useState({
-    name: '',
-    email: '',
-    password: '',
-    category: productCategory, // Default fallback
-    plan: planType,        // Optional plan field
-  });
+
+const PLAN_CODES = {
+  basic: 'PLN_w4hf2tk7k3mu66a',
+  standard: 'PLN_pl6nmfsedqvm0oa',
+  premium: 'PLN_bquiv8u3t2otwuh',
+};
+
+type PlanType = keyof typeof PLAN_CODES;
+
+// Utility for safely resolving plan codes
+const resolvePlanCode = (plan: string) => PLAN_CODES[plan as PlanType] ?? PLAN_CODES.basic;
+
+// --- React state ---
+const [message, setMessage] = useState({
+  visibility: 'invisible',
+  text: '',
+  color: '',
+});
+
+const [formData, setFormData] = useState(() => ({
+  name: '',
+  org: '',
+  email: '',
+  password: '',
+  category: productCategory ?? '',
+  plan: planType ?? 'basic',
+  planCode: resolvePlanCode(planType),
+}));
+
+
+
 
   const switchSlide = () => {
     slider_index++;
@@ -79,7 +103,6 @@ export default function Home() {
   async function signup( event: FormEvent<HTMLFormElement>) {
     event.preventDefault()
     setMessage({  visibility: 'visible', text: 'Signing in, Please wait...', color: 'green' })
-    // TODO - change dynamic route from "/signup/[role]" to "/signup/[type]" to avoid future problems
   
     try {
       const req = await fetch( '/api/signup', 
@@ -167,8 +190,13 @@ export default function Home() {
         <p className='text-sm mb-8'>{`Enter your details and let's get started`}</p>
 
         <div className="input flex flex-col justify-center mb-4">
-          <label htmlFor="name" className='mb-1 font-bold text-sm'>Name:</label>
+          <label htmlFor="name" className='mb-1 font-bold text-sm'>Admin Name:</label>
           <input onChange={handleChange} value={formData.name} className='bg-transparent border border-gray-200 text-gray-300 placeholder:text-gray-300 text-sm focus:outline-pes ps-4 py-3 rounded-md' type="text" name="name" id="" placeholder='Enter your Institution or company name' required/>
+        </div>
+
+        <div className="input flex flex-col justify-center mb-4">
+          <label htmlFor="name" className='mb-1 font-bold text-sm'>Organization Name:</label>
+          <input onChange={handleChange} value={formData.org} className='bg-transparent border border-gray-200 text-gray-300 placeholder:text-gray-300 text-sm focus:outline-pes ps-4 py-3 rounded-md' type="text" name="name" id="" placeholder='Enter your Institution or company name' required/>
         </div>
 
         <div className="input flex flex-col justify-center mb-4">
