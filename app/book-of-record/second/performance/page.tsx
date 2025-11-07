@@ -1,6 +1,7 @@
 'use client'
 import { useState, useEffect } from "react";
 import { ChevronLeft, ChevronRight, Award, Download } from "lucide-react";
+import Link from "next/link";
 
 interface HallOfFameMember {
   id: string;
@@ -121,10 +122,11 @@ useEffect(() => {
         <div className="flex-1 overflow-y-auto p-6">
           <div className="space-y-3">
             {members.map((member, idx) => (
-              <div
-                key={member.id}
-                className="group border border-gray-200 rounded-lg p-5 hover:shadow-md hover:border-pes transition-all duration-200 bg-gradient-to-r hover:from-peshover:to-transparent"
-              >
+                <Link
+                  href={`/reward/badges/${encodeURIComponent(member.name)}`}
+                  key={member.id}
+                  className="w-full border rounded-lg p-5 transition-all duration-200"
+                >
                 <div className="flex items-start justify-between">
                   <div className="flex-1">
                     <div className="flex items-center gap-3 mb-2">
@@ -139,7 +141,7 @@ useEffect(() => {
                     </span>
                   </div>
                 </div>
-              </div>
+              </Link>
             ))}
           </div>
         </div>

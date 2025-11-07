@@ -82,7 +82,7 @@ useEffect(() => {
                 <Link
                   href={`/reward/badges/${encodeURIComponent(member.name)}`}
                   key={member.id}
-                  className="group border border-gray-200 rounded-lg p-5 hover:shadow-md hover:border-pes transition-all duration-200 bg-gradient-to-r hover:from-pes hover:to-transparent"
+                  className="w-full border rounded-lg p-5 transition-all duration-200"
                 >
                   <div className="flex items-start justify-between">
                     <div className="flex-1">
