@@ -39,7 +39,7 @@ export default function Home({ params }: { params: { user: string } }){
             {/* Fixed aspect ratio container - adjust based on your certificate dimensions */}
             <div ref={certificateRef} className="relative w-full max-w-[1200px] aspect-[1.414/1]">
                 <img 
-                    src="/1st-class-cert.png" 
+                    src="/2nd-class-cert.png" 
                     alt="Certificate"
                     className="absolute inset-0 w-full h-full object-fill"
                 />
@@ -76,11 +76,11 @@ export default function Home({ params }: { params: { user: string } }){
                         className="absolute text-center"
                         style={{
                             bottom: '18%',
-                            right: '22%',
-                            fontSize: 'clamp(1rem, 2.5vw, 2rem)'
+                            right: '19%',
+                            fontSize: 'clamp(1rem, 2.5vw, 1.7rem)'
                         }}
                     >
-                        date
+                        {new Date().toLocaleDateString()}
                     </p>
                 </div>
             </div>

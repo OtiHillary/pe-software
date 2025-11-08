@@ -80,7 +80,7 @@ export default function Home() {
           <div className="space-y-3">
             {members.map((member, idx) => (
                 <Link
-                  href={`/reward/badges/${encodeURIComponent(member.name)}`}
+                  href={`/reward/certificates/2nd/${encodeURIComponent(member.name)}`}
                   key={member.id}
                   className="w-full border rounded-lg p-5 transition-all duration-200"
                 >

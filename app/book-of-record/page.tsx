@@ -80,7 +80,7 @@ useEffect(() => {
             <div className="space-y-3">
               {members.map(member => (
                 <Link
-                  href={`/reward/badges/${encodeURIComponent(member.name)}`}
+                  href={`/reward/certificates/1st/${encodeURIComponent(member.name)}`}
                   key={member.id}
                   className="w-full border rounded-lg p-5 transition-all duration-200"
                 >

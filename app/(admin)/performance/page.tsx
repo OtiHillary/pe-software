@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from "react";
 import jwt from "jsonwebtoken";
+import Link from "next/link";
 
 function grader(num: number) {
   if (num >= 80) return "1st class (Excellent)";
@@ -19,6 +20,7 @@ function gradeColor(num: number) {
 
 export default function Home() {
   const [data, setData] = useState<any>(null);
+  const [achievements, setAchievements] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -26,13 +28,26 @@ export default function Home() {
       try {
         const token = localStorage.getItem("access_token");
         const decoded: any = jwt.decode(token as string);
-        const res = await fetch("/api/performance-single", {
+
+        // Fetch performance + appraisal
+        const perfRes = await fetch("/api/performance-single", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({ pesuser_name: decoded.name, org: decoded.org }),
         });
-        const result = await res.json();
-        setData(result);
+
+        const perfResult = await perfRes.json();
+
+        // Fetch achievements from all sources
+        const achieveRes = await fetch("/api/achievements", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ name: decoded.name }),
+        });
+        const achieveResult = await achieveRes.json();
+
+        setData(perfResult);
+        setAchievements(achieveResult);
       } catch (err) {
         console.error(err);
       } finally {
@@ -50,13 +65,6 @@ export default function Home() {
   const perf = data.performance || {};
   const appr = data.appraisal || {};
 
-  const appraisalTotal =
-    (Number(appr.teaching_quality_evaluation || 0) +
-      Number(appr.research_quality_evaluation || 0) +
-      Number(appr.administrative_quality_evaluation || 0) +
-      Number(appr.community_quality_evaluation || 0)) /
-    4;
-
   return (
     <div className="flex flex-col m-8 bg-white">
       <div className="nav flex justify-between bg-white h-[4rem] w-full text-md border border-slate-50">
@@ -69,14 +77,26 @@ export default function Home() {
 
       {/* Appraisal Section */}
       <div className="bg-white p-4">
-        <div className="flex justify-between my-3">
-          <p className="w-6/12 font-semibold text-lg">Appraisal</p>
-          <p className={`w-3/12 ${gradeColor(appraisalTotal)}`}>
-            {appraisalTotal?.toFixed(2)}%
-          </p>
-          <p className={`w-3/12 ${gradeColor(appraisalTotal)}`}>
-            {grader(appraisalTotal)}
-          </p>
+        <div className="flex flex-col">
+          <p className="font-semibold my-3 text-lg">Appraisal</p>
+          {[
+            ["Research Quality", appr.research_quality_evaluation],
+            ["Teaching Quality", appr.teaching_quality_evaluation],
+            ["Administrative Quality", appr.administrative_quality_evaluation],
+            ["Community Quality", appr.community_quality_evaluation],
+          ].map(([label, value]) => {
+            const color = gradeColor(Number(value));
+            return (
+              <div
+                key={label}
+                className="flex justify-between py-3 border-b ms-6 border-[#cfcfcf1a]"
+              >
+                <p className="w-6/12">{label}</p>
+                <p className={`w-3/12 ${color}`}>{Number(value)?.toFixed(2)}%</p>
+                <p className={`w-3/12 ${color}`}>{grader(Number(value))}</p>
+              </div>
+            );
+          })}
         </div>
 
         {/* Performance Section */}
@@ -92,7 +112,7 @@ export default function Home() {
             return (
               <div
                 key={label}
-                className="flex justify-between py-3 border-b border-[#cfcfcf1a]"
+                className="flex justify-between py-3 border-b ms-6 border-[#cfcfcf1a]"
               >
                 <p className="w-6/12">{label}</p>
                 <p className={`w-3/12 ${color}`}>{Number(value)?.toFixed(2)}%</p>
@@ -101,28 +121,29 @@ export default function Home() {
             );
           })}
         </div>
-
-        {/* Stress Factor Section (Placeholder) */}
-        <div>
-          <p className="font-semibold my-3 text-lg">Stress Factor</p>
-          <div className="flex justify-between py-3 border-b border-[#cfcfcf1a]">
-            <p className="w-6/12">Total stress frequency</p>
-            <p className="w-3/12 text-gray-500">–</p>
-            <p className="w-3/12 text-gray-500">–</p>
-          </div>
-          <div className="flex justify-between py-3 border-b border-[#cfcfcf1a]">
-            <p className="w-6/12">Major feelings based on stress category</p>
-            <p className="w-3/12 text-gray-500">–</p>
-            <p className="w-3/12 text-gray-500">–</p>
-          </div>
-        </div>
       </div>
 
       <div className="bg-gray-50 h-[3rem] flex justify-between">
         <h1 className="my-auto mx-6 font-semibold">Achievements</h1>
       </div>
 
-      <div className="bg-white p-4 min-h-[10rem]"></div>
+      <div className="bg-white p-4 min-h-[10rem]">
+        {achievements.length === 0 ? (
+          <p className="text-gray-500">No achievements found.</p>
+        ) : (
+          <ul className="space-y-3">
+            {achievements.map((item, idx) => (
+              <Link href={} key={idx} className="border p-3 rounded-lg shadow-sm">
+                <div className="flex justify-between">
+                  <p className="font-semibold text-gray-800">{item.achievement || item.title}</p>
+                  <p className="text-sm text-gray-400">{item.year || item.date_achieved}</p>
+                </div>
+                <p className="text-gray-600">{item.description}</p>
+              </Link>
+            ))}
+          </ul>
+        )}
+      </div>
     </div>
   );
 }
