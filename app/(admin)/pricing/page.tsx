@@ -49,6 +49,32 @@ export default function Home() {
     }
   };
 
+  // --- CANCEL PLAN HANDLER ---
+  const handleCancelPlan = async () => {
+    if (!confirm("Are you sure you want to cancel all plans? This will delete your account and all related data.")) return;
+
+    try {
+      const res = await fetch("/api/subscriptions/cancel", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email }),
+      });
+
+      const data = await res.json();
+
+      if (res.ok) {
+        alert("All plans canceled and account deleted.");
+        localStorage.removeItem("access_token");
+        window.location.href = "/"; // Redirect to home or signup page
+      } else {
+        alert(data.error || "Failed to cancel plans.");
+      }
+    } catch (err) {
+      console.error("Cancel plan failed:", err);
+      alert("Cancel plan failed. Check console for details.");
+    }
+  };
+
   const renderPlan = (
     planKey: "basic" | "standard" | "premium",
     color?: string
@@ -117,11 +143,6 @@ export default function Home() {
           >
             <Subscriptionbutton
               plan={planKey}
-              disabled={isActive}
-              onClick={() => {
-                if (canUpgrade && activePlan)
-                  handleUpgrade(activePlan, planKey);
-              }}
             />
           </Suspense>
 
@@ -135,11 +156,6 @@ export default function Home() {
                 : "PLN_bquiv8u3t2otwuh"
             }
             label={label}
-            disabled={isActive}
-            onClick={() => {
-              if (canUpgrade && activePlan)
-                handleUpgrade(activePlan, planKey);
-            }}
           />
         </div>
       </div>
@@ -163,6 +179,18 @@ export default function Home() {
           {renderPlan("standard")}
           {renderPlan("premium", "bg-my")}
         </div>
+
+        {/* Cancel Plan Button */}
+        {activePlan && (
+          <div className="flex justify-center my-8">
+            <button
+              onClick={handleCancelPlan}
+              className="bg-red-600 hover:bg-red-700 text-white px-6 py-3 rounded-xl font-bold shadow-md transition-colors"
+            >
+              Cancel All Plans & Delete Account
+            </button>
+          </div>
+        )}
 
         {/* Other Packages */}
         <div className="flex flex-col px-12 p-12 ms-6 mb-6 me-6 bg-white">
