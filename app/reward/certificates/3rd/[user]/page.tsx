@@ -1,6 +1,6 @@
 'use client'
 import { useRef } from 'react';
-import {jwtDecode} from 'jwt-decode';
+import { jwtDecode } from 'jwt-decode';
 
 export default function Home({ params }: { params: { user: string } }){
     const {user} = params
@@ -53,7 +53,7 @@ export default function Home({ params }: { params: { user: string } }){
             {/* Fixed aspect ratio container - adjust based on your certificate dimensions */}
             <div ref={certificateRef} className="relative w-full max-w-[1200px] aspect-[1.414/1]">
                 <img 
-                    src="/1st-class-cert.png" 
+                    src="/3rd-class-cert.png" 
                     alt="Certificate"
                     className="absolute inset-0 w-full h-full object-fill"
                 />

@@ -1,10 +1,23 @@
 'use client'
 import { useRef } from 'react';
+import { jwtDecode } from 'jwt-decode';
 
 export default function Home({ params }: { params: { user: string } }){
     const {user} = params
     const certificateRef = useRef<HTMLDivElement>(null);
-
+    let org = '';
+    let access_token = '';
+    if (typeof window !== 'undefined') {
+        access_token = localStorage.getItem('access_token') || '';
+        if (access_token) {
+            try {
+                const decoded: any = (jwtDecode as any)(access_token);
+                org = decoded.org || '';
+            } catch (e) {
+                org = '';
+            }
+        }
+    }
     const handleDownload = async () => {
         if (!certificateRef.current) return;
 
@@ -46,6 +59,19 @@ export default function Home({ params }: { params: { user: string } }){
                 
                 {/* All text positioned with percentage of container */}
                 <div className="absolute inset-0">
+                    {/* institution (replaced with org from localStorage) */}
+                    <p 
+                        className="absolute text-center whitespace-nowrap font-serif"
+                        style={{
+                            top: '10%',
+                            left: '50%',
+                            transform: 'translateX(-50%)',
+                            fontSize: 'clamp(1.5rem, 4vw, 2rem)'
+                        }}
+                    >
+                        {org}
+                    </p>
+
                     {/* Name */}
                     <p 
                         className="absolute text-center whitespace-nowrap font-serif"

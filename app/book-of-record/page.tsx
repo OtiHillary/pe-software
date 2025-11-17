@@ -1,10 +1,11 @@
-'use client'
+"use client";
 
-import { useState, useEffect, useMemo } from "react";
+import { useState, useEffect } from "react";
 import { ChevronLeft, ChevronRight, Award, Download } from "lucide-react";
 import Link from "next/link";
+import clsx from "clsx";
 
-interface HallOfFameMember {
+interface BookRecord {
   id: string;
   name: string;
   title?: string;
@@ -13,138 +14,158 @@ interface HallOfFameMember {
   description?: string;
 }
 
-export default function Home() {
-  const ITEMS_PER_PAGE = 10;
+export default function BookViewer() {
+  const ITEMS_PER_PAGE = 6; // 3 records per page (LEFT + RIGHT)
   const [showCover, setShowCover] = useState(true);
-  const [members, setMembers] = useState<HallOfFameMember[]>([]);
+  const [records, setRecords] = useState<BookRecord[]>([]);
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
   const [loading, setLoading] = useState(true);
+  const [isFlipping, setIsFlipping] = useState(false);
 
-// Fetch data from backend
-useEffect(() => {
-  const fetchData = async () => {
-    try {
-      setLoading(true);
+  // Fetch data
+  useEffect(() => {
+    async function fetchData() {
+      try {
+        setLoading(true);
 
-      const res = await fetch(`/api/first-book-api/appraisal?page=${currentPage}&limit=${ITEMS_PER_PAGE}`);
-      const data = await res.json();
+        const res = await fetch(
+          `/api/first-book-api/appraisal?page=${currentPage}&limit=${ITEMS_PER_PAGE}`
+        );
 
-      if (!res.ok) throw new Error(data.error || "Failed to fetch records");
+        const data = await res.json();
+        if (!res.ok) throw new Error(data.error || "Failed to load records");
 
-      setMembers(data.data || []);
-      setTotalPages(data.totalPages || 1);
-    } catch (err) {
-      console.error("❌ Failed to fetch records:", err);
-    } finally {
-      setLoading(false);
+        setRecords(data.data);
+        setTotalPages(data.totalPages);
+      } catch (error) {
+        console.error("❌ Fetch failed:", error);
+      } finally {
+        setLoading(false);
+      }
     }
+
+    fetchData();
+  }, [currentPage]);
+
+  // Handle flipping animation
+  const flip = (newPage: number) => {
+    setIsFlipping(true);
+    setTimeout(() => {
+      setCurrentPage(newPage);
+      setIsFlipping(false);
+    }, 450);
   };
 
-  fetchData();
-}, [currentPage]);
-
-
-  const handlePrevPage = () => setCurrentPage(prev => Math.max(1, prev - 1));
-  const handleNextPage = () => setCurrentPage(prev => Math.min(totalPages, prev + 1));
-  const handlePageClick = (page: number) => setCurrentPage(page);
+  const prevPage = () => currentPage > 1 && flip(currentPage - 1);
+  const nextPage = () =>
+    currentPage < totalPages && flip(currentPage + 1);
 
   return (
-    <div className="min-h-screen w-full relative flex items-center justify-center bg-gradient-to-br from-slate-100 to-slate-200 p-4">
-      {/* Cover Image */}
-      <img onClick={() => setShowCover(false)} src="/1st-book.png" alt="first book"  className={`${ showCover ? 'translate-x-0': '-translate-x-full' } transition-transform duration-[700ms] ease-in-out absolute h-full w-full top-0 left-0 z-20`}/>
+    <div className="h-screen w-screen flex items-center justify-center bg-slate-200 relative">
 
+      {/* COVER PAGE */}
+      <img
+        onClick={() => setShowCover(false)}
+        src="/1st-book.png"
+        alt="Book Cover"
+        className={clsx(
+          "absolute top-0 left-0 h-full w-full object-cover cursor-pointer z-30 transition-transform duration-[800ms]",
+          showCover ? "translate-x-0" : "-translate-x-full"
+        )}
+      />
 
-      {/* Main Content */}
-      <div className="relative flex flex-col bg-white shadow-2xl rounded-xl w-full max-w-4xl h-[80vh] overflow-hidden">
-        {/* Header */}
-        <div className="bg-gradient-to-r from-pes to-pes text-white p-6 shadow-lg">
-          <div className="flex items-center justify-between">
-            <div className="flex items-center gap-3">
-              <Award className="w-8 h-8" />
-              <h2 className="text-2xl font-bold">1st Book of Record (Appraisal)</h2>
-            </div>
-            <div className="text-sm bg-white/20 px-4 py-2 rounded-full">
-              Page {currentPage} of {totalPages}
-            </div>
-          </div>
-        </div>
+      {/* MAIN BOOK */}
+      <div className="relative w-[95%] h-[95%] bg-white rounded-lg flex overflow-hidden m-auto">
 
-        {/* Members List */}
-        <div className="flex-1 overflow-y-auto p-6">
-          {loading ? (
-            <div className="text-center text-gray-500 py-20">Loading records...</div>
-          ) : members.length === 0 ? (
-            <div className="text-center text-gray-500 py-20">No records found</div>
-          ) : (
-            <div className="space-y-3">
-              {members.map(member => (
-                <Link
-                  href={`/reward/certificates/1st/${encodeURIComponent(member.name)}`}
-                  key={member.id}
-                  className="w-full border rounded-lg p-5 transition-all duration-200"
-                >
-                  <div className="flex items-start justify-between">
-                    <div className="flex-1">
-                      <div className="flex items-center gap-3 mb-2">
-                        <h3 className="text-lg font-semibold text-gray-800 group-hover:text-pes transition-colors">
-                          {member.name}
-                        </h3>
-                      </div>
-                      <p className="text-gray-600 text-sm">{member.title}</p>
-                    </div>
-                    <div className="flex-shrink-0 ml-4">
-                      <span className="inline-block bg-white text-pes text-sm font-medium px-3 py-1 rounded-full">
-                        <Download />
-                      </span>
-                    </div>
-                  </div>
-                </Link>
-              ))}
-            </div>
+        {/* LEFT & RIGHT PAGES */}
+        <div
+          className={clsx(
+            "w-1/2 border-r p-6 overflow-y-auto bg-[url('/paper.avif')] bg-cover bg-center",
+            isFlipping && "animate-page-flip-left"
           )}
+        >
+          <PageContent
+            loading={loading}
+            records={records.slice(0, 3)}
+            pageNumber={currentPage}
+          />
         </div>
 
-        {/* Pagination Footer */}
-        <div className="border-t bg-gray-50 p-4">
-          <div className="flex items-center justify-between mb-3">
-            <button
-              onClick={handlePrevPage}
-              disabled={currentPage === 1}
-              className="flex items-center gap-2 bg-pes hover:bg-pes disabled:bg-gray-300 disabled:cursor-not-allowed text-white px-5 py-2.5 rounded-lg font-medium shadow-md transition-all duration-200 disabled:shadow-none"
-            >
-              <ChevronLeft className="w-5 h-5" />
-              Previous
-            </button>
+        <div
+          className={clsx(
+            "w-1/2 p-6 overflow-y-auto bg-[url('/paper.avif')] bg-cover bg-center",
+            isFlipping && "animate-page-flip-right"
+          )}
+        >
+          <PageContent
+            loading={loading}
+            records={records.slice(3, 6)}
+            pageNumber={currentPage}
+          />
+        </div>
 
-            <button
-              onClick={handleNextPage}
-              disabled={currentPage === totalPages}
-              className="flex items-center gap-2 bg-pes hover:bg-pes disabled:bg-gray-300 disabled:cursor-not-allowed text-white px-5 py-2.5 rounded-lg font-medium shadow-md transition-all duration-200 disabled:shadow-none"
-            >
-              Next
-              <ChevronRight className="w-5 h-5" />
-            </button>
-          </div>
+        {/* PAGE CONTROLS */}
+        <button
+          onClick={prevPage}
+          disabled={currentPage === 1}
+          className="absolute left-2 top-1/2 -translate-y-1/2 bg-pes text-white p-3 rounded-full disabled:bg-gray-400 shadow-lg"
+        >
+          <ChevronLeft />
+        </button>
 
-          {/* Page Numbers */}
-          <div className="flex justify-center gap-2">
-            {Array.from({ length: totalPages }, (_, i) => i + 1).map(page => (
-              <button
-                key={page}
-                onClick={() => handlePageClick(page)}
-                className={`w-10 h-10 rounded-lg font-medium transition-all duration-200 ${
-                  page === currentPage
-                    ? "bg-pes text-white shadow-md"
-                    : "bg-white text-gray-700 hover:bg-pes border border-gray-300"
-                }`}
-              >
-                {page}
-              </button>
-            ))}
-          </div>
+        <button
+          onClick={nextPage}
+          disabled={currentPage === totalPages}
+          className="absolute right-2 top-1/2 -translate-y-1/2 bg-pes text-white p-3 rounded-full disabled:bg-gray-400 shadow-lg"
+        >
+          <ChevronRight />
+        </button>
+
+        {/* FOOTER */}
+        <div className="absolute bottom-2 left-1/2 -translate-x-1/2 bg-white px-6 py-1 rounded-full shadow text-sm text-gray-700">
+          Page {currentPage} of {totalPages}
         </div>
       </div>
+    </div>
+  );
+}
+
+/* -------- PAGE CONTENT COMPONENT -------- */
+
+function PageContent({
+  loading,
+  records,
+}: {
+  loading: boolean;
+  records: BookRecord[];
+  pageNumber: number;
+}) {
+  if (loading)
+    return <p className="text-center mt-20 text-gray-500">Loading...</p>;
+
+  if (records.length === 0)
+    return <p className="text-center mt-20 text-gray-400">No records on this page</p>;
+
+  return (
+    <div className="space-y-4">
+      {records.map((rec) => (
+        <div
+          key={rec.id}
+          className="border p-4 bg-white/80 backdrop-blur rounded-lg shadow hover:shadow-md transition cursor-pointer"
+        >
+          <Link href={`/reward/certificates/2nd/${encodeURIComponent(rec.name)}`}>
+            <h3 className="text-lg font-bold text-gray-700">{rec.name}</h3>
+            <p className="text-sm text-gray-500">{rec.title}</p>
+          </Link>
+
+          <div className="mt-3">
+            <button className="text-pes flex items-center gap-2 text-sm font-medium">
+              <Download size={16} /> Download
+            </button>
+          </div>
+        </div>
+      ))}
     </div>
   );
 }

@@ -123,7 +123,7 @@ useEffect(() => {
           <div className="space-y-3">
             {members.map((member, idx) => (
                 <Link
-                  href={`/reward/certificates/2nd/${encodeURIComponent(member.name)}`}
+                  href={`/reward/certificates/3rd/${encodeURIComponent(member.name)}`}
                   key={member.id}
                   className="w-full border rounded-lg p-5 transition-all duration-200"
                 >

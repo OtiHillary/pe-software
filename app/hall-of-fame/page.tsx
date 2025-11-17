@@ -1,5 +1,7 @@
 'use client';
 import React, { useEffect, useState } from 'react';
+import { ChevronLeft, ChevronRight, Award, Download } from "lucide-react";
+import Link from "next/link";
 
 interface HallOfFameMember {
   id: string;
@@ -66,11 +68,11 @@ export default function HallOfFame() {
 
       {/* WHITE PAPER (scaling animation) */}
       <div
-        className={`min-w-[80%] mx-auto h-[90%] relative z-10 transition-all duration-[1500ms] ease-in-out transform origin-center ${
+        className={`min-w-[70%] mx-auto h-[90%] relative z-10 transition-all duration-[1500ms] ease-in-out transform origin-center ${
           isOpen ? 'scale-100 opacity-100' : 'scale-0 opacity-0'
         }`}
         style={{
-          backgroundImage: "url('/scroll.png')",
+          backgroundImage: "url('/scroll2.png')",
           backgroundRepeat: 'no-repeat',
           backgroundSize: 'cover',
           backgroundPosition: 'center',
@@ -82,14 +84,36 @@ export default function HallOfFame() {
 
         <div className="flex flex-col items-center overflow-y-auto h-[calc(100vh-200px)]">
           {members?.map((member) => (
-            <div
-              key={member.id}
-              className="flex flex-col items-center space-y-2 p-4 text-black w-full"
-            >
-              <p className="text-2xl font-semibold">{member.name}</p>
-              {member.title && <p className="text-lg text-gray-600">{member.title}</p>}
-              {member.year && <p className="text-sm text-yellow-600">{member.year}</p>}
-            </div>
+            <Link
+                href={`/reward/certificates/1st/${encodeURIComponent(member.name)}`}
+                key={member.id}
+                className="w-full rounded-lg p-5 transition-all duration-200"
+              >
+              <div className="flex border-b border-yellow-700 items-center justify-center">
+                <div className="flex flex-col items-center">
+                  <div className="flex items-center gap-3 mb-2">
+                    <h3 className="text-lg font-semibold text-gray-800 group-hover:text-pes transition-colors">
+                      {member.name}
+                    </h3>
+                  </div>
+                  {member.title && <p className="text-lg text-gray-600">{member.title}</p>}
+                  {member.year && <p className="text-sm text-yellow-700">{member.year}</p>}
+                </div>
+                <div className="flex-shrink-0 ml-4">
+                  <span className="inline-block bg-white text-pes text-sm font-medium px-3 py-1 rounded-full">
+                    <Download/>
+                  </span>
+                </div>
+              </div>
+            </Link>
+            // <div
+            //   key={member.id}
+            //   className="flex flex-col items-center space-y-2 p-4 text-black w-full"
+            // >
+            //   <p className="text-2xl font-semibold">{member.name}</p>
+            //   {member.title && <p className="text-lg text-gray-600">{member.title}</p>}
+            //   {member.year && <p className="text-sm text-yellow-600">{member.year}</p>}
+            // </div>
           ))}
         </div>
       </div>    

@@ -2,6 +2,7 @@
 import { useState, useEffect } from "react";
 import { ChevronLeft, ChevronRight, Award, Download } from "lucide-react";
 import Link from "next/link";
+import clsx from "clsx";
 
 interface HallOfFameMember {
   id: string;
@@ -11,181 +12,130 @@ interface HallOfFameMember {
   year?: string;
 }
 
-const hallOfFameMembers: HallOfFameMember[] = [
-  { id: "1", name: "Dr. Ada Nkem", title: "Pioneer of Quantum Computing Research", year: "2020" },
-  { id: "2", name: "Engr. Michael Adebayo", title: "Founder, Nova Robotics", year: "2019" },
-  { id: "3", name: "Prof. Chioma Eze", title: "Renowned AI Ethicist", year: "2021" },
-  { id: "4", name: "Dr. Tunde Balogun", title: "Cybersecurity Visionary", year: "2018" },
-  { id: "5", name: "Engr. Ifeoma Okoro", title: "Software Architect, Stellar Systems", year: "2022" },
-  { id: "6", name: "Dr. Emmanuel Ojo", title: "Data Science Innovator", year: "2017" },
-  { id: "7", name: "Mrs. Grace Umeh", title: "Humanitarian and Tech Advocate", year: "2023" },
-  { id: "8", name: "Mr. Chidi Anozie", title: "IoT Systems Engineer", year: "2016" },
-  { id: "9", name: "Dr. Mariam Sule", title: "Astrophysicist and Educator", year: "2024" },
-  { id: "10", name: "Engr. Obinna Nwosu", title: "Blockchain Innovator", year: "2025" },
-  { id: "11", name: "Dr. Oluwaseun Adeyemi", title: "Renewable Energy Pioneer", year: "2020" },
-  { id: "12", name: "Prof. Ngozi Iwuala", title: "Neuroscience Researcher", year: "2019" },
-  { id: "13", name: "Engr. Folake Adeniji", title: "Civil Engineering Excellence", year: "2021" },
-  { id: "14", name: "Dr. Yusuf Mohammed", title: "Medical AI Specialist", year: "2018" },
-  { id: "15", name: "Mrs. Amaka Okonkwo", title: "EdTech Innovator", year: "2022" },
-  { id: "16", name: "Mr. Babajide Oladipo", title: "Fintech Disruptor", year: "2017" },
-  { id: "17", name: "Dr. Zainab Abubakar", title: "Agricultural Tech Leader", year: "2023" },
-  { id: "18", name: "Engr. Kunle Adewale", title: "Smart City Architect", year: "2016" },
-  { id: "19", name: "Prof. Oluchi Mbanefo", title: "Quantum Physics Expert", year: "2024" },
-  { id: "20", name: "Dr. Ibrahim Yakubu", title: "Healthcare Innovation", year: "2025" },
-  { id: "21", name: "Engr. Chiamaka Nnadi", title: "Aerospace Engineering", year: "2020" },
-  { id: "22", name: "Dr. Segun Ogunleye", title: "Climate Tech Researcher", year: "2019" },
-  { id: "23", name: "Mrs. Fatima Bello", title: "Social Impact Technology", year: "2021" },
-  { id: "24", name: "Mr. Emeka Obi", title: "Cloud Architecture Expert", year: "2018" },
-  { id: "25", name: "Dr. Blessing Nwankwo", title: "Biomedical Engineer", year: "2022" },
-  { id: "26", name: "Prof. Akin Falola", title: "Theoretical Physics", year: "2017" },
-  { id: "27", name: "Engr. Sade Olusanya", title: "Telecommunications Pioneer", year: "2023" },
-  { id: "28", name: "Dr. Musa Abdullahi", title: "Machine Learning Architect", year: "2016" },
-  { id: "29", name: "Mrs. Nneka Ezeh", title: "Digital Health Advocate", year: "2024" },
-  { id: "30", name: "Mr. Kehinde Ashiru", title: "AR/VR Innovator", year: "2025" },
-  { id: "31", name: "Dr. Adaeze Chukwu", title: "Materials Science Expert", year: "2020" },
-  { id: "32", name: "Engr. Biodun Ajayi", title: "Green Energy Specialist", year: "2019" },
-  { id: "33", name: "Prof. Hauwa Sani", title: "Computer Vision Research", year: "2021" },
-  { id: "34", name: "Dr. Chukwudi Onwurah", title: "Nanotech Pioneer", year: "2018" },
-  { id: "35", name: "Mrs. Olabisi Coker", title: "Digital Banking Leader", year: "2022" },
-  { id: "36", name: "Mr. Uche Okeke", title: "DevOps Excellence", year: "2017" },
-  { id: "37", name: "Dr. Rashida Yusuf", title: "Public Health Informatics", year: "2023" },
-  { id: "38", name: "Engr. Tolu Osinowo", title: "Automation Systems", year: "2016" },
-  { id: "39", name: "Prof. Chinwe Okoro", title: "Computational Biology", year: "2024" },
-  { id: "40", name: "Dr. Damilola Adeyemi", title: "Genomics Research", year: "2025" },
-];
-
-export default function Home() {
-  const ITEMS_PER_PAGE = 10;
+export default function BookPerformance() {
+  const ITEMS_PER_PAGE = 6; // 3 per left/right page
   const [showCover, setShowCover] = useState(true);
   const [members, setMembers] = useState<HallOfFameMember[]>([]);
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
   const [loading, setLoading] = useState(true);
+  const [isFlipping, setIsFlipping] = useState(false);
 
-// Fetch data from backend
-useEffect(() => {
-  const fetchData = async () => {
-    try {
-      setLoading(true);
+  // Fetch data
+  useEffect(() => {
+    async function fetchData() {
+      try {
+        setLoading(true);
+        const res = await fetch(`/api/first-book-api/performance?page=${currentPage}&limit=${ITEMS_PER_PAGE}`);
+        const data = await res.json();
+        if (!res.ok) throw new Error(data.error || "Failed to fetch records");
 
-      const res = await fetch(`/api/first-book-api/performance?page=${currentPage}&limit=${ITEMS_PER_PAGE}`);
-      const data = await res.json();
-
-      if (!res.ok) throw new Error(data.error || "Failed to fetch records");
-
-      setMembers(data.data || []);
-      setTotalPages(data.totalPages || 1);
-    } catch (err) {
-      console.error("❌ Failed to fetch records:", err);
-    } finally {
-      setLoading(false);
+        setMembers(data.data || []);
+        setTotalPages(data.totalPages || 1);
+      } catch (err) {
+        console.error("❌ Failed to fetch records:", err);
+      } finally {
+        setLoading(false);
+      }
     }
+
+    fetchData();
+  }, [currentPage]);
+
+  const flipPage = (newPage: number) => {
+    setIsFlipping(true);
+    setTimeout(() => {
+      setCurrentPage(newPage);
+      setIsFlipping(false);
+    }, 450);
   };
 
-  fetchData();
-}, [currentPage]);
-
-  const handlePrevPage = () => {
-    setCurrentPage(prev => Math.max(1, prev - 1));
-  };
-
-  const handleNextPage = () => {
-    setCurrentPage(prev => Math.min(totalPages, prev + 1));
-  };
-
-  const handlePageClick = (page: number) => {
-    setCurrentPage(page);
-  };
+  const prevPage = () => currentPage > 1 && flipPage(currentPage - 1);
+  const nextPage = () => currentPage < totalPages && flipPage(currentPage + 1);
 
   return (
-    <div className="min-h-screen w-full relative flex items-center justify-center bg-gradient-to-br from-slate-100 to-slate-200 p-4">
-      {/* Cover Image */}
-      <img onClick={() => setShowCover(false)} src="/1st-book.png" alt="first book"  className={`${ showCover ? 'translate-x-0': '-translate-x-full' } transition-transform duration-[700ms] ease-in-out absolute h-full w-full top-0 left-0 z-20`}/>
+    <div className="min-h-screen w-full flex items-center justify-center bg-slate-200 p-4 relative">
 
+      {/* COVER */}
+      <img
+        onClick={() => setShowCover(false)}
+        src="/1st-book.png"
+        alt="Book Cover"
+        className={clsx(
+          "absolute top-0 left-0 h-full w-full object-cover z-30 cursor-pointer transition-transform duration-[800ms]",
+          showCover ? "translate-x-0" : "-translate-x-full"
+        )}
+      />
 
-      {/* Main Content */}
-      <div className="relative flex flex-col bg-white shadow-2xl rounded-xl w-full max-w-4xl h-[80vh] overflow-hidden">
-        {/* Header */}
-        <div className="bg-gradient-to-r from-pes to-pes text-white p-6 shadow-lg">
-          <div className="flex items-center justify-between">
-            <div className="flex items-center gap-3">
-              <Award className="w-8 h-8" />
-              <h2 className="text-2xl font-bold">1st Book of Record(Performance)</h2>
-            </div>
-            <div className="text-sm bg-white/20 px-4 py-2 rounded-full">
-              Page {currentPage} of {totalPages}
-            </div>
-          </div>
+      {/* BOOK */}
+      <div className="relative w-full max-w-5xl h-[90vh] bg-white shadow-2xl rounded-lg flex overflow-hidden">
+
+        {/* LEFT PAGE */}
+        <div
+          className={clsx(
+            "w-1/2 border-r p-6 overflow-y-auto bg-[url('/paper.avif')] bg-cover bg-center",
+            isFlipping && "animate-page-flip-left"
+          )}
+        >
+          <PageContent records={members.slice(0, 3)} loading={loading} />
         </div>
 
-        {/* Members List */}
-        <div className="flex-1 overflow-y-auto p-6">
-          <div className="space-y-3">
-            {members.map((member, idx) => (
-                <Link
-                  href={`/reward/badges/${encodeURIComponent(member.name)}`}
-                  key={member.id}
-                  className="w-full border rounded-lg p-5 transition-all duration-200"
-                >
-                <div className="flex items-start justify-between">
-                  <div className="flex-1">
-                    <div className="flex items-center gap-3 mb-2">
-                      <h3 className="text-lg font-semibold text-gray-800 group-hover:text-pes transition-colors">
-                        {member.name}
-                      </h3>
-                    </div>
-                  </div>
-                  <div className="flex-shrink-0 ml-4">
-                    <span className="inline-block bg-white text-pes text-sm font-medium px-3 py-1 rounded-full">
-                      <Download/>
-                    </span>
-                  </div>
-                </div>
-              </Link>
-            ))}
-          </div>
+        {/* RIGHT PAGE */}
+        <div
+          className={clsx(
+            "w-1/2 p-6 overflow-y-auto bg-[url('/paper.avif')] bg-cover bg-center",
+            isFlipping && "animate-page-flip-right"
+          )}
+        >
+          <PageContent records={members.slice(3, 6)} loading={loading} />
         </div>
 
-        {/* Pagination Footer */}
-        <div className="border-t bg-gray-50 p-4">
-          <div className="flex items-center justify-between mb-3">
-            <button
-              onClick={handlePrevPage}
-              disabled={currentPage === 1}
-              className="flex items-center gap-2 bg-pes hover:bg-pes disabled:bg-gray-300 disabled:cursor-not-allowed text-white px-5 py-2.5 rounded-lg font-medium shadow-md transition-all duration-200 disabled:shadow-none"
-            >
-              <ChevronLeft className="w-5 h-5" />
-              Previous
-            </button>
+        {/* PAGE CONTROLS */}
+        <button
+          onClick={prevPage}
+          disabled={currentPage === 1}
+          className="absolute left-2 top-1/2 -translate-y-1/2 bg-pes text-white p-3 rounded-full disabled:bg-gray-400 shadow-lg"
+        >
+          <ChevronLeft />
+        </button>
+        <button
+          onClick={nextPage}
+          disabled={currentPage === totalPages}
+          className="absolute right-2 top-1/2 -translate-y-1/2 bg-pes text-white p-3 rounded-full disabled:bg-gray-400 shadow-lg"
+        >
+          <ChevronRight />
+        </button>
 
-            <button
-              onClick={handleNextPage}
-              disabled={currentPage === totalPages}
-              className="flex items-center gap-2 bg-pes hover:bg-pes disabled:bg-gray-300 disabled:cursor-not-allowed text-white px-5 py-2.5 rounded-lg font-medium shadow-md transition-all duration-200 disabled:shadow-none"
-            >
-              Next
-              <ChevronRight className="w-5 h-5" />
-            </button>
-          </div>
-
-          {/* Page Numbers */}
-          <div className="flex justify-center gap-2">
-            {Array.from({ length: totalPages }, (_, i) => i + 1).map(page => (
-              <button
-                key={page}
-                onClick={() => handlePageClick(page)}
-                className={`w-10 h-10 rounded-lg font-medium transition-all duration-200 ${
-                  page === currentPage
-                    ? 'bg-pes text-white shadow-md'
-                    : 'bg-white text-gray-700 hover:bg-pes border border-gray-300'
-                }`}
-              >
-                {page}
-              </button>
-            ))}
-          </div>
+        {/* FOOTER */}
+        <div className="absolute bottom-2 left-1/2 -translate-x-1/2 bg-white px-6 py-1 rounded-full shadow text-sm text-gray-700">
+          Page {currentPage} of {totalPages}
         </div>
       </div>
+    </div>
+  );
+}
+
+function PageContent({ records, loading }: { records: HallOfFameMember[]; loading: boolean }) {
+  if (loading) return <p className="text-center mt-20 text-gray-500">Loading...</p>;
+  if (!records.length) return <p className="text-center mt-20 text-gray-400">No records on this page</p>;
+
+  return (
+    <div className="space-y-4">
+      {records.map((rec) => (
+        <Link
+          key={rec.id}
+          href={`/reward/certificates/2nd/${encodeURIComponent(rec.name)}`}
+          className="block border p-4 bg-white/80 backdrop-blur rounded-lg shadow hover:shadow-md transition cursor-pointer"
+        >
+          <h3 className="text-lg font-bold text-gray-700">{rec.name}</h3>
+          <p className="text-sm text-gray-500">{rec.title}</p>
+          <div className="mt-2">
+            <button className="text-pes flex items-center gap-2 text-sm font-medium">
+              <Download size={16} /> Download
+            </button>
+          </div>
+        </Link>
+      ))}
     </div>
   );
 }
