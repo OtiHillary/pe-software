@@ -47,7 +47,7 @@ export default function HallOfFame() {
     <>
       <div
         className={`absolute bottom-0 left-0 w-1/2 h-[75vh] transition-transform duration-[2000ms] ease-in-out cursor-pointer z-20 ${
-          isOpen ? '-translate-x-full' : 'translate-x-0'
+          isOpen ? '-translate-x-[75%]' : 'translate-x-0'
         }`}
         onClick={() => setIsOpen(true)}
       >
@@ -57,7 +57,7 @@ export default function HallOfFame() {
       {/* RIGHT GATE */}
       <div
         className={`absolute bottom-0 right-0 w-1/2 h-[75vh]  transition-transform duration-[2000ms] ease-in-out cursor-pointer z-20 ${
-          isOpen ? 'translate-x-full' : 'translate-x-0'
+          isOpen ? 'translate-x-[75%]' : 'translate-x-0'
         }`}
         onClick={() => setIsOpen(true)}
       >
@@ -66,11 +66,17 @@ export default function HallOfFame() {
 
       {/* WHITE PAPER (scaling animation) */}
       <div
-        className={`min-w-[80%] mx-auto bg-white h-screen relative z-10 transition-all duration-[1500ms] ease-in-out transform origin-center ${
+        className={`min-w-[80%] mx-auto h-[90%] relative z-10 transition-all duration-[1500ms] ease-in-out transform origin-center ${
           isOpen ? 'scale-100 opacity-100' : 'scale-0 opacity-0'
         }`}
+        style={{
+          backgroundImage: "url('/scroll.png')",
+          backgroundRepeat: 'no-repeat',
+          backgroundSize: 'cover',
+          backgroundPosition: 'center',
+        }}
       >
-        <h1 className="text-5xl font-bold text-center text-yellow-500 py-12 underline">
+        <h1 className="text-5xl font-bold text-center text-yellow-900 py-12 underline">
           HALL OF FAME
         </h1>
 
@@ -78,7 +84,7 @@ export default function HallOfFame() {
           {members?.map((member) => (
             <div
               key={member.id}
-              className="flex flex-col items-center space-y-2 border-b p-4 text-black w-full"
+              className="flex flex-col items-center space-y-2 p-4 text-black w-full"
             >
               <p className="text-2xl font-semibold">{member.name}</p>
               {member.title && <p className="text-lg text-gray-600">{member.title}</p>}
