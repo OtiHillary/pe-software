@@ -133,7 +133,7 @@ export default function Home() {
         ) : (
           <ul className="space-y-3">
             {achievements.map((item, idx) => (
-              <Link href={''} key={idx} className="border p-3 rounded-lg shadow-sm">
+              <Link href={item.url} key={idx} className="border p-3 rounded-lg shadow-sm">
                 <div className="flex justify-between">
                   <p className="font-semibold text-gray-800">{item.achievement || item.title}</p>
                   <p className="text-sm text-gray-400">{item.year || item.date_achieved}</p>
