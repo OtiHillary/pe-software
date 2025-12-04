@@ -1,4 +1,4 @@
-"use client"
+"use client";
 
 import Image from "next/image";
 import Link from "next/link";
@@ -6,14 +6,15 @@ import { useRouter } from "next/navigation";
 import { Formik, Form, Field } from "formik";
 import * as Yup from "yup";
 import { useEffect, useState } from "react";
-import { useAuth } from "@/app/components/useAuth"
+import { useAuth } from "@/app/components/useAuth";
+
 type formdata = {
   email: string;
   password: string;
 };
 
 export default function Home() {
-  const { setRole } = useAuth(); // ✅ grab setter
+  const { setRole } = useAuth();
   const [message, setMessage] = useState({
     visibility: "invisible",
     text: "",
@@ -46,10 +47,8 @@ export default function Home() {
       if (res.status == 200) {
         localStorage.setItem("access_token", res.token);
 
-        // ✅ save role to context
         setRole(res.role);
 
-        // ✅ optional: also store role in cookie for middleware
         document.cookie = `role=${res.role}; path=/; max-age=86400`;
 
         router.push("/dashboard");
@@ -98,62 +97,59 @@ export default function Home() {
         validationSchema={schema}
         onSubmit={(values) => login("/api/login", values)}
       >
-        <Form className="form w-1/2 h-screen flex flex-col p-28 justify-center">
-          <p className="text-4xl text-semibold mb-8">Sign In</p>
+        {({ isValid, dirty }) => (
+          <Form className="form w-1/2 h-screen flex flex-col p-28 justify-center">
+            <p className="text-4xl text-semibold mb-8">Sign In</p>
 
-          <div className="input flex flex-col justify-center mb-4">
-            <label htmlFor="email" className="mb-1">
-              Email Address:
-            </label>
-            <Field
-              className="bg-transparent border border-gray-200 text-gray-700 focus:outline-pes ps-4 py-2 rounded-lg"
-              type="email"
-              name="email"
-              id="email"
-              required
-            />
-          </div>
-
-          <div className="input flex flex-col justify-center mb-4">
-            <label htmlFor="password" className="mb-1">
-              Password:
-            </label>
-            <Field
-              className="bg-transparent border border-gray-200 text-gray-700 focus:outline-pes ps-4 py-2 rounded-lg"
-              type="password"
-              name="password"
-              id="password"
-              required
-            />
-          </div>
-
-          <div className="flex flex-row justify-between mb-8">
-            <div className="flex">
-              <Field type="checkbox" name="remember" id="remember" />
-              <label htmlFor="remember" className="mx-4">
-                Remember me
+            <div className="input flex flex-col justify-center mb-4">
+              <label htmlFor="email" className="mb-1">
+                Email Address:
               </label>
+              <Field
+                className="bg-transparent border border-gray-200 text-gray-700 focus:outline-pes ps-4 py-2 rounded-lg"
+                type="email"
+                name="email"
+                id="email"
+                required
+              />
             </div>
 
-            <Link className="text-pes" href={"/"}>
-              Forgot Password ?
-            </Link>
-          </div>
+            <div className="input flex flex-col justify-center mb-4">
+              <label htmlFor="password" className="mb-1">
+                Password:
+              </label>
+              <Field
+                className="bg-transparent border border-gray-200 text-gray-700 focus:outline-pes ps-4 py-2 rounded-lg"
+                type="password"
+                name="password"
+                id="password"
+                required
+              />
+            </div>
 
-          <input
-            type="submit"
-            role="button"
-            className="btn bg-pes text-white px-4 py-3 flex justify-center rounded-lg mb-2"
-            value="Sign In"
-          />
+            <div className="flex flex-row justify-between mb-8">
+              <div className="flex">
+                <Field type="checkbox" name="remember" id="remember" />
+                <label htmlFor="remember" className="mx-4">
+                  Remember me
+                </label>
+              </div>
 
-          <p className="text-center">
-            {"Don't have an Account?"}{" "}
-            <Link className="text-pes" href={"/signup"}>
-              Sign Up
-            </Link>
-          </p>
-        </Form>
+              <Link className="text-pes" href={"/"}>
+                Forgot Password ?
+              </Link>
+            </div>
+
+            <button
+              type="submit"
+              className="btn bg-pes text-white px-4 py-3 flex justify-center rounded-lg mb-2 
+                         disabled:opacity-50 disabled:cursor-not-allowed"
+              disabled={!(dirty && isValid)}
+            >
+              Sign In
+            </button>
+          </Form>
+        )}
       </Formik>
     </main>
   );

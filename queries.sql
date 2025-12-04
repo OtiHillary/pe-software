@@ -12,6 +12,9 @@
 --  public | stress_scores   | table | postgres
 --  public | userperformance | table | postgres
 
+pg_dump --schema-only postgresql://postgres:otonye@13.60.56.151:5432/pes > pes_schema.sql
+
+
 -- assessment
 CREATE TABLE assessment (
    id SERIAL PRIMARY KEY,
@@ -201,25 +204,6 @@ CREATE TABLE subscription_events (
   raw_payload JSONB NOT NULL,     
   processed BOOLEAN NOT NULL DEFAULT FALSE
 );
-
--- (
---    'Chika Okafor',
---    'chika.okafor@example.com',
---    'hashedpassword1',
---    '08012345678',
---    'auditor',
---    '12 Herbert Macaulay Way, Yaba, Lagos',
---    'Business Administration',
---    '1992-05-14',
---    '2020-01-10',
---    'Yaba',
---    '2020-01-11',
---    'Auditor I',
---    '2020-01-15',
---    'Senior',
---    'chika.jpg',
---    'university of lagos'
--- ),
 
 CREATE TABLE personnel_utilization (
   id SERIAL PRIMARY KEY,

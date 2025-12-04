@@ -43,8 +43,62 @@ export default function Home() {
   const searchParams = useSearchParams();
   const productCategory = searchParams.get('product_category') as string;
   const planType = searchParams.get('product_plan') as string;
+  // --- React state ---
+  const [message, setMessage] = useState({
+    visibility: 'invisible',
+    text: '',
+    color: '',
+  });
+
+  const [formData, setFormData] = useState(() => ({
+    name: '',
+    org: '',
+    email: '',
+    password: '',
+    category: productCategory ?? '',
+    plan: planType ?? 'basic',
+    planCode: resolvePlanCode(planType),
+    logo: ''
+  }));
+  const allFieldsFilled =
+    formData.name.trim() &&
+    formData.org.trim() &&
+    formData.email.trim() &&
+    formData.password.trim() &&
+    formData.logo.trim() &&         // include logo
+    (document.getElementById("c-password") as HTMLInputElement)?.value.trim() &&
+    (document.getElementById("agree") as HTMLInputElement)?.checked;
+
+
 
   // planCodes
+  async function handleImageUpload(e: any) {
+    const file = e.target.files[0];
+    if (!file) return;
+
+    const data = new FormData();
+    data.append("file", file);
+    data.append("upload_preset", "pes-unsigned"); // change this
+    data.append("folder", "pes/logo");
+
+    try {
+      const cloudRes = await fetch(
+        "https://api.cloudinary.com/v1_1/djqaqhcxk/image/upload",
+        {
+          method: "POST",
+          body: data
+        }
+      );
+      const uploaded = await cloudRes.json();
+
+      setFormData({
+        ...formData,
+        logo: uploaded.secure_url
+      });
+    } catch (err) {
+      console.log(err);
+    }
+  }
 
   // Redirect if query params missing
   useEffect(() => {
@@ -63,26 +117,7 @@ const PLAN_CODES = {
 type PlanType = keyof typeof PLAN_CODES;
 
 // Utility for safely resolving plan codes
-const resolvePlanCode = (plan: string) => PLAN_CODES[plan as PlanType] ?? PLAN_CODES.basic;
-
-// --- React state ---
-const [message, setMessage] = useState({
-  visibility: 'invisible',
-  text: '',
-  color: '',
-});
-
-const [formData, setFormData] = useState(() => ({
-  name: '',
-  org: '',
-  email: '',
-  password: '',
-  category: productCategory ?? '',
-  plan: planType ?? 'basic',
-  planCode: resolvePlanCode(planType),
-}));
-
-
+  const resolvePlanCode = (plan: string) => PLAN_CODES[plan as PlanType] ?? PLAN_CODES.basic;
 
 
   const switchSlide = () => {
@@ -191,17 +226,17 @@ const [formData, setFormData] = useState(() => ({
 
         <div className="input flex flex-col justify-center mb-4">
           <label htmlFor="name" className='mb-1 font-bold text-sm'>Admin Name:</label>
-          <input onChange={handleChange} value={formData.name} className='bg-transparent border border-gray-200 text-gray-300 placeholder:text-gray-300 text-sm focus:outline-pes ps-4 py-3 rounded-md' type="text" name="name" id="" placeholder='Enter your Institution or company name' required/>
+          <input onChange={handleChange} value={formData.name} className='bg-transparent border border-gray-200 text-gray-300 placeholder:text-gray-300 text-sm focus:outline-pes ps-4 py-3 rounded-md' type="text" name="name" id="name" placeholder='Enter your Institution or company name' required/>
         </div>
 
         <div className="input flex flex-col justify-center mb-4">
-          <label htmlFor="name" className='mb-1 font-bold text-sm'>Organization Name:</label>
-          <input onChange={handleChange} value={formData.org} className='bg-transparent border border-gray-200 text-gray-300 placeholder:text-gray-300 text-sm focus:outline-pes ps-4 py-3 rounded-md' type="text" name="name" id="" placeholder='Enter your Institution or company name' required/>
+          <label htmlFor="org" className='mb-1 font-bold text-sm'>Organization Name:</label>
+          <input onChange={handleChange} value={formData.org} className='bg-transparent border border-gray-200 text-gray-300 placeholder:text-gray-300 text-sm focus:outline-pes ps-4 py-3 rounded-md' type="text" name="org" id="org" placeholder='Enter your Institution or company name' required/>
         </div>
 
         <div className="input flex flex-col justify-center mb-4">
           <label htmlFor="email" className='mb-1 font-bold text-sm'>Email Address:</label>
-          <input onChange={handleChange} value={formData.email} className='bg-transparent border border-gray-200 text-gray-300 placeholder:text-gray-300 text-sm focus:outline-pes ps-4 py-3 rounded-md' type="email" name="email" id="" placeholder='Enter your Institution or company email' required/>
+          <input onChange={handleChange} value={formData.email} className='bg-transparent border border-gray-200 text-gray-300 placeholder:text-gray-300 text-sm focus:outline-pes ps-4 py-3 rounded-md' type="email" name="email" id="email" placeholder='Enter your Institution or company email' required/>
         </div>
 
         <div className="input flex flex-col justify-center mb-4">
@@ -221,7 +256,34 @@ const [formData, setFormData] = useState(() => ({
           </div>
         </div>
 
-        <input type='submit' value={'Sign up'} className="btn active:bg-pes hover:bg-[#141444] bg-pes text-white px-4 py-3 flex justify-center rounded-lg mb-2" />
+        <div className="input flex flex-col justify-center mb-4">
+          <label htmlFor="logo" className='mb-1 font-bold text-sm'>Institution Logo:</label>
+          <input 
+            type="file" 
+            accept="image/*"
+            onChange={handleImageUpload}
+            className="text-sm text-gray-400"
+          />
+
+          {formData.logo && (
+            <Image 
+              src={formData.logo} 
+              alt="Logo preview" 
+              width={80} 
+              height={80} 
+              className="mt-3 rounded-md border border-gray-300"
+            />
+          )}
+        </div>
+
+        <input 
+          type='submit' 
+          value={'Sign up'} 
+          disabled={!allFieldsFilled}
+          className={`btn px-4 py-3 rounded-lg mb-2 text-white
+            ${allFieldsFilled ? "bg-pes hover:bg-[#141444]" : "bg-gray-400 cursor-not-allowed"}
+          `}
+        />
 
         <p className='text-center'>{`Have an Account?`} <Link className='text-pes' href={'/login'}>Sign In</Link> </p>
       </form>

@@ -1,35 +1,143 @@
 "use client";
 
 import { useRouter } from "next/navigation";
+import {jwtDecode} from "jwt-decode";
 
 export default function ModelsPage() {
   const router = useRouter();
+  console.log(jwtDecode(localStorage.getItem("access_token") || ""));
+  const { productCategory, productPlan } = jwtDecode(localStorage.getItem("access_token") || "")
 
-  // Define the routes in the folder
-  const routes = [
-    // { name: "Achievement Criteria", path: "/models/achievement-criteria" },
-    // { name: "Appraisal", path: "/models/appraisal" },
-    // { name: "Motivation", path: "/models/motivation" },
-    { name: "Non-Academic Appraisal", path: "/models/non-academic-appraisal" },
-    { name: "Org Structure", path: "/models/org-structure" },
-    { name: "Personnel Redundancy", path: "/models/personnel-redundancy" },
-    { name: "Personnel Utilization", path: "/models/personnel-utilization" },
-    { name: "Productivity Index", path: "/models/productivity-index" },
-    { name: "Redundancy Index", path: "/models/redundancy-index" },
-    { name: "Staff Number", path: "/models/staff-number" },
-    { name: "Student Teacher", path: "/models/student-teacher" },
-    { name: "Utility Index", path: "/models/utility-index" },
-  ];
+  const planConfigs: Record<string, any> = {
+    "public": 
+      {
+        "basic": [
+          "Personnel Utilization",
+          "Productivity Index",
+          "Student Teacher",
+          "Staff Number",
+          "Stress",
+        ],
+
+       "standard": [
+          "Personnel Utilization",
+          "Productivity Index",
+          "Student Teacher",
+          "Staff number",
+          "Stress",
+          "Appraisal",
+        ],
+
+        "premium": [
+          "Personnel Utilization",
+          "Productivity Index",
+          "Student Teacher",
+          "Staff number",
+          "Stress",
+          "Appraisal",
+          "Organization Structure",
+          "Performance",
+          "Motivation",
+        ],
+      },
+
+    "company":
+    {
+      "basic": [
+        "Staff Number",
+        "Stress",
+        "Appraisal",
+      ],
+
+      "standard": [
+        "Staff Number",
+        "Stress",
+        "Appraisal",
+        "Organization Structure",
+        "Performance",
+        "Motivation"
+      ],
+      
+      "premium": [
+        "Staff Number",
+        "Stress",
+        "Appraisal",
+        "Organization Structure",
+        "Performance",
+        "Motivation",
+        "Personnel Utilization",
+        "Productivity Index",
+        "Redundancy Index",
+      ]
+    },
+
+    "academic":
+      {
+        "basic": [
+          "Student Teacher",
+          "Stress",
+          "Appraisal",
+          "Non-Academic Appraisal",
+          "Motivation",
+          "Maintenance model"
+        ],
+
+        "standard": [
+          "Student Teacher",
+          "Stress",
+          "Appraisal",
+          "Non-Academic Appraisal",
+          "Motivation",
+          "Maintenance model",
+          "Organization Structure",
+          "Performance"
+        ],
+
+        "premium": [
+          "Student Teacher",
+          "Stress",
+          "Appraisal",
+          "Non-Academic Appraisal",
+          "Motivation",
+          "Maintenance model",
+          "Organization Structure",
+          "Performance",
+          "Personnel Utilization",
+          "Productivity Index",
+          "Student Teacher",
+          "Staff Number",
+          "Redundancy Index",
+        ]
+      }
+  };
+
+  const routesAlt: Record<string, string> = {
+    "Performance" : "/models/performance",
+    "Appraisal" : "/models/appraisal",
+    "Motivation" : "/models/motivation",
+    "Stress" : "/models/stress",
+    "Non-Academic Appraisal" : "/models/non-academic-appraisal",
+    "Organization Structure" : "/models/org-structure",
+    "Personnel Redundancy" : "/models/personnel-redundancy",
+    "Personnel Utilization" : "/models/personnel-utilization",
+    "Productivity Index" : "/models/productivity-index",
+    "Redundancy Index" : "/models/redundancy-index",
+    "Staff Number" : "/models/staff-number",
+    "Student Teacher" : "/models/student-teacher",
+    "Utility Index" : "/models/utility-index",
+  };
+  
+  const filteredRoutes = planConfigs[productCategory][productPlan]
 
   return (
     <div>
       <h1>Models</h1>
       <div className="flex flex-wrap gap-4 mt-1">
-        {routes.map((route, index) => (
+        {filteredRoutes.map((route: string, index: number) => (
           <button
             className="bg-pes w-fit"
             key={index}
-            onClick={() => router.push(route.path)}
+            onClick={() => router.push(routesAlt[route])}
             style={{
               display: "block",
               padding: "10px 20px",
@@ -39,7 +147,7 @@ export default function ModelsPage() {
               cursor: "pointer",
             }}
           >
-            {route.name}
+            {route}
           </button>
         ))}
       </div>

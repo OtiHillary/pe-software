@@ -64,7 +64,7 @@ export default function Goals(){
 
                     {
                         user?.role == 'admin'?
-                        <div className="bg-pes py-3 px-8 rounded-md text-white new ms-12" onClick={ () => dispatch( newGoal() )}>
+                        <div className="bg-pes py-3 px-8 rounded-md text-white new ms-12 cursor-pointer" onClick={ () => dispatch( newGoal() )}>
                             Set new Goal
                         </div>
                         :

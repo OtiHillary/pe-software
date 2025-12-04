@@ -26,6 +26,8 @@ type user = {
   image : string
   org : string
   dept : string
+  category : string
+  plan : string
 }
 
 async function getUser(info: reqInfo) {
@@ -44,7 +46,15 @@ export async function POST(req: Request) {
     await prisma.$disconnect()
     
     if (data.length > 0) {
-      const token = jwt.sign( { userID: data[0].id, name: data[0].name, role: data[0].role, org: data[0].org, email: data[0].email, dept: data[0].dept }, 'oti');
+      const token = jwt.sign( { userID: data[0].id, 
+        name: data[0].name, 
+        role: data[0].role, 
+        org: data[0].org, 
+        email: data[0].email, 
+        dept: data[0].dept,
+        productCategory: data[0].category,
+        productPlan: data[0].plan
+      }, 'oti');
       return NextResponse.json({ message: 'Login successful!', token: token, role: data[0].role, status: 200 })
 
     } else {

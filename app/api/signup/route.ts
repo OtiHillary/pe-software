@@ -12,6 +12,7 @@ type reqInfo = {
   plan: string
   planCode: string
   category: string
+  logo: string
 }
 
 type user = {
@@ -32,6 +33,9 @@ type user = {
   level: string
   image : string
   org : string
+  dept : string
+  category : string
+  plan : string
 }
 
 type planCodes = keyof typeof amounts
@@ -43,10 +47,10 @@ const amounts = {
 }
 
 async function addToDb(info: reqInfo) {
-  const {name, email, password, type, category, plan, planCode, org} = info
+  const {name, email, password, type, category, plan, planCode, org, logo} = info
   let amount = amounts[planCode as planCodes]
 
-  await prisma.$queryRaw`INSERT INTO pesuser (name, email, password, gsm, role, faculty_college, dob, doa, poa, doc, post, dopp, level, image, org, category, plan) VALUES( ${name}, ${email}, ${password}, null, ${type}, null, null, null, null, null, null, null, null, null, ${org}, ); `
+  await prisma.$queryRaw`INSERT INTO pesuser (name, email, password, gsm, role, faculty_college, dob, doa, poa, doc, post, dopp, level, image, org, category, plan) VALUES( ${name}, ${email}, ${password}, null, ${type}, null, null, null, null, null, null, null, null, ${logo}, ${org}, ${category}, ${plan}); `
   await prisma.$queryRaw`INSERT INTO subscriptions_info (pesuser_email, pesuser_name, org, plan_code, plan_name, reference, status, amount, paid_at, created_at) VALUES ( ${email}, ${name}, ${org}, ${planCode}, ${plan}, null, "success", ${amount}, null, null)`
 //  insert into org;
 //  id | name | category | plan | created_at | updated_at
@@ -63,18 +67,26 @@ export async function GET() {
 }
 
 export async function POST(req: Request) {
-  const { name, org, email, password, type, category, plan, planCode } = await req.json()
+  const { name, org, email, password, type, category, plan, planCode, logo } = await req.json()
   console.log(email, password)
   
   // let sID = Math.floor(Math.random())
 
   try {
-    let data = await addToDb({ name, email, password, type, category, plan, planCode, org })
+    let data = await addToDb({ name, email, password, type, category, plan, planCode, org, logo })
     console.log(data);
     await prisma.$disconnect()
     
     if (data.length > 0) {
-      const token = jwt.sign( { name: data[0].name, role: data[0].role }, 'oti');
+      const token = jwt.sign( { userID: data[0].id, 
+        name: data[0].name, 
+        role: data[0].role, 
+        org: data[0].org, 
+        email: data[0].email, 
+        dept: data[0].dept,
+        productCategory: data[0].category,
+        productPlan: data[0].plan
+      }, 'oti');
       
       console.log(token, 'before send', data[0].name)
       return NextResponse.json({ message: 'Login successful!', token: token, status: 200 })      

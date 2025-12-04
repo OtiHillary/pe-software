@@ -19,12 +19,17 @@ export default function Newgoal() {
 
   const goalTypes = [
     "appraisal",
+    "non-academic appraisal",
+    "motivation",
     "performance",
     "stress",
-    "motivation",
     "student-teacher ratio",
     "utility-index",
     "redundancy-index",
+    "productivity-index",
+    "personnnel redundancy",
+    "personnnel utilization",
+    "number of staff",
     "maintenance models",
     "organizational structure"
   ];

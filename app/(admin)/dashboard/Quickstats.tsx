@@ -3,6 +3,7 @@
 import { People, Award, Timer } from 'iconsax-react';
 import React, { useState, useEffect } from 'react';
 import jwt from 'jsonwebtoken'
+import Link from 'next/link';
 
 export default function Quickstats() {
     const [quickStats, setQuickStats] = useState< number[] | null[]>([null, null, null])
@@ -55,7 +56,7 @@ export default function Quickstats() {
                             <p>Loading...</p>
                         }
                     </p>
-                    <p className='m-1 text-xs underline'>View All</p>
+                    <Link href='' className='m-1 text-xs underline cursor-pointer'>View All</Link>
                 </div>
                 <People size={ 64 } className='text-gray-400 font-bold mb-auto' />
             </div>
@@ -75,7 +76,7 @@ export default function Quickstats() {
                             <p>Loading...</p>
                         }                    
                     </p>
-                    <a className='m-1 text-xs underline text-pes'>View All</a>
+                    <Link href={``} className='m-1 text-xs underline text-pes cursor-pointer'>View All</Link>
                 </div>
                 <Award size={ 64 } className='text-gray-100 font-bold mb-auto' />
             </div>
@@ -95,7 +96,8 @@ export default function Quickstats() {
                            <p>Loading...</p>
                         }
                     </p>
-                    <a className='m-1 text-xs underline text-pes'>View All</a>
+                    <Link href={``} className='m-1 text-xs underline text-pes cursor-pointer'>View All</Link>
+
                 </div>
                 <Timer size={ 64 } className='text-gray-100 font-bold mb-auto' />
             </div>
