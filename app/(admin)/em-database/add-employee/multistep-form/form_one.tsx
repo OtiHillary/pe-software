@@ -8,9 +8,9 @@ type FormProps = {
   setStepValid: (data: boolean) => void;
 };
 
-// --------------------------
-// PhoneInput Component
-// --------------------------
+// --------------------------------------
+// Stable Phone Input (No Focus Loss)
+// --------------------------------------
 function PhoneInput({ name, label, placeholder, value, onChange }: {
   name: string;
   label?: string;
@@ -32,7 +32,6 @@ function PhoneInput({ name, label, placeholder, value, onChange }: {
     if (!num.startsWith("+234")) num = "+234" + num;
 
     const rest = num.replace("+234", "");
-
     const p1 = rest.slice(0, 3);
     const p2 = rest.slice(3, 6);
     const p3 = rest.slice(6, 10);
@@ -46,8 +45,7 @@ function PhoneInput({ name, label, placeholder, value, onChange }: {
   }
 
   function handleChange(e: React.ChangeEvent<HTMLInputElement>) {
-    const val = e.target.value.replace(/[^\d+]/g, ""); // digits and plus only
-    setLocalValue(val);
+    setLocalValue(e.target.value.replace(/[^\d+]/g, ""));
   }
 
   function handleBlur() {
@@ -73,9 +71,9 @@ function PhoneInput({ name, label, placeholder, value, onChange }: {
   );
 }
 
-// --------------------------
-// Main FormOne Component
-// --------------------------
+// --------------------------------------
+// MAIN FORM COMPONENT (STABLE LAYOUT)
+// --------------------------------------
 export default function FormOne({ formdata, updateFields, setStepValid }: FormProps) {
   const requiredFields = [
     'name', 'address', 'faculty_college', 'email', 'gsm', 'dept',
@@ -84,9 +82,6 @@ export default function FormOne({ formdata, updateFields, setStepValid }: FormPr
 
   const [errors, setErrors] = useState<Record<string, string>>({});
 
-  // --------------------------
-  // Validation
-  // --------------------------
   function validateField(name: string, value: string) {
     let error = "";
 
@@ -110,54 +105,79 @@ export default function FormOne({ formdata, updateFields, setStepValid }: FormPr
     setErrors(prev => ({ ...prev, [name]: error }));
   }
 
-  // --------------------------
-  // Handle Input Changes
-  // --------------------------
   function handleChange(e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) {
     const { name, value } = e.target;
     updateFields({ [name]: value });
     validateField(name, value);
   }
 
-  // --------------------------
-  // Enable/Disable Next Button
-  // --------------------------
   useEffect(() => {
     const allFilled = requiredFields.every(f => formdata[f]?.trim());
     const noErrors = Object.values(errors).every(err => err === "");
     setStepValid(allFilled && noErrors);
   }, [formdata, errors]);
 
-  // --------------------------
-  // Reusable Input Component
-  // --------------------------
-  const Input = ({ name, label, type = "text", placeholder }: { name: string; label: string; type?: string; placeholder?: string; }) => (
-    <div className="formgroup flex flex-col my-2 w-full">
-      <label className="my-2 text-sm">{label}</label>
-      <input
-        name={name}
-        type={type}
-        value={formdata[name] || ""}
-        onChange={handleChange}
-        placeholder={placeholder}
-        className="font-light text-sm text-gray-500 placeholder-gray-300 py-3 px-6 outline-0 border rounded-sm focus:border-gray-400"
-      />
-      {errors[name] && <p className="text-red-500 text-xs mt-1">{errors[name]}</p>}
-    </div>
-  );
+  const Input = ({
+    name,
+    label,
+    type = "text",
+    placeholder,
+  }: {
+    name: string;
+    label: string;
+    type?: string;
+    placeholder?: string;
+  }) => {
+    const [localValue, setLocalValue] = useState(formdata[name] || "");
+
+    // Sync external updates (but not while typing)
+    useEffect(() => {
+      if (formdata[name] !== localValue) {
+        setLocalValue(formdata[name] || "");
+      }
+    }, [formdata[name]]);
+
+    return (
+      <div className="formgroup flex flex-col my-2 w-full">
+        <label className="my-2 text-sm">{label}</label>
+
+        <input
+          name={name}
+          type={type}
+          value={localValue}
+          placeholder={placeholder}
+          onChange={(e) => {
+            setLocalValue(e.target.value);
+          }}
+          onBlur={(e) => {
+            updateFields({ [name]: e.target.value });
+            validateField(name, e.target.value);
+          }}
+          className="font-light text-sm text-gray-500 placeholder-gray-300 py-3 px-6 outline-0 border rounded-sm focus:border-gray-400"
+        />
+
+        {errors[name] && (
+          <p className="text-red-500 text-xs mt-1">{errors[name]}</p>
+        )}
+      </div>
+    );
+  };
+
 
   return (
-    <div className="flex flex-col">
+    <div className="flex flex-col gap-8 w-full px-10">
+
       {/* Row 1 */}
-      <div className="flex pt-4">
-        <div className="w-1/2 mx-8">
+      <div className="grid grid-cols-2 gap-10">
+        <div>
           <Input name="name" label="Employee's Full Name:" placeholder="Enter full name" />
           <Input name="address" label="Current Home Address:" placeholder="Home address" />
           <Input name="faculty_college" label="Faculty/College:" placeholder="Enter faculty" />
         </div>
 
-        <div className="w-1/2 mx-8">
+        <div>
           <Input name="email" label="Employee's Email Address:" placeholder="Enter email" />
+
           <PhoneInput
             name="gsm"
             label="Phone Number:"
@@ -168,12 +188,13 @@ export default function FormOne({ formdata, updateFields, setStepValid }: FormPr
               validateField("gsm", v);
             }}
           />
+
           <Input name="dept" label="Department:" placeholder="Enter department" />
         </div>
       </div>
 
-      {/* Row 2 - Dates */}
-      <div className="w-[95%] mx-auto flex justify-between">
+      {/* Row 2 */}
+      <div className="grid grid-cols-4 gap-6">
         <Input name="dob" label="Date of birth:" type="date" />
         <Input name="doa" label="Date of first appointment:" type="date" />
         <Input name="post" label="Post/grade of first appointment:" placeholder="Enter post" />
@@ -181,8 +202,8 @@ export default function FormOne({ formdata, updateFields, setStepValid }: FormPr
       </div>
 
       {/* Row 3 */}
-      <div className="w-[80%] ms-8 me-auto mb-4 flex justify-between">
-        <div className="formgroup flex flex-col">
+      <div className="grid grid-cols-3 gap-6 w-full">
+        <div className="flex flex-col">
           <label className="my-2 text-sm">Present post:</label>
           <select
             name="role"
@@ -202,8 +223,8 @@ export default function FormOne({ formdata, updateFields, setStepValid }: FormPr
         <Input name="level" label="Current level:" placeholder="Current level" />
       </div>
 
-      {/* Qualifications Section */}
-      <div className="w-[50%] ms-8 me-auto mb-4 flex flex-col">
+      {/* Qualifications */}
+      <div className="w-full flex flex-col">
         <p className='text-sm text-pes my-3'>
           Academic & Professional Qualifications held:
           <span className="text-gray-300"> (certificates must be attached)</span>
@@ -234,7 +255,10 @@ export default function FormOne({ formdata, updateFields, setStepValid }: FormPr
               </div>
               <input id="file" type="file" className="hidden" />
             </label>
-            <button className="border border-pes rounded-sm text-pes py-2 px-6">Save</button>
+
+            <button className="border border-pes rounded-sm text-pes py-2 px-6">
+              Save
+            </button>
           </div>
         </div>
       </div>
