@@ -1,123 +1,255 @@
-'use client'
+'use client';
+
+import { useEffect, useState } from 'react';
+
+function PhoneInput({ name, label, placeholder, value, onChange }) {
+
+  function formatPhone(num) {
+    // remove everything except numbers
+    num = num.replace(/\D/g, "");
+
+    // Normalize: always convert to +234
+    if (num.startsWith("234")) num = "+" + num;
+    if (num.startsWith("0")) num = "+234" + num.slice(1);
+    if (!num.startsWith("+234")) num = "+234" + num;
+
+    let rest = num.replace("+234", "");
+
+    let p1 = rest.slice(0, 3);
+    let p2 = rest.slice(3, 6);
+    let p3 = rest.slice(6, 10);
+
+    let formatted = "+234";
+    if (p1) formatted += " " + p1;
+    if (p2) formatted += " " + p2;
+    if (p3) formatted += " " + p3;
+
+    return formatted;
+  }
+
+  function handleChange(e) {
+    onChange(formatPhone(e.target.value));
+  }
+
+  return (
+    <div className="my-4 w-full">
+      {label && <label className="text-gray-600 font-medium block mb-1">{label}</label>}
+
+      <input
+        type="text"
+        name={name}
+        value={value}
+        placeholder={placeholder}
+        onChange={handleChange}
+        className="border border-gray-300 rounded p-2 w-full outline-none focus:border-black"
+        maxLength={16}
+      />
+    </div>
+  );
+}
+
 
 type FormProps = {
-   formdata: Record<string, any>;
-   setFormdata: (data: Record<string, any>) => void;
+  formdata: Record<string, any>;
+  updateFields: (data: Record<string, any>) => void;
+  setStepValid: (data: boolean) => void;
 };
 
-export default function Formone({ formdata, setFormdata }: FormProps){
+export default function FormOne({ formdata, updateFields, setStepValid }: FormProps) {
+  const required = [
+    'name', 'address', 'faculty_college', 'email', 'gsm', 'dept',
+    'dob', 'doa', 'post', 'doc', 'role', 'dopp', 'level'
+  ];
 
-   return(
-      <div className='flex flex-col'>
-         <div className='flex pt-4'>
-            <div className="w-1/2 mx-8">
-               <div className="formgroup flex flex-col my-2 w-full">
-                    <label htmlFor=""className='my-2 text-sm'>{`Employee's Full Name:`}</label>
-                    <input name="name" onChange={ (event) => setFormdata({...formdata, [event?.target.name]: event.target.value }) } type="text" className='font-light text-sm text-gray-500 placeholder-gray-300 py-3 px-6 outline-0 border focus:border-gray-400 rounded-sm' placeholder="Enter the Employee's first name and last name" />
-                </div>
+  const [errors, setErrors] = useState<Record<string, string>>({});
 
-                <div className="formgroup flex flex-col my-2 w-full">
-                    <label htmlFor=""className='my-2 text-sm'>Current Home Address:</label>
-                    <input name="address" onChange={ (event) => setFormdata({...formdata, [event?.target.name]: event.target.value }) } type="text" className='font-light text-sm text-gray-500 placeholder-gray-300 py-3 px-6 outline-0 border focus:border-gray-400 rounded-sm' placeholder='Home address' />
-                </div>
-                <div className="formgroup flex flex-col my-2 w-full">
-                    <label htmlFor=""className='my-2 text-sm'>Faculty/College:</label>
-                    <input name="faculty_college" className='font-light text-sm text-gray-500 placeholder-gray-300 py-3 px-6 outline-0 border focus:border-gray-400 rounded-sm' placeholder='Select a faculty'/>
-                </div>
-            </div>
+  // --------------------------
+  // Validations
+  // --------------------------
+  function validateField(name: string, value: string) {
+    let error = "";
 
-            <div className="w-1/2 mx-8">
-               <div className="formgroup flex flex-col my-2 w-full">
-                    <label htmlFor="" className='my-2 text-sm'>{`Employee's Email Address:`}</label>
-                    <input name="email" onChange={ (event) => setFormdata({...formdata, [event?.target.name]: event.target.value }) } type="text" className='font-light text-sm text-gray-500 placeholder-gray-300 py-3 px-6 outline-0 border focus:border-gray-400 rounded-sm' placeholder="Enter the Employee's email address" />
-                </div>
+    // Required field
+    if (!value.trim()) {
+      error = "This field is required.";
+    }
 
-                <div className="formgroup flex flex-col my-2 w-full">
-                    <label htmlFor="" className='my-2 text-sm'>Functional G.S.M:</label>
-                    <input name="gsm" onChange={ (event) => setFormdata({...formdata, [event?.target.name]: event.target.value }) } type="text" className='font-light text-sm text-gray-500 placeholder-gray-300 py-3 px-6 outline-0 border focus:border-gray-400 rounded-sm' placeholder='gsm' />
-                </div>
+    // Email validation
+    if (name === "email" && value.trim()) {
+      const regex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+      if (!regex.test(value)) error = "Enter a valid email address.";
+    }
 
-                <div className="formgroup flex flex-col my-2 w-full">
-                    <label htmlFor=""className='my-2 text-sm'>Department:</label>
-                    <input  name="dept" onChange={ (event) => setFormdata({...formdata, [event?.target.name]: event.target.value }) } type="text" className='font-light text-sm text-gray-500 placeholder-gray-300 py-3 px-6 outline-0 border focus:border-gray-400 rounded-sm' placeholder='Select a Department' />
-                </div>
-            </div>
-         </div>
+   // GSM numeric validation
+   if (name === "gsm" && value.trim()) {
+      if (!/^\d+$/.test(value)) {
+         error = "Phone number must contain only digits.";
+      } else if (value.length < 7 || value.length > 15) {
+         error = "Phone number must be between 7 and 15 digits.";
+      }
+   }
 
-         <div className="w-[95%] mx-auto flex justify-between">
-            <div className="formgroup flex flex-col">
-               <label htmlFor="" className='my-2 text-sm'>{`Date of birth:`}</label>
-               <input name="dob" onChange={ (event) => setFormdata({...formdata, [event?.target.name]: event.target.value }) } type="date" className='font-light text-sm text-gray-500 placeholder-gray-300 py-3 px-6 outline-0 border focus:border-gray-400 rounded-sm' placeholder="Enter the Employee's dob" />
-            </div>
 
-            <div className="formgroup flex flex-col">
-               <label htmlFor=""className='my-2 text-sm'>Date of first appointment:</label>
-               <input name="doa" onChange={ (event) => setFormdata({...formdata, [event?.target.name]: event.target.value }) } type="date" className='font-light text-sm text-gray-500 placeholder-gray-300 py-3 px-6 outline-0 border focus:border-gray-400 rounded-sm' placeholder='Date of first appointment' />
-            </div>
+    // Date validation (no future date)
+    if (["dob", "doa", "doc", "dopp"].includes(name) && value.trim()) {
+      const today = new Date().toISOString().split("T")[0];
+      if (value > today) error = "Date cannot be in the future.";
+    }
 
-            <div className="formgroup flex flex-col">
-               <label htmlFor=""className='my-2 text-sm'>Post/grade of first appointment:</label>
-               <input name="post" onChange={ (event) => setFormdata({...formdata, [event?.target.name]: event.target.value }) } type="text" className='font-light text-sm text-gray-500 placeholder-gray-300 py-3 px-6 outline-0 border focus:border-gray-400 rounded-sm' placeholder='Post of first appointment' />
-            </div>
+    setErrors(prev => ({ ...prev, [name]: error }));
+  }
 
-            <div className="formgroup flex flex-col">
-               <label htmlFor=""className='my-2 text-sm'>Date of confirmation:</label>
-               <input name='doc' onChange={ (event) => setFormdata({...formdata, [event?.target.name]: event.target.value }) } type="date" className='font-light text-sm text-gray-500 placeholder-gray-300 py-3 px-6 outline-0 border focus:border-gray-400 rounded-sm' placeholder='Date of appointment' />
-            </div>
-         </div>
+  // --------------------------
+  // Handle input changes
+  // --------------------------
+  function handleChange(e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) {
+    const { name, value } = e.target;
+    updateFields({ [name]: value });
+    validateField(name, value);
+  }
+  
 
-         <div className="w-[80%] ms-8 me-auto mb-4 flex justify-between">
-            <div className="formgroup flex flex-col">
-               <label htmlFor="role" className="my-2 text-sm">Present post:</label>
-               <select
-                  name="role"
-                  value={formdata.role || ""}
-                  onChange={(event) =>
-                     setFormdata({ ...formdata, [event.target.name]: event.target.value })
-                  }
-                  className="font-light text-sm text-gray-500 placeholder-gray-300 py-3 px-6 outline-0 border focus:border-gray-400 rounded-sm"
-               >
-                  <option value="" disabled>Select a role</option>
-                  <option value="lecturer">Employee Academic</option>
-                  <option value="industrial-engineer">Employee Non-Academic(industrial/production engineer)</option>
-                  <option value="hod">Department Lead</option>
-               </select>
-            </div>
+  // --------------------------
+  // Enable/Disable Next button
+  // --------------------------
+  useEffect(() => {
+    const allFilled = required.every(f => formdata[f]?.trim());
+    const noErrors = Object.values(errors).every(err => err === "");
+    setStepValid(allFilled && noErrors);
+  }, [formdata, errors]);
 
-            <div className="formgroup flex flex-col">
-               <label htmlFor=""className='my-2 text-sm'>Date appointed to present post:</label>
-               <input name="dopp" onChange={ (event) => setFormdata({...formdata, [event?.target.name]: event.target.value }) } type="date" className='font-light text-sm text-gray-500 placeholder-gray-300 py-3 px-6 outline-0 border focus:border-gray-400 rounded-sm' placeholder='' />
-            </div>
+  // --------------------------
+  // Input renderer helper (reduces duplication)
+  // --------------------------
+  const Input = ({
+    name,
+    label,
+    type = "text",
+    placeholder
+  }: {
+    name: string;
+    label: string;
+    type?: string;
+    placeholder?: string;
+  }) => (
+    <div className="formgroup flex flex-col my-2 w-full">
+      <label className="my-2 text-sm">{label}</label>
 
-            <div className="formgroup flex flex-col">
-               <label htmlFor=""className='my-2 text-sm'>Current level:</label>
-               <input name="level" onChange={ (event) => setFormdata({...formdata, [event?.target.name]: event.target.value }) } type="text" className='font-light text-sm text-gray-500 placeholder-gray-300 py-3 px-6 outline-0 border focus:border-gray-400 rounded-sm' placeholder='Current level' />
-            </div>
-         </div>
+      <input
+        name={name}
+        type={type}
+        value={formdata[name] || ""}
+        onChange={handleChange}
+        placeholder={placeholder}
+        className="font-light text-sm text-gray-500 placeholder-gray-300 py-3 px-6 outline-0 border rounded-sm focus:border-gray-400"
+      />
 
-         <div className="w-[50%] ms-8 me-auto mb-4 flex flex-col">
-            <p className='text-sm text-pes my-3'>Academic & Professional Qualifications held: <span className="text-gray-300">{` (certificates must be attached)`}</span></p>
-            <div className="flex flex-col bg-gray-50 rounded-xs p-4">
-               <div className="flex justify-between m-2">
-                  <input onChange={ (event) => setFormdata({...formdata, [event?.target.name]: event.target.value }) } id="title" type="text" placeholder="Title or Qualification" className="font-light text-sm text-gray-500 placeholder-gray-300 py-3 px-6 outline-0 border focus:border-gray-400 rounded-sm" />
+      {errors[name] && <p className="text-red-500 text-xs mt-1">{errors[name]}</p>}
+    </div>
+  );
 
-                  <select name="year" id="year" placeholder="Year Obtained" defaultValue={`Year Obtained`} className="font-light text-sm text-gray-500 placeholder-gray-300 py-3 px-6 outline-0 border focus:border-gray-400 rounded-sm">
-                     <option value="" className="text-gray-300">Year Obtained</option>
-                  </select>
-               </div>
-               <div className="flex justify-between m-2">
-                  <label htmlFor="file" className="w-[80%] my-auto">
-                     <div className="flex justify-end bg-white rounded-sm w-11/12 relative">
-                        <p className="m-auto text-sm text-gray-300">Choose File to Upload</p>
-                        <div className="bg-gray-100 rounded-sm px-5 py-3 text-sm text-gray-500">Browse Files</div>
-                     </div>
-                     <input onChange={ (event) => setFormdata({...formdata, [event?.target.name]: event.target.value }) } type="file" name="file" id="file" className="invisible absolute"/>
-                  </label>
+  return (
+    <div className="flex flex-col">
+      {/* Row 1 */}
+      <div className="flex pt-4">
+        <div className="w-1/2 mx-8">
+          <Input name="name" label="Employee's Full Name:" placeholder="Enter full name" />
+          <Input name="address" label="Current Home Address:" placeholder="Home address" />
+          <Input name="faculty_college" label="Faculty/College:" placeholder="Enter faculty" />
+        </div>
 
-                  <button className="border border-pes rounded-sm text-pes py-2 px-6">Save</button>
-               </div>
-            </div>
-         </div>
+        <div className="w-1/2 mx-8">
+          <Input name="email" label="Employee's Email Address:" placeholder="Enter email" />
+         <PhoneInput
+            name="gsm"
+            label="Phone Number:"
+            placeholder="Enter phone number"
+            value={formdata.gsm}
+            onChange={(v) => {
+               updateFields({ gsm: v });
+               validateField("gsm", v);
+            }}
+         />
+
+
+
+          <Input name="dept" label="Department:" placeholder="Enter department" />
+        </div>
       </div>
-   )
+
+      {/* Row 2 Dates */}
+      <div className="w-[95%] mx-auto flex justify-between">
+        <Input name="dob" label="Date of birth:" type="date" />
+        <Input name="doa" label="Date of first appointment:" type="date" />
+        <Input name="post" label="Post/grade of first appointment:" placeholder="Enter post" />
+        <Input name="doc" label="Date of confirmation:" type="date" />
+      </div>
+
+      {/* Row 3 */}
+      <div className="w-[80%] ms-8 me-auto mb-4 flex justify-between">
+        {/* Role */}
+        <div className="formgroup flex flex-col">
+          <label className="my-2 text-sm">Present post:</label>
+
+          <select
+            name="role"
+            value={formdata.role || ""}
+            onChange={handleChange}
+            className="font-light text-sm text-gray-500 py-3 px-6 outline-0 border rounded-sm focus:border-gray-400"
+          >
+            <option value="" disabled>Select a role</option>
+            <option value="lecturer">Employee Academic</option>
+            <option value="industrial-engineer">Employee Non-Academic (industrial/production engineer)</option>
+            <option value="hod">Department Lead</option>
+          </select>
+
+          {errors.role && (
+            <p className="text-red-500 text-xs mt-1">{errors.role}</p>
+          )}
+        </div>
+
+        <Input name="dopp" label="Date appointed to present post:" type="date" />
+        <Input name="level" label="Current level:" placeholder="Current level" />
+      </div>
+
+      {/* Qualifications section (not required/validated yet) */}
+      <div className="w-[50%] ms-8 me-auto mb-4 flex flex-col">
+        <p className='text-sm text-pes my-3'>
+          Academic & Professional Qualifications held:
+          <span className="text-gray-300"> (certificates must be attached)</span>
+        </p>
+
+        <div className="flex flex-col bg-gray-50 rounded-xs p-4">
+          <div className="flex justify-between m-2">
+            <input
+              id="title"
+              type="text"
+              placeholder="Title or Qualification"
+              className="font-light text-sm text-gray-500 py-3 px-6 border rounded-sm"
+            />
+
+            <select
+              id="year"
+              defaultValue=""
+              className="font-light text-sm text-gray-500 py-3 px-6 border rounded-sm"
+            >
+              <option value="">Year Obtained</option>
+            </select>
+          </div>
+
+          <div className="flex justify-between m-2">
+            <label htmlFor="file" className="w-[80%] my-auto">
+              <div className="flex justify-end bg-white rounded-sm w-11/12 relative cursor-pointer">
+                <p className="m-auto text-sm text-gray-300">Choose File to Upload</p>
+                <div className="bg-gray-100 rounded-sm px-5 py-3 text-sm text-gray-500">Browse Files</div>
+              </div>
+              <input id="file" type="file" className="hidden" />
+            </label>
+
+            <button className="border border-pes rounded-sm text-pes py-2 px-6">Save</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
 }

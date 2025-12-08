@@ -4,7 +4,12 @@ import { ArrowLeft } from "iconsax-react"
 import { useDispatch } from 'react-redux';
 import { roleCreatedView } from '@/app/state/rolecreated/roleCreatedSlice';
 
-export default function Formthree(){
+type FormProps = {
+   formdata: Record<string, any>;
+   setFormdata: (data: Record<string, any>) => void;
+};
+
+export default function Formthree({ formdata, setFormdata }: FormProps){
    const dispatch = useDispatch()
 
    return(
