@@ -69,14 +69,14 @@ import { LucideDatabase } from 'lucide-react';
 export default function Sidebar({is_sidebar_active, handleSideBar}: 
    {is_sidebar_active: boolean, handleSideBar:any}): JSX.Element{
    const pathname = usePathname()
-   const [user, setUser] = useState({ name: '', role: '', org: '' })
+   const [user, setUser] = useState({ name: '', role: '', org: '', logo: '' })
    const { role } = useAuth();
 
    useEffect(() => {
       console.log('role is:', role)
       const access_token = localStorage.getItem('access_token') as string
       const newUser = jwt.decode(access_token)
-      setUser(newUser as { name: string; role: string, org: string });
+      setUser(newUser as { name: string; role: string, org: string, logo: string });
    }, [])
    
 
@@ -104,9 +104,9 @@ export default function Sidebar({is_sidebar_active, handleSideBar}:
             <div className="w-1/5 h-full shadow-sm shadow-gray-50 me-auto max-lg:hidden lg:block z-20">
                <div className="bg-white h-screen fixed w-1/5 py-3 flex flex-col justify-start">
                   <div className = 'my-4 text-pes text-2xl font-extrabold flex justify-center w-2/4 ms-12 me-auto'>
-                     <Image src={'/Vector.svg'} alt='PES' width={55} height={55} />
+                     <Image src={`/${user.logo}` || '/Vector.svg'} alt='PES' width={55} height={55} />
                      <p className = 'ms-2 my-auto'> { user.org || 'PES'}</p>
-                  </div>
+                  </div>; 
 
                   <div className='tabs my-16 flex flex-col justify-between'>
                    {

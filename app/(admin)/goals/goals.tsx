@@ -2,7 +2,6 @@
 import Image from "next/image"
 import { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { RootState } from '../../state/store'
 import { newGoal, viewGoal } from "@/app/state/goals/goalSlice";
 import { Status, CalendarRemove } from 'iconsax-react'
 import jwt from "jsonwebtoken";

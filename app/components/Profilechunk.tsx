@@ -57,7 +57,7 @@ export default function ProfileChunk(){
                      user?.image == "" ?
                         <img src={ `/${user.image}` } alt="profile-img" className='w-full h-full'/>                   
                      :
-                        <img src='young oti.PNG' alt='profile' />                        
+                        <img src='/young oti.PNG' alt='profile' />                        
 
                   }
                </div>

@@ -1,5 +1,6 @@
 import { NextResponse } from 'next/server'
 import prisma from '../prisma.dev'
+import nodemailer from 'nodemailer'
 const randombytes = require('randombytes');
 
 type reqInfo = {
@@ -35,6 +36,8 @@ type reqInfo = {
   mr_sel: string
 }
 
+
+// ---------------- PASSWORD GENERATOR -----------------
 function generateUniquePassword(length = 8) {
   const chars = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789!@#$%^&*()";
   const randomBytes = randombytes(length);
@@ -48,12 +51,42 @@ function generateUniquePassword(length = 8) {
 
 function sanitizeString(val?: string | null) {
   if (!val) return null
-  return val.replace(/\u0000/g, '') // remove all null characters
+  return val.replace(/\u0000/g, '')
 }
 
 
-const randPassword = generateUniquePassword();
+// ---------------- SEND EMAIL (IN SAME FILE) -----------------
+async function sendLoginEmail(to: string, name: string, password: string) {
+  const transporter = nodemailer.createTransport({
+    host: "smtp.gmail.com",
+    port: 587,
+    secure: false,
+    auth: {
+      user: process.env.SMTP_USER,
+      pass: process.env.SMTP_PASS
+    }
+  });
 
+  const html = `
+    <div style="font-family: Arial; line-height: 1.6">
+      <h2>Hello ${name},</h2>
+      <p>Your account has been created successfully.</p>
+      <p><strong>Email:</strong> ${to}</p>
+      <p><strong>Password:</strong> ${password}</p>
+      <p>Please log in and change your password immediately.</p>
+    </div>
+  `;
+
+  await transporter.sendMail({
+    from: `"Admin" <${process.env.SMTP_USER}>`,
+    to,
+    subject: "Your Login Credentials",
+    html
+  });
+}
+
+
+// ---------------- INCREASE ASSIGNED COUNT -----------------
 async function addAssigned(info: reqInfo){
   const { role , org } = info
   await prisma.$queryRaw`
@@ -64,7 +97,9 @@ async function addAssigned(info: reqInfo){
   `
 }
 
-async function addUser(info: reqInfo) {
+
+// ---------------- INSERT USER INTO DB -----------------
+async function addUser(info: reqInfo, randPassword: string) {
   const { 
     name, email, gsm, role, address, faculty_college,
     dob, doa, poa, doc, post, dopp, level, org,
@@ -74,7 +109,6 @@ async function addUser(info: reqInfo) {
   } = info
 
   try {
-    // Insert into pesuser and get back the id
     const user: any = await prisma.$queryRaw`
       INSERT INTO pesuser 
       (name, email, password, gsm, role, address, faculty_college, dob, doa, poa, doc, post, dopp, level, image, org)
@@ -95,7 +129,6 @@ async function addUser(info: reqInfo) {
 
     const userId = user[0].id
 
-    // Insert into permission with correct user_id
     await prisma.$queryRaw`
       INSERT INTO permission 
       (manage_user, access_em, ae_all, ae_sub, ae_sel, define_performance, dp_all, dp_sub, dp_sel, access_hierachy, manage_review, mr_all, mr_sub, mr_sel, user_id, org)
@@ -116,16 +149,25 @@ async function addUser(info: reqInfo) {
   }
 }
 
+
+// ---------------- POST HANDLER -----------------
 export async function POST(req: Request) {
   const reqInfo = await req.json()
-  
+  const randPassword = generateUniquePassword(); // generate new password for each request
+
   try {
-    let data = await addUser(reqInfo)
-    if (data === 'success') {
-      return NextResponse.json({ message: 'added role successfully!', status: 200 })      
+    let result = await addUser(reqInfo, randPassword)
+
+    if (result === 'success') {
+
+      // 🔥 SEND LOGIN EMAIL
+      await sendLoginEmail(reqInfo.email, reqInfo.name, randPassword)
+
+      return NextResponse.json({ message: 'User created and email sent!', status: 200 })
     } else {
       return NextResponse.json({ message: 'There was a problem', status: 500 })
     }
+
   } catch (err) {
     console.error(err)
     return NextResponse.json({ message: 'Invalid credentials' })

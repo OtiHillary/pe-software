@@ -70,8 +70,6 @@ export async function POST(req: Request) {
   const { name, org, email, password, type, category, plan, planCode, logo } = await req.json()
   console.log(email, password)
   
-  // let sID = Math.floor(Math.random())
-
   try {
     let data = await addToDb({ name, email, password, type, category, plan, planCode, org, logo })
     console.log(data);
@@ -82,7 +80,8 @@ export async function POST(req: Request) {
         name: data[0].name, 
         role: data[0].role, 
         org: data[0].org, 
-        email: data[0].email, 
+        email: data[0].email,
+        logo: data[0].image,
         dept: data[0].dept,
         productCategory: data[0].category,
         productPlan: data[0].plan

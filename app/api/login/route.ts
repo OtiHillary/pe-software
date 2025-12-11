@@ -7,61 +7,75 @@ type reqInfo = {
   password: string
 }
 
-type user = {
-  id:number
-  name: string
-  email: string 
-  password: string
-  gsm: string
-  role: string
-  address: string
-  faculty_college: string
-  dob: string
-  doa: string
-  poa : string
-  doc : string
-  post : string
-  dopp: string
-  level: string
-  image : string
-  org : string
-  dept : string
-  category : string
-  plan : string
+async function getUser(info: reqInfo) {
+  const { email, password } = info
+  const users = await prisma.$queryRaw`
+    SELECT * 
+    FROM pesuser 
+    WHERE email = ${email} 
+      AND password = ${password};
+  `;
+
+  return users as any[];
 }
 
-async function getUser(info: reqInfo) {
-  const {email, password} = info
-  const users = await prisma.$queryRaw`SELECT * FROM pesuser WHERE email = ${email} AND password = ${password};`
-  await prisma.$disconnect()
-  return users as user[];
+async function getAdminLogo(org: string) {
+  const admin: any[] = await prisma.$queryRaw`
+    SELECT image 
+    FROM pesuser
+    WHERE role = 'admin'
+      AND org = ${org}
+    LIMIT 1;
+  `;
+
+  return admin.length > 0 ? admin[0].image : "" as string;
 }
 
 export async function POST(req: Request) {
-  const { email, password } = await req.json()
-  
-  try {
-    let data = await getUser({ email, password })
-    console.log(data);
-    await prisma.$disconnect()
-    
-    if (data.length > 0) {
-      const token = jwt.sign( { userID: data[0].id, 
-        name: data[0].name, 
-        role: data[0].role, 
-        org: data[0].org, 
-        email: data[0].email, 
-        dept: data[0].dept,
-        productCategory: data[0].category,
-        productPlan: data[0].plan
-      }, 'oti');
-      return NextResponse.json({ message: 'Login successful!', token: token, role: data[0].role, status: 200 })
+  const { email, password } = await req.json();
 
-    } else {
-      return NextResponse.json({ message: 'Invalid credentials', status: 500})
+  try {
+    const data = await getUser({ email, password });
+
+    if (data.length === 0) {
+      return NextResponse.json({ message: "Invalid credentials", status: 500 });
     }
+
+    const user = data[0];
+
+    // 🔍 Fetch admin logo in same org
+    const adminLogo = await getAdminLogo(user.org);
+
+    // 🧠 If admin isn’t found, fallback to user’s own image or null
+    const logo = adminLogo || user.image || null;
+
+    const token = jwt.sign(
+      {
+        userID: user.id,
+        name: user.name,
+        role: user.role,
+        org: user.org,
+        email: user.email,
+        logo,                      // <-- injected admin logo
+        dept: user.dept,
+        productCategory: user.category,
+        productPlan: user.plan,
+      },
+      'oti'
+    );
+
+    return NextResponse.json({
+      message: "Login successful!",
+      token,
+      role: user.role,
+      status: 200,
+    });
+
   } catch (err) {
-    console.error(err)
-    return NextResponse.json({ message: 'Invalid credentials'})
+    console.error("LOGIN ERROR:", err);
+    return NextResponse.json({ message: "Invalid credentials", status: 500 });
+  } finally {
+    // Close Prisma AFTER all queries
+    await prisma.$disconnect();
   }
 }
