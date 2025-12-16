@@ -1,7 +1,6 @@
 import { NextResponse } from 'next/server'
 import jwt from 'jsonwebtoken'
 import prisma from '../prisma.dev'
-import { AppPageRouteModuleOptions } from 'next/dist/server/future/route-modules/app-page/module.compiled'
 
 type reqInfo = {
   name: string
@@ -37,6 +36,16 @@ type user = {
   category : string
   plan : string
 }
+type Org = {
+  id: number
+  name: string
+  category: string
+  plan: string
+  evaluation: boolean
+  created_at: string
+  updated_at: string
+}
+
 
 type planCodes = keyof typeof amounts
 
@@ -47,20 +56,54 @@ const amounts = {
 }
 
 async function addToDb(info: reqInfo) {
-  const {name, email, password, type, category, plan, planCode, org, logo} = info
-  let amount = amounts[planCode as planCodes]
+  const { name, email, password, type, category, plan, planCode, org, logo } = info;
+  const amount = amounts[planCode as planCodes];
 
-  await prisma.$queryRaw`INSERT INTO pesuser (name, email, password, gsm, role, faculty_college, dob, doa, poa, doc, post, dopp, level, image, org, category, plan) VALUES( ${name}, ${email}, ${password}, null, ${type}, null, null, null, null, null, null, null, null, ${logo}, ${org}, ${category}, ${plan}); `
-  await prisma.$queryRaw`INSERT INTO subscriptions_info (pesuser_email, pesuser_name, org, plan_code, plan_name, reference, status, amount, paid_at, created_at) VALUES ( ${email}, ${name}, ${org}, ${planCode}, ${plan}, null, "success", ${amount}, null, null)`
-//  insert into org;
-//  id | name | category | plan | created_at | updated_at
-// ----+------+----------+------+------------+------------
+  // 1️⃣ Create org IF NOT EXISTS
+  await prisma.$queryRaw`
+    INSERT INTO org (name, category, plan)
+    VALUES (${org}, ${category}, ${plan})
+    ON CONFLICT (name) DO NOTHING;
+  `;
 
-  await prisma.$queryRaw`INSERT INTO org (name, category, plan, created_at, updated_at) VALUES ( ${name}, ${category}, ${plan}, ${plan}, null, null)`
+  // 2️⃣ Create user
+  await prisma.$queryRaw`
+    INSERT INTO pesuser (
+      name, email, password, gsm, role,
+      faculty_college, dob, doa, poa, doc,
+      post, dopp, level, image, org, category, plan
+    )
+    VALUES (
+      ${name}, ${email}, ${password}, null, ${type},
+      null, null, null, null, null,
+      null, null, null, ${logo}, ${org}, ${category}, ${plan}
+    );
+  `;
 
-  const users = await prisma.$queryRaw`SELECT * FROM pesuser WHERE email = ${email} AND password = ${password};`
-  return users as user[]
+  // 3️⃣ Create subscription
+  await prisma.$queryRaw`
+    INSERT INTO subscriptions_info (
+      pesuser_email, pesuser_name, org,
+      plan_code, plan_name, reference,
+      status, amount, paid_at, created_at
+    )
+    VALUES (
+      ${email}, ${name}, ${org},
+      ${planCode}, ${plan}, null,
+      'success', ${amount}, null, NOW()
+    );
+  `;
+
+  // 4️⃣ Fetch user
+  const users = await prisma.$queryRaw<user[]>`
+    SELECT * FROM pesuser
+    WHERE email = ${email}
+    LIMIT 1;
+  `;
+
+  return users;
 }
+
 
 export async function GET() {
   return NextResponse.json({ name: 'successful!', data: 'true' })

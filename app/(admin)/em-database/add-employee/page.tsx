@@ -87,7 +87,7 @@ export default function MainForm() {
         <button
           type="submit"
           disabled={!stepValid}               // 🔥 disable logic
-          className={`btn rounded-sm py-2 px-16 mx-8 border border-pes text-white 
+          className={`btn rounded-sm py-2 px-16 mx-8 border border-pes text-white ms-auto
             ${stepValid ? "bg-pes" : "bg-gray-400 cursor-not-allowed"}`}
         >
           {isLastStep ? "Finish" : "Next"}
