@@ -1,6 +1,9 @@
 import { NextResponse } from 'next/server'
 import jwt from 'jsonwebtoken'
 import prisma from '../prisma.dev'
+import { randomUUID } from "crypto";
+
+const reference = `PES_${randomUUID()}`;
 
 type reqInfo = {
   name: string
@@ -50,14 +53,14 @@ type Org = {
 type planCodes = keyof typeof amounts
 
 const amounts = {
-  PLN_w4hf2tk7k3mu66a: 'basic',
-  PLN_pl6nmfsedqvm0oa: 'standard',
-  PLN_bquiv8u3t2otwuh: 'premium'
+  PLN_w4hf2tk7k3mu66a: {code: 'basic', amount: 100},
+  PLN_pl6nmfsedqvm0oa: {code:'standard', amount: 200},
+  PLN_bquiv8u3t2otwuh: {code:'premium', amount: 300}
 }
 
 async function addToDb(info: reqInfo) {
   const { name, email, password, type, category, plan, planCode, org, logo } = info;
-  const amount = amounts[planCode as planCodes];
+  const amount = amounts[planCode as planCodes].amount;
 
   // 1️⃣ Create org IF NOT EXISTS
   await prisma.$queryRaw`
@@ -89,7 +92,7 @@ async function addToDb(info: reqInfo) {
     )
     VALUES (
       ${email}, ${name}, ${org},
-      ${planCode}, ${plan}, null,
+      ${planCode}, ${plan}, ${reference},
       'success', ${amount}, null, NOW()
     );
   `;

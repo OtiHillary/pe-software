@@ -104,7 +104,7 @@ export default function Sidebar({is_sidebar_active, handleSideBar}:
             <div className="w-1/5 h-full shadow-sm shadow-gray-50 me-auto max-lg:hidden lg:block z-20">
                <div className="bg-white h-screen fixed w-1/5 py-3 flex flex-col justify-start">
                   <div className = 'my-4 text-pes text-2xl font-extrabold flex justify-center w-2/4 ms-12 me-auto'>
-                     <Image src={`/${user.logo}` || '/Vector.svg'} alt='PES' width={55} height={55} />
+                     <Image src={`${user.logo}` || '/Vector.svg'} alt='PES' width={55} height={55} />
                      <p className = 'ms-2 my-auto'> { user.org || 'PES'}</p>
                   </div>; 
 
@@ -133,8 +133,8 @@ export default function Sidebar({is_sidebar_active, handleSideBar}:
                <div className={`${is_sidebar_active ? 'w-screen' : 'w-auto'} bg-[#ffffff20] h-full shadow-sm shadow-gray-50 me-auto fixed left-2 z-20`}>
                   <div className={`bg-white h-screen fixed w-1/3 max-sm:w-2/3 py-3 flex flex-col justify-start ${is_sidebar_active ? '': 'hidden'}`}>
                      <div className = 'my-4 text-pes text-2xl font-extrabold flex justify-center w-2/4 ms-12 me-auto'>
-                        <Image src={'/Vector.svg'} alt='PES' width={55} height={55} />
-                        <p className = 'ms-2 my-auto'>PES</p>
+                        <img src={`${user.logo}` || '/Vector.svg'} alt='' width={55} height={55} />
+                        <p className = 'ms-2 my-auto'>{ user.org || 'PES'}</p>
                      </div>
 
                      <div className='tabs my-10 max-lg:my-0 flex flex-col justify-between'>

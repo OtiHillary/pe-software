@@ -35,6 +35,17 @@ const third = <>
 </>
 
 
+const PLAN_CODES = {
+  basic: 'PLN_w4hf2tk7k3mu66a',
+  standard: 'PLN_pl6nmfsedqvm0oa',
+  premium: 'PLN_bquiv8u3t2otwuh',
+};
+
+type PlanType = keyof typeof PLAN_CODES;
+
+// Utility for safely resolving plan codes
+const resolvePlanCode = (plan: string) => PLAN_CODES[plan as PlanType] ?? PLAN_CODES.basic;
+
 export default function Home() {
   const slider_arr = [ true, false, false ]
   const content_arr = [ first, second, third ]
@@ -106,18 +117,6 @@ export default function Home() {
       router.replace("/forbidden");
     }
   }, [productCategory, planType, router]);
-
-
-const PLAN_CODES = {
-  basic: 'PLN_w4hf2tk7k3mu66a',
-  standard: 'PLN_pl6nmfsedqvm0oa',
-  premium: 'PLN_bquiv8u3t2otwuh',
-};
-
-type PlanType = keyof typeof PLAN_CODES;
-
-// Utility for safely resolving plan codes
-  const resolvePlanCode = (plan: string) => PLAN_CODES[plan as PlanType] ?? PLAN_CODES.basic;
 
 
   const switchSlide = () => {
@@ -279,9 +278,9 @@ type PlanType = keyof typeof PLAN_CODES;
         <input 
           type='submit' 
           value={'Sign up'} 
-          disabled={!allFieldsFilled}
+          // disabled={!allFieldsFilled}
           className={`btn px-4 py-3 rounded-lg mb-2 text-white
-            ${allFieldsFilled ? "bg-pes hover:bg-[#141444]" : "bg-gray-400 cursor-not-allowed"}
+            ${!allFieldsFilled ? "bg-pes hover:bg-[#141444]" : "bg-gray-400 cursor-not-allowed"}
           `}
         />
 
