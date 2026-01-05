@@ -19,6 +19,7 @@ async function assignUsersToHods() {
   `;
 
   if (hods.length === 0) return { message: "No HODs found", status: 404 };
+  if (hods.length > 0 && hods.length < 15) return { message: "Not enough HODs found", status: 400 };
 
   // -------------------------
   // 2. Get all non-HOD users
