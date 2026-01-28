@@ -82,18 +82,18 @@ export default function Sidebar({is_sidebar_active, handleSideBar}:
 
    console.log(pathname.split('/'))
 
-   // roles should be : admin, dean, hod, auditor 
+   // roles should be : admin, dean, hod, auditor, super-admin, industrial-engineer, lecturer, employee-w
    const tabs = [
-      { key: 1, name: 'Dashboard', icon: <Home3 />, href: '/dashboard', role_access: ['admin', 'lecturer', 'industrial-engineer', 'hod', 'employee-w', 'auditor'] },
+      { key: 1, name: 'Dashboard', icon: <Home3 />, href: '/dashboard', role_access: ['admin', 'lecturer', 'industrial-engineer', 'hod', 'employee-w', 'auditor', 'super-admin'] },
       { key: 4, name: 'Employee Database', icon: <People />, href: '/em-database', role_access: ['admin', 'hod'] }, 
-      { key: 5, name: 'Goals', icon: <Setting4 />, href: '/goals', role_access: ['admin', 'lecturer', 'industrial-engineer', 'hod', 'employee-w'] }, 
-      { key: 3, name: 'Data Entry', icon: <LucideDatabase />, href: '/data-entry', role_access: ['lecturer', 'industrial-engineer', 'hod', 'employee-w', 'auditor'] }, 
-      { key: 6, name: 'Assessment', icon: <Award />, href: '/assessment', role_access: ['admin'] }, 
-      { key: 7, name: 'Performance Review', icon: <Teacher />, href: '/performance', role_access: ['lecturer', 'industrial-engineer', 'hod', 'employee-w'] }, 
-      { key: 2, name: 'Profile', icon: <ProfileCircle />, href: '/profile', role_access: ['lecturer', 'industrial-engineer', 'hod', 'employee-w', 'auditor'] },
-      { key: 8, name: 'Pricing', icon: <DollarCircle />, href: '/pricing', role_access: ['admin'] },
-      { key: 9, name: 'Maintenance Model', icon: <Setting3 />, href: '/maintenance', role_access: [ 'industrial-engineer', 'admin'] },
-      { key: 10, name: 'Other Models', icon: <Setting2 />, href: '/models', role_access: ['industrial-engineer', 'admin'] }
+      { key: 5, name: 'Goals', icon: <Setting4 />, href: '/goals', role_access: ['admin', 'lecturer', 'industrial-engineer', 'hod', 'employee-w', 'super-admin'] }, 
+      { key: 3, name: 'Data Entry', icon: <LucideDatabase />, href: '/data-entry', role_access: ['lecturer', 'industrial-engineer', 'hod', 'employee-w', 'auditor', 'super-admin'] }, 
+      { key: 6, name: 'Assessment', icon: <Award />, href: '/assessment', role_access: ['admin', 'super-admin'] }, 
+      { key: 7, name: 'Performance Review', icon: <Teacher />, href: '/performance', role_access: ['lecturer', 'industrial-engineer', 'hod', 'employee-w', 'super-admin'] }, 
+      { key: 2, name: 'Profile', icon: <ProfileCircle />, href: '/profile', role_access: ['lecturer', 'industrial-engineer', 'hod', 'employee-w', 'auditor', 'super-admin'] },
+      { key: 8, name: 'Pricing', icon: <DollarCircle />, href: '/pricing', role_access: ['admin', 'super-admin'] },
+      { key: 9, name: 'Maintenance Model', icon: <Setting3 />, href: '/maintenance', role_access: [ 'industrial-engineer', 'admin', 'super-admin'] },
+      { key: 10, name: 'Other Models', icon: <Setting2 />, href: '/models', role_access: ['industrial-engineer', 'admin', 'super-admin'] }
    ]
 
    const allowedTabs = tabs.filter(tab => tab.role_access.includes(user.role));
